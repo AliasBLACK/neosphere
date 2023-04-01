@@ -61,7 +61,7 @@ enum pegasus_type
 	PEGASUS_TEXT_ENC,
 	PEGASUS_TEXTURE,
 	PEGASUS_TRANSFORM,
-	PEGASUS_VERTEX_LIST,
+	PEGASUS_VERTEX_LIST
 };
 
 void pegasus_init   (int api_level, int target_api_level);
