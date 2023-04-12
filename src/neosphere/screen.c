@@ -110,7 +110,6 @@ screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, 
 		// and the screen-grab functions.
 		al_store_state(&old_state, ALLEGRO_STATE_NEW_BITMAP_PARAMETERS);
 		al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY_24_NO_ALPHA);
-		al_set_new_bitmap_samples(4);
 		backbuffer = image_new(resolution.width, resolution.height, NULL);
 		al_restore_state(&old_state);
 	}
