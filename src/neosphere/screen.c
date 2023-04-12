@@ -110,6 +110,7 @@ screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, 
 		// and the screen-grab functions.
 		al_store_state(&old_state, ALLEGRO_STATE_NEW_BITMAP_PARAMETERS);
 		al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY_24_NO_ALPHA);
+		al_set_new_bitmap_samples(4);
 		backbuffer = image_new(resolution.width, resolution.height, NULL);
 		al_restore_state(&old_state);
 	}
@@ -163,6 +164,7 @@ screen_free(screen_t* it)
 		return;
 
 	console_log(1, "shutting down render context");
+	al_destroy_bitmap(it->backbuffer);
 	image_unref(it->backbuffer);
 	al_destroy_display(it->display);
 	free(it);
