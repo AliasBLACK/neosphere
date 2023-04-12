@@ -701,7 +701,7 @@ ttf_path(const ttf_t* it)
 }
 
 void
-ttf_draw_text(const ttf_t* it, int x, int y, const char* text, color_t color)
+ttf_draw_text(const ttf_t* it, float x, float y, const char* text, color_t color)
 {
 	if (it->ttf_font != NULL) {
 		al_draw_text(it->ttf_font, nativecolor(color), x, y, 0x0, text);

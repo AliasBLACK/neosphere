@@ -2614,16 +2614,16 @@ js_Font_drawText(int num_args, bool is_ctor, intptr_t magic)
 	const char* text;
 	int         width = 0;
 	wraptext_t* wraptext;
-	int         x;
-	int         y;
+	float       x;
+	float       y;
 
 	int i;
 
 	jsal_push_this();
 	font = jsal_require_class_obj(-1, PEGASUS_FONT);
 	surface = jsal_require_class_obj(0, PEGASUS_SURFACE);
-	x = jsal_require_int(1);
-	y = jsal_require_int(2);
+	x = (float)jsal_require_number(1);
+	y = (float)jsal_require_number(2);
 	text = jsal_to_string(3);
 	color = num_args >= 5 ? jsal_pegasus_require_color(4)
 		: mk_color(255, 255, 255, 255);

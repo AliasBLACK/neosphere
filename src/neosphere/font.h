@@ -69,7 +69,7 @@ ttf_t*      ttf_ref           (ttf_t* it);
 void        ttf_unref         (ttf_t* it);
 int         ttf_height        (const ttf_t* it);
 const char* ttf_path          (const ttf_t* it);
-void        ttf_draw_text     (const ttf_t* it, int x, int y, const char* text, color_t color);
+void        ttf_draw_text     (const ttf_t* it, float x, float y, const char* text, color_t color);
 int         ttf_get_width     (const ttf_t* it, const char* text);
 wraptext_t* ttf_wrap          (const ttf_t* it, const char* text, int width);
 
