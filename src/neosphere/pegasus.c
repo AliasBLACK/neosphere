@@ -505,7 +505,12 @@ static bool js_Transform_translate           (int num_args, bool is_ctor, intptr
 static bool js_new_VertexList                (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Z_deflate                     (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Z_inflate                     (int num_args, bool is_ctor, intptr_t magic);
-static bool js_Steam_init                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_Steam_init						(int num_args, bool is_ctor, intptr_t magic);
+static bool js_Steam_shutdown					(int num_args, bool is_ctor, intptr_t magic);
+static bool js_SteamInput_init					(int num_args, bool is_ctor, intptr_t magic);
+static bool js_SteamInput_shutdown				(int num_args, bool is_ctor, intptr_t magic);
+static bool js_SteamInput_runFrame				(int num_args, bool is_ctor, intptr_t magic);
+static bool js_SteamInput_getControllerAtIndex	(int num_args, bool is_ctor, intptr_t magic);
 
 #if defined(NEOSPHERE_SPHERUN)
 static bool js_SSj_assert     (int num_args, bool is_ctor, intptr_t magic);
@@ -783,6 +788,11 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_method("Transform", "translate", js_Transform_translate, 0);
 	api_define_class("VertexList", PEGASUS_VERTEX_LIST, js_new_VertexList, js_VertexList_finalize, 0);
 	api_define_func("Steam", "init", js_Steam_init, 0);
+	api_define_func("Steam", "shutdown", js_Steam_shutdown, 0);
+	api_define_func("SteamInput", "init", js_SteamInput_init, 0);
+	api_define_func("SteamInput", "shutdown", js_SteamInput_shutdown, 0);
+	api_define_func("SteamInput", "runFrame", js_SteamInput_runFrame, 0);
+	api_define_func("SteamInput", "getControllerAtIndex", js_SteamInput_getControllerAtIndex, 0);
 
 	api_define_subclass("Surface", PEGASUS_SURFACE, PEGASUS_TEXTURE, js_new_Texture, js_Texture_finalize, PEGASUS_SURFACE);
 	api_define_static_prop("Surface", "Screen", js_Surface_get_Screen, NULL, 0);
@@ -945,6 +955,7 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_const("ShapeType", "Points", SHAPE_POINTS);
 	api_define_const("ShapeType", "Triangles", SHAPE_TRIANGLES);
 	api_define_const("ShapeType", "TriStrip", SHAPE_TRI_STRIP);
+
 
 	if (api_level >= 2) {
 		api_define_class("BlendOp", PEGASUS_BLENDER, api_level >= 3 ? js_new_BlendOp : NULL, js_BlendOp_finalize, 0);
@@ -5826,4 +5837,50 @@ js_Steam_init(int num_args, bool is_ctor, intptr_t magic)
 		jsal_error(JS_ERROR, "SteamAPI_Init() failed. Is Steam running or is steam_appid.txt missing from executable folder?");
 	}
 	return false;
+}
+
+static bool
+js_Steam_shutdown(int num_args, bool is_ctor, intptr_t magic)
+{
+	SteamAPI_Shutdown();
+	if (!steam_exit())
+	{
+		jsal_error(JS_ERROR, "Failed to free library 'steam_api64.dll'");
+	}
+	return false;
+}
+
+static bool
+js_SteamInput_init(int num_args, bool is_ctor, intptr_t magic)
+{
+	if (!SteamAPI_ISteamInput_Init(true))
+	{
+		jsal_error(JS_ERROR, "Failed to init Steam Input.");
+	}
+	return false;
+}
+
+static bool
+js_SteamInput_shutdown(int num_args, bool is_ctor, intptr_t magic)
+{
+	if (!SteamAPI_ISteamInput_Shutdown())
+	{
+		jsal_error(JS_ERROR, "Failed to shutdown Steam Input.");
+	}
+	return false;
+}
+
+static bool
+js_SteamInput_runFrame(int num_args, bool is_ctor, intptr_t magic)
+{
+	SteamAPI_ISteamInput_RunFrame();
+	return false;
+}
+
+static bool
+js_SteamInput_getControllerAtIndex(int num_arg, bool is_ctar, intptr_t magic)
+{
+	int index = jsal_require_int(0);
+	jsal_push_number(SteamAPI_ISteamInput_GetControllerForGamepadIndex(index));
+	return true;
 }
