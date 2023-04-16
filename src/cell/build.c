@@ -517,6 +517,7 @@ build_package(build_t* build, const char* filename, bool rebuilding)
 	spk_add_file(spk, build->fs, "@/game.json", "game.json");
 	spk_add_file(spk, build->fs, "@/game.sgm", "game.sgm");
 	package_dir(build, spk, "#/game_modules", "#/game_modules", true);
+	package_dir(build, spk, "#/external_libs/", "#/external_libs", true);
 	package_dir(build, spk, "#/lib", "#/lib", true);
 	package_dir(build, spk, "#/runtime", "#/runtime", true);
 	package_dir(build, spk, "#/scripts", "#/scripts", true);

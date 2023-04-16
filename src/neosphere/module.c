@@ -97,6 +97,7 @@ module_resolve(const char* specifier, const char* importer, bool node_compatible
 	{
 		{ false, "@/lib" },
 		{ true,  "#/game_modules" },
+		{ true,	 "#/external_libs" },
 		{ true,  "#/runtime" },
 	};
 

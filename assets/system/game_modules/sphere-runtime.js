@@ -50,3 +50,6 @@ export { default as DataStream } from 'data-stream';
 export { default as from, Query } from 'from';
 export { default as Logger } from 'logger';
 export { default as Random } from 'random';
+
+// External Modules
+export { Matter } from 'matter';
