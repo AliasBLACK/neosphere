@@ -69,6 +69,12 @@ static unsigned int s_next_image_id = 0;
 image_t*
 image_new(int width, int height, const color_t* pixels)
 {
+	return image_new_ms(width, height, pixels, 0);
+}
+
+image_t*
+image_new_ms(int width, int height, const color_t* pixels, int samples)
+{
 	image_t*        image;
 	ALLEGRO_BITMAP* old_target;
 
@@ -76,9 +82,11 @@ image_new(int width, int height, const color_t* pixels)
 	if (!(image = calloc(1, sizeof(image_t))))
 		goto on_error;
 	al_set_new_bitmap_depth(16);
+	al_set_new_bitmap_samples(samples);
 	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	if ((image->bitmap = al_create_bitmap(width, height)) == NULL)
 		goto on_error;
+	al_set_new_bitmap_samples(0);
 	image->id = s_next_image_id++;
 	image->width = al_get_bitmap_width(image->bitmap);
 	image->height = al_get_bitmap_height(image->bitmap);
