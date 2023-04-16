@@ -506,6 +506,18 @@ static bool js_Transform_translate           (int num_args, bool is_ctor, intptr
 static bool js_new_VertexList                (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Z_deflate                     (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Z_inflate                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_Prim_drawLine				 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_drawTriangle					 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_drawFilledTriangle			 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_drawRectangle				 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_drawFilledRectangle			 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_drawRoundedRectangle			 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_drawFilledRoundedRectangle	 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_drawEllipse					 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_drawFilledEllipse			 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_drawCircle					 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_drawFilledCircle				 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_drawArc						 (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Steam_init						(int num_args, bool is_ctor, intptr_t magic);
 static bool js_Steam_shutdown					(int num_args, bool is_ctor, intptr_t magic);
 static bool js_SteamInput_init					(int num_args, bool is_ctor, intptr_t magic);
@@ -788,6 +800,18 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_method("Transform", "scale", js_Transform_scale, 0);
 	api_define_method("Transform", "translate", js_Transform_translate, 0);
 	api_define_class("VertexList", PEGASUS_VERTEX_LIST, js_new_VertexList, js_VertexList_finalize, 0);
+	api_define_func("PrimNative", "drawLine", js_Prim_drawLine, 0);
+	api_define_func("PrimNative", "drawTriangle", js_drawTriangle, 0);
+	api_define_func("PrimNative", "drawFilledTriangle", js_drawFilledTriangle, 0);
+	api_define_func("PrimNative", "drawRectangle", js_drawRectangle, 0);
+	api_define_func("PrimNative", "drawFilledRectangle", js_drawFilledRectangle, 0);
+	api_define_func("PrimNative", "drawRoundedRectangle", js_drawRoundedRectangle, 0);
+	api_define_func("PrimNative", "drawFilledRoundedRectangle", js_drawFilledRoundedRectangle, 0);
+	api_define_func("PrimNative", "drawEllipse", js_drawEllipse, 0);
+	api_define_func("PrimNative", "drawFilledEllipse", js_drawFilledEllipse, 0);
+	api_define_func("PrimNative", "drawCircle", js_drawCircle, 0);
+	api_define_func("PrimNative", "drawFilledCircle", js_drawFilledCircle, 0);
+	api_define_func("PrimNative", "drawArc", js_drawArc, 0);
 	api_define_func("Steam", "init", js_Steam_init, 0);
 	api_define_func("Steam", "shutdown", js_Steam_shutdown, 0);
 	api_define_func("SteamInput", "init", js_SteamInput_init, 0);
@@ -5824,6 +5848,298 @@ js_Z_inflate(int num_args, bool is_ctor, intptr_t magic)
 	memcpy(buffer, output_data, output_size);
 	free(output_data);
 	return true;
+}
+
+static bool
+js_Prim_drawLine(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_COLOR	color;
+	float			x1;
+	float			y1;
+	float			x2;
+	float			y2;
+	float           thickness;
+	image_t*		surface;
+
+	surface = jsal_get_class_obj(0, PEGASUS_SURFACE);
+	x1 = (float)jsal_require_number(1);
+	y1 = (float)jsal_require_number(2);
+	x2 = (float)jsal_require_number(3);
+	y2 = (float)jsal_require_number(4);
+	thickness = (float)jsal_require_number(5);
+	color = nativecolor(jsal_pegasus_require_color(6));
+	image_render_to(surface, NULL);
+	shader_use(galileo_shader(), false);
+	al_draw_line(x1, y1, x2, y2, color, thickness);
+	return false;
+}
+
+static bool
+js_drawTriangle(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_COLOR	color;
+	float			x1;
+	float			y1;
+	float			x2;
+	float			y2;
+	float			x3;
+	float			y3;
+	float           thickness;
+	image_t*		surface;
+
+	surface = jsal_get_class_obj(0, PEGASUS_SURFACE);
+	x1 = (float)jsal_require_number(1);
+	y1 = (float)jsal_require_number(2);
+	x2 = (float)jsal_require_number(3);
+	y2 = (float)jsal_require_number(4);
+	x3 = (float)jsal_require_number(5);
+	y3 = (float)jsal_require_number(6);
+	thickness = (float)jsal_require_number(7);
+	color = nativecolor(jsal_pegasus_require_color(8));
+	image_render_to(surface, NULL);
+	shader_use(galileo_shader(), false);
+	al_draw_triangle(x1, y1, x2, y2, x3, y3, color, thickness);
+	return false;
+}
+
+static bool
+js_drawFilledTriangle(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_COLOR	color;
+	float			x1;
+	float			y1;
+	float			x2;
+	float			y2;
+	float			x3;
+	float			y3;
+	image_t*		surface;
+
+	surface = jsal_get_class_obj(0, PEGASUS_SURFACE);
+	x1 = (float)jsal_require_number(1);
+	y1 = (float)jsal_require_number(2);
+	x2 = (float)jsal_require_number(3);
+	y2 = (float)jsal_require_number(4);
+	x3 = (float)jsal_require_number(5);
+	y3 = (float)jsal_require_number(6);
+	color = nativecolor(jsal_pegasus_require_color(7));
+	image_render_to(surface, NULL);
+	shader_use(galileo_shader(), false);
+	al_draw_filled_triangle(x1, y1, x2, y2, x3, y3, color);
+	return false;
+}
+
+static bool
+js_drawRectangle(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_COLOR	color;
+	float			x1;
+	float			y1;
+	float			x2;
+	float			y2;
+	float           thickness;
+	image_t*		surface;
+
+	surface = jsal_get_class_obj(0, PEGASUS_SURFACE);
+	x1 = (float)jsal_require_number(1);
+	y1 = (float)jsal_require_number(2);
+	x2 = (float)jsal_require_number(3);
+	y2 = (float)jsal_require_number(4);
+	thickness = (float)jsal_require_number(5);
+	color = nativecolor(jsal_pegasus_require_color(6));
+	image_render_to(surface, NULL);
+	shader_use(galileo_shader(), false);
+	al_draw_rectangle(x1, y1, x2, y2, color, thickness);
+	return false;
+}
+
+static bool
+js_drawFilledRectangle(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_COLOR	color;
+	float			x1;
+	float			y1;
+	float			x2;
+	float			y2;
+	image_t*		surface;
+
+	surface = jsal_get_class_obj(0, PEGASUS_SURFACE);
+	x1 = (float)jsal_require_number(1);
+	y1 = (float)jsal_require_number(2);
+	x2 = (float)jsal_require_number(3);
+	y2 = (float)jsal_require_number(4);
+	color = nativecolor(jsal_pegasus_require_color(5));
+	image_render_to(surface, NULL);
+	shader_use(galileo_shader(), false);
+	al_draw_filled_rectangle(x1, y1, x2, y2, color);
+	return false;
+}
+
+static bool
+js_drawRoundedRectangle(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_COLOR	color;
+	float			x1;
+	float			y1;
+	float			x2;
+	float			y2;
+	float			rx;
+	float			ry;
+	float           thickness;
+	image_t*		surface;
+
+	surface = jsal_get_class_obj(0, PEGASUS_SURFACE);
+	x1 = (float)jsal_require_number(1);
+	y1 = (float)jsal_require_number(2);
+	x2 = (float)jsal_require_number(3);
+	y2 = (float)jsal_require_number(4);
+	rx = (float)jsal_require_number(5);
+	ry = (float)jsal_require_number(6);
+	thickness = (float)jsal_require_number(7);
+	color = nativecolor(jsal_pegasus_require_color(8));
+	image_render_to(surface, NULL);
+	shader_use(galileo_shader(), false);
+	al_draw_rounded_rectangle(x1, y1, x2, y2, rx, ry, color, thickness);
+	return false;
+}
+
+static bool
+js_drawFilledRoundedRectangle(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_COLOR	color;
+	float			x1;
+	float			y1;
+	float			x2;
+	float			y2;
+	float			rx;
+	float			ry;
+	image_t*		surface;
+
+	surface = jsal_get_class_obj(0, PEGASUS_SURFACE);
+	x1 = (float)jsal_require_number(1);
+	y1 = (float)jsal_require_number(2);
+	x2 = (float)jsal_require_number(3);
+	y2 = (float)jsal_require_number(4);
+	rx = (float)jsal_require_number(5);
+	ry = (float)jsal_require_number(6);
+	color = nativecolor(jsal_pegasus_require_color(7));
+	image_render_to(surface, NULL);
+	shader_use(galileo_shader(), false);
+	al_draw_filled_rounded_rectangle(x1, y1, x2, y2, rx, ry, color);
+	return false;
+}
+
+static bool
+js_drawEllipse(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_COLOR	color;
+	float			cx;
+	float			cy;
+	float			rx;
+	float			ry;
+	float           thickness;
+	image_t* surface;
+
+	surface = jsal_get_class_obj(0, PEGASUS_SURFACE);
+	cx = (float)jsal_require_number(1);
+	cy = (float)jsal_require_number(2);
+	rx = (float)jsal_require_number(3);
+	ry = (float)jsal_require_number(4);
+	thickness = (float)jsal_require_number(5);
+	color = nativecolor(jsal_pegasus_require_color(6));
+	image_render_to(surface, NULL);
+	shader_use(galileo_shader(), false);
+	al_draw_ellipse(cx, cy, rx, ry, color, thickness);
+	return false;
+}
+
+static bool
+js_drawFilledEllipse(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_COLOR	color;
+	float			cx;
+	float			cy;
+	float			rx;
+	float			ry;
+	image_t* surface;
+
+	surface = jsal_get_class_obj(0, PEGASUS_SURFACE);
+	cx = (float)jsal_require_number(1);
+	cy = (float)jsal_require_number(2);
+	rx = (float)jsal_require_number(3);
+	ry = (float)jsal_require_number(4);
+	color = nativecolor(jsal_pegasus_require_color(5));
+	image_render_to(surface, NULL);
+	shader_use(galileo_shader(), false);
+	al_draw_filled_ellipse(cx, cy, rx, ry, color);
+	return false;
+}
+
+static bool
+js_drawCircle(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_COLOR	color;
+	float			cx;
+	float			cy;
+	float			r;
+	float           thickness;
+	image_t* surface;
+
+	surface = jsal_get_class_obj(0, PEGASUS_SURFACE);
+	cx = (float)jsal_require_number(1);
+	cy = (float)jsal_require_number(2);
+	r = (float)jsal_require_number(3);
+	thickness = (float)jsal_require_number(4);
+	color = nativecolor(jsal_pegasus_require_color(5));
+	image_render_to(surface, NULL);
+	shader_use(galileo_shader(), false);
+	al_draw_circle(cx, cy, r, color, thickness);
+	return false;
+}
+
+static bool
+js_drawFilledCircle(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_COLOR	color;
+	float			cx;
+	float			cy;
+	float			r;
+	image_t* surface;
+
+	surface = jsal_get_class_obj(0, PEGASUS_SURFACE);
+	cx = (float)jsal_require_number(1);
+	cy = (float)jsal_require_number(2);
+	r = (float)jsal_require_number(3);
+	color = nativecolor(jsal_pegasus_require_color(4));
+	image_render_to(surface, NULL);
+	shader_use(galileo_shader(), false);
+	al_draw_filled_circle(cx, cy, r, color);
+	return false;
+}
+
+static bool
+js_drawArc(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_COLOR	color;
+	float			cx;
+	float			cy;
+	float			r;
+	float			a1;
+	float			a2;
+	float           thickness;
+	image_t* surface;
+
+	surface = jsal_get_class_obj(0, PEGASUS_SURFACE);
+	cx = (float)jsal_require_number(1);
+	cy = (float)jsal_require_number(2);
+	r = (float)jsal_require_number(3);
+	a1 = (float)jsal_require_number(4);
+	a2 = (float)jsal_require_number(5);
+	thickness = (float)jsal_require_number(6);
+	color = nativecolor(jsal_pegasus_require_color(7));
+	image_render_to(surface, NULL);
+	shader_use(galileo_shader(), false);
+	al_draw_arc(cx, cy, r, a1, a2, color, thickness);
+	return false;
 }
 
 static bool
