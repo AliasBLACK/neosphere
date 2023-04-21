@@ -62,10 +62,57 @@ SteamAPI_ISteamInput_RunFrame()
 	SteamAPI_ISteamInput_RunFrame(steam_input, true);
 }
 
+void
+SteamAPI_ISteamInput_ActivateActionSet(uint64_t controller, uint64_t actionSetHandle)
+{
+	ActivateActionSet_Func SteamAPI_ISteamInput_ActivateActionSet;
+	SteamAPI_ISteamInput_ActivateActionSet = (ActivateActionSet_Func)GetProcAddress(steam_api, "SteamAPI_ISteamInput_ActivateActionSet");
+	SteamAPI_ISteamInput_ActivateActionSet(steam_input, controller, actionSetHandle);
+}
+
+int
+SteamAPI_ISteamInput_GetDigitalActionOrigins(uint64_t controller, uint64_t actionSetHandle, uint64_t actionHandle)
+{
+	GetDigitalActionOrigins_Func SteamAPI_ISteamInput_GetDigitalActionOrigins;
+	SteamAPI_ISteamInput_GetDigitalActionOrigins = (GetDigitalActionOrigins_Func)GetProcAddress(steam_api, "SteamAPI_ISteamInput_GetDigitalActionOrigins");
+	return SteamAPI_ISteamInput_GetDigitalActionOrigins(steam_input, controller, actionSetHandle, actionHandle, &button_origins[0]);
+}
+int
+SteamAPI_ISteamInput_GetConnectedControllers()
+{
+	GetConnectedControllers_Func SteamAPI_ISteamInput_GetConnectedControllers;
+	SteamAPI_ISteamInput_GetConnectedControllers = (GetConnectedControllers_Func)GetProcAddress(steam_api, "SteamAPI_ISteamInput_GetConnectedControllers");
+	return SteamAPI_ISteamInput_GetConnectedControllers(steam_input, &connected_controllers[0]);
+}
+
 uint64_t
 SteamAPI_ISteamInput_GetControllerForGamepadIndex(int index)
 {
 	GetControllerForGamepadIndex_Func SteamAPI_ISteamInput_GetControllerForGamepadIndex;
 	SteamAPI_ISteamInput_GetControllerForGamepadIndex = (GetControllerForGamepadIndex_Func)GetProcAddress(steam_api, "SteamAPI_ISteamInput_GetControllerForGamepadIndex");
 	return SteamAPI_ISteamInput_GetControllerForGamepadIndex(steam_input, index);
+}
+
+uint64_t
+SteamAPI_ISteamInput_GetDigitalActionHandle(const char* actionName)
+{
+	StringToHandle_Func SteamAPI_ISteamInput_GetDigitalActionHandle;
+	SteamAPI_ISteamInput_GetDigitalActionHandle = (StringToHandle_Func)GetProcAddress(steam_api, "SteamAPI_ISteamInput_GetDigitalActionHandle");
+	return SteamAPI_ISteamInput_GetDigitalActionHandle(steam_input, actionName);
+}
+
+uint64_t
+SteamAPI_ISteamInput_GetActionSetHandle(const char* actionSetName)
+{
+	StringToHandle_Func SteamAPI_ISteamInput_GetActionSetHandle;
+	SteamAPI_ISteamInput_GetActionSetHandle = (StringToHandle_Func)GetProcAddress(steam_api, "SteamAPI_ISteamInput_GetActionSetHandle");
+	return SteamAPI_ISteamInput_GetActionSetHandle(steam_input, actionSetName);
+}
+
+InputDigitalActionData_t
+SteamAPI_ISteamInput_GetDigitalActionData(uint64_t controller, uint64_t action)
+{
+	GetDigitalActionData_Func SteamAPI_ISteamInput_GetDigitalActionData;
+	SteamAPI_ISteamInput_GetDigitalActionData = (GetDigitalActionData_Func)GetProcAddress(steam_api, "SteamAPI_ISteamInput_GetDigitalActionData");
+	return SteamAPI_ISteamInput_GetDigitalActionData(steam_input, controller, action);
 }

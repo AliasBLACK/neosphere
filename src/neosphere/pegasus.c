@@ -524,6 +524,12 @@ static bool js_SteamInput_init					(int num_args, bool is_ctor, intptr_t magic);
 static bool js_SteamInput_shutdown				(int num_args, bool is_ctor, intptr_t magic);
 static bool js_SteamInput_runFrame				(int num_args, bool is_ctor, intptr_t magic);
 static bool js_SteamInput_getControllerAtIndex	(int num_args, bool is_ctor, intptr_t magic);
+static bool js_SteamInput_getConnectedControllers(int num_args, bool is_ctor, intptr_t magic);
+static bool js_SteamInput_activateActionSet		(int num_args, bool is_ctor, intptr_t magic);
+static bool js_SteamInput_getActionSetHandle	(int num_args, bool is_ctor, intptr_t magic);
+static bool js_SteamInput_GetDigitalActionHandle(int num_args, bool is_ctor, intptr_t magic);
+static bool js_SteamInput_getDigitalActionData	(int num_args, bool is_ctor, intptr_t magic);
+static bool js_SteamInput_getDigitalActionOrigin(int num_args, bool is_ctor, intptr_t magic);
 
 #if defined(NEOSPHERE_SPHERUN)
 static bool js_SSj_assert     (int num_args, bool is_ctor, intptr_t magic);
@@ -818,6 +824,12 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_func("SteamInput", "shutdown", js_SteamInput_shutdown, 0);
 	api_define_func("SteamInput", "runFrame", js_SteamInput_runFrame, 0);
 	api_define_func("SteamInput", "getControllerAtIndex", js_SteamInput_getControllerAtIndex, 0);
+	api_define_func("SteamInput", "getConnectedControllers", js_SteamInput_getConnectedControllers, 0);
+	api_define_func("SteamInput", "activateActionSet", js_SteamInput_activateActionSet, 0);
+	api_define_func("SteamInput", "getActionSetHandle", js_SteamInput_getActionSetHandle, 0);
+	api_define_func("SteamInput", "getDigitalActionHandle", js_SteamInput_GetDigitalActionHandle, 0);
+	api_define_func("SteamInput", "getDigitalActionData", js_SteamInput_getDigitalActionData, 0);
+	api_define_func("SteamInput", "getDigitalActionOrigin", js_SteamInput_getDigitalActionOrigin, 0);
 
 	api_define_subclass("Surface", PEGASUS_SURFACE, PEGASUS_TEXTURE, js_new_Texture, js_Texture_finalize, PEGASUS_SURFACE);
 	api_define_static_prop("Surface", "Screen", js_Surface_get_Screen, NULL, 0);
@@ -981,6 +993,101 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_const("ShapeType", "Triangles", SHAPE_TRIANGLES);
 	api_define_const("ShapeType", "TriStrip", SHAPE_TRI_STRIP);
 
+	// SteamInput enums.
+	api_define_const("SteamInput", "SteamController_A", 1);
+	api_define_const("SteamInput", "SteamController_B", 2);
+	api_define_const("SteamInput", "SteamController_X", 3);
+	api_define_const("SteamInput", "SteamController_Y", 4);
+	api_define_const("SteamInput", "SteamController_LeftBumper", 5);
+	api_define_const("SteamInput", "SteamController_RightBumper", 6);
+	api_define_const("SteamInput", "SteamController_RightPad_Click", 20);
+	api_define_const("SteamInput", "SteamController_LeftTrigger_Click", 26);
+	api_define_const("SteamInput", "SteamController_RightTrigger_Click", 28);
+	api_define_const("SteamInput", "SteamController_LeftStick_Click", 30);
+	api_define_const("SteamInput", "PS4_Cross", 50);
+	api_define_const("SteamInput", "PS4_Circle", 51);
+	api_define_const("SteamInput", "PS4_Triangle", 52);
+	api_define_const("SteamInput", "PS4_Square", 53);
+	api_define_const("SteamInput", "PS4_LeftBumper", 54);
+	api_define_const("SteamInput", "PS4_RightBumper", 55);
+	api_define_const("SteamInput", "PS4_LeftTrigger_Click", 80);
+	api_define_const("SteamInput", "PS4_RightTrigger_Click", 82);
+	api_define_const("SteamInput", "PS4_LeftStick_Click", 84);
+	api_define_const("SteamInput", "PS4_RightStick_Click", 90);
+	api_define_const("SteamInput", "PS4_DPad_North", 95);
+	api_define_const("SteamInput", "PS4_DPad_South", 96);
+	api_define_const("SteamInput", "PS4_DPad_West", 97);
+	api_define_const("SteamInput", "PS4_DPad_East", 98);
+	api_define_const("SteamInput", "XBoxOne_A", 114);
+	api_define_const("SteamInput", "XBoxOne_B", 115);
+	api_define_const("SteamInput", "XBoxOne_X", 116);
+	api_define_const("SteamInput", "XBoxOne_Y", 117);
+	api_define_const("SteamInput", "XBoxOne_LeftBumper", 118);
+	api_define_const("SteamInput", "XBoxOne_RightBumper", 119);
+	api_define_const("SteamInput", "XBoxOne_LeftTrigger_Click", 123);
+	api_define_const("SteamInput", "XBoxOne_RightTrigger_Click", 125);
+	api_define_const("SteamInput", "XBoxOne_LeftStick_Click", 127);
+	api_define_const("SteamInput", "XBoxOne_RightStick_Click", 133);
+	api_define_const("SteamInput", "XBoxOne_DPad_North", 138);
+	api_define_const("SteamInput", "XBoxOne_DPad_South", 139);
+	api_define_const("SteamInput", "XBoxOne_DPad_West", 140);
+	api_define_const("SteamInput", "XBoxOne_DPad_East", 141);
+	api_define_const("SteamInput", "XBox360_A", 153);
+	api_define_const("SteamInput", "XBox360_B", 154);
+	api_define_const("SteamInput", "XBox360_X", 155);
+	api_define_const("SteamInput", "XBox360_Y", 156);
+	api_define_const("SteamInput", "XBox360_LeftBumper", 157);
+	api_define_const("SteamInput", "XBox360_RightBumper", 158);
+	api_define_const("SteamInput", "XBox360_LeftTrigger_Click", 162);
+	api_define_const("SteamInput", "XBox360_RightTrigger_Click", 164);
+	api_define_const("SteamInput", "XBox360_LeftStick_Click", 166);
+	api_define_const("SteamInput", "XBox360_RightStick_Click", 172);
+	api_define_const("SteamInput", "XBox360_DPad_North", 177);
+	api_define_const("SteamInput", "XBox360_DPad_South", 178);
+	api_define_const("SteamInput", "XBox360_DPad_West", 179);
+	api_define_const("SteamInput", "XBox360_DPad_East", 180);
+	api_define_const("SteamInput", "Switch_A", 192);
+	api_define_const("SteamInput", "Switch_B", 193);
+	api_define_const("SteamInput", "Switch_X", 194);
+	api_define_const("SteamInput", "Switch_Y", 195);
+	api_define_const("SteamInput", "Switch_LeftBumper", 196);
+	api_define_const("SteamInput", "Switch_RightBumper", 197);
+	api_define_const("SteamInput", "Switch_LeftTrigger_Click", 202);
+	api_define_const("SteamInput", "Switch_RightTrigger_Click", 204);
+	api_define_const("SteamInput", "Switch_LeftStick_Click", 206);
+	api_define_const("SteamInput", "Switch_RightStick_Click", 212);
+	api_define_const("SteamInput", "Switch_DPad_North", 217);
+	api_define_const("SteamInput", "Switch_DPad_South", 218);
+	api_define_const("SteamInput", "Switch_DPad_West", 219);
+	api_define_const("SteamInput", "Switch_DPad_East", 220);
+	api_define_const("SteamInput", "PS5_Cross", 258);
+	api_define_const("SteamInput", "PS5_Circle", 259);
+	api_define_const("SteamInput", "PS5_Triangle", 260);
+	api_define_const("SteamInput", "PS5_Square", 261);
+	api_define_const("SteamInput", "PS5_LeftBumper", 262);
+	api_define_const("SteamInput", "PS5_RightBumper", 263);
+	api_define_const("SteamInput", "PS5_LeftTrigger_Click", 289);
+	api_define_const("SteamInput", "PS5_RightTrigger_Click", 291);
+	api_define_const("SteamInput", "PS5_LeftStick_Click", 293);
+	api_define_const("SteamInput", "PS5_RightStick_Click", 299);
+	api_define_const("SteamInput", "PS5_DPad_North", 304);
+	api_define_const("SteamInput", "PS5_DPad_South", 305);
+	api_define_const("SteamInput", "PS5_DPad_West", 306);
+	api_define_const("SteamInput", "PS5_DPad_East", 307);
+	api_define_const("SteamInput", "SteamDeck_A", 333);
+	api_define_const("SteamInput", "SteamDeck_B", 334);
+	api_define_const("SteamInput", "SteamDeck_X", 335);
+	api_define_const("SteamInput", "SteamDeck_Y", 336);
+	api_define_const("SteamInput", "SteamDeck_L1", 337);
+	api_define_const("SteamInput", "SteamDeck_R1", 338);
+	api_define_const("SteamInput", "SteamDeck_L2", 356);
+	api_define_const("SteamInput", "SteamDeck_R2", 358);
+	api_define_const("SteamInput", "SteamDeck_L3", 360);
+	api_define_const("SteamInput", "SteamDeck_R3", 367);
+	api_define_const("SteamInput", "SteamDeck_DPad_North", 378);
+	api_define_const("SteamInput", "SteamDeck_DPad_South", 379);
+	api_define_const("SteamInput", "SteamDeck_DPad_West", 380);
+	api_define_const("SteamInput", "SteamDeck_DPad_East", 381);
 
 	if (api_level >= 2) {
 		api_define_class("BlendOp", PEGASUS_BLENDER, api_level >= 3 ? js_new_BlendOp : NULL, js_BlendOp_finalize, 0);
@@ -6199,5 +6306,81 @@ js_SteamInput_getControllerAtIndex(int num_arg, bool is_ctar, intptr_t magic)
 {
 	int index = jsal_require_int(0);
 	jsal_push_number(SteamAPI_ISteamInput_GetControllerForGamepadIndex(index));
+	return true;
+}
+
+static bool
+js_SteamInput_getConnectedControllers(int num_arg, bool is_ctar, intptr_t magic)
+{
+	int num_controllers = SteamAPI_ISteamInput_GetConnectedControllers();
+
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < num_controllers; ++i)
+	{
+		jsal_push_number(connected_controllers[i]);
+		jsal_put_prop_index(-2, i);
+	}
+	return true;
+}
+
+static bool
+js_SteamInput_activateActionSet(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t controller = jsal_require_number(0);
+	uint64_t actionSetHandle = jsal_require_number(1);
+	SteamAPI_ISteamInput_ActivateActionSet(controller, actionSetHandle);
+	return false;
+}
+
+static bool
+js_SteamInput_getActionSetHandle(int num_args, bool is_ctor, intptr_t magic)
+{
+	const char* actionSetName = jsal_require_string(0);
+	jsal_push_number(SteamAPI_ISteamInput_GetActionSetHandle(actionSetName));
+	return true;
+}
+
+static bool
+js_SteamInput_GetDigitalActionHandle(int num_args, bool is_ctor, intptr_t magic)
+{
+	const char* actionName = jsal_require_string(0);
+	jsal_push_number(SteamAPI_ISteamInput_GetDigitalActionHandle(actionName));
+	return true;
+}
+
+static bool
+js_SteamInput_getDigitalActionData(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t controller = jsal_require_number(0);
+	uint64_t actionHandle = jsal_require_number(1);
+
+	InputDigitalActionData_t actionData = SteamAPI_ISteamInput_GetDigitalActionData(controller, actionHandle);
+
+	jsal_push_new_object();
+	jsal_push_boolean(actionData.bState);
+	jsal_put_prop_string(-2, "bState");
+	jsal_push_boolean(actionData.bActive);
+	jsal_put_prop_string(-2, "bActive");
+
+	return true;
+}
+
+static bool
+js_SteamInput_getDigitalActionOrigin(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t controller = jsal_require_number(0);
+	uint64_t actionSetHandle = jsal_require_number(1);
+	uint64_t actionHandle = jsal_require_number(2);
+
+	int numOrigins = SteamAPI_ISteamInput_GetDigitalActionOrigins(controller, actionSetHandle, actionHandle);
+
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < numOrigins; ++i) {
+		jsal_push_int(button_origins[i]);
+		jsal_put_prop_index(-2, i);
+	}
+
 	return true;
 }
