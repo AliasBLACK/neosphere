@@ -53,4 +53,4 @@ export { default as Random } from 'random';
 
 // External Modules
 export { Matter } from 'matter';
-export { Yoga } from 'yoga';
+export * as Yoga from 'yoga/api';
