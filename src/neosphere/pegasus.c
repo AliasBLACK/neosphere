@@ -5446,7 +5446,7 @@ js_new_Texture(int num_args, bool is_ctor, intptr_t magic)
 		height = jsal_require_int(1);
 		if (buffer_size < width * height * sizeof(color_t))
 			jsal_error(JS_RANGE_ERROR, "Not enough data in pixel buffer");
-		if (!(image = image_new(width, height, buffer)))
+		if (!(image = image_new_ms(width, height, buffer, 8)))
 			jsal_error(JS_ERROR, "Couldn't create a %d x %d GPU texture", width, height);
 	}
 	else if (num_args >= 2) {
@@ -5455,7 +5455,7 @@ js_new_Texture(int num_args, bool is_ctor, intptr_t magic)
 		height = jsal_require_int(1);
 		fill_color = num_args >= 3 ? jsal_pegasus_require_color(2)
 			: mk_color(0, 0, 0, 0);
-		if (!(image = image_new(width, height, NULL)))
+		if (!(image = image_new_ms(width, height, NULL, 8)))
 			jsal_error(JS_ERROR, "Couldn't create a %d x %d GPU texture", width, height);
 		image_fill(image, fill_color, 1.0f);
 	}

@@ -86,7 +86,6 @@ image_new_ms(int width, int height, const color_t* pixels, int samples)
 	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	if ((image->bitmap = al_create_bitmap(width, height)) == NULL)
 		goto on_error;
-	al_set_new_bitmap_samples(0);
 	image->id = s_next_image_id++;
 	image->width = al_get_bitmap_width(image->bitmap);
 	image->height = al_get_bitmap_height(image->bitmap);
