@@ -530,6 +530,7 @@ static bool js_SteamInput_getActionSetHandle	(int num_args, bool is_ctor, intptr
 static bool js_SteamInput_GetDigitalActionHandle(int num_args, bool is_ctor, intptr_t magic);
 static bool js_SteamInput_getDigitalActionData	(int num_args, bool is_ctor, intptr_t magic);
 static bool js_SteamInput_getDigitalActionOrigin(int num_args, bool is_ctor, intptr_t magic);
+static bool js_SteamApps_GetCurrentGameLanguage (int num_args, bool is_ctor, intptr_t magic);
 
 #if defined(NEOSPHERE_SPHERUN)
 static bool js_SSj_assert     (int num_args, bool is_ctor, intptr_t magic);
@@ -830,6 +831,7 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_func("SteamInput", "getDigitalActionHandle", js_SteamInput_GetDigitalActionHandle, 0);
 	api_define_func("SteamInput", "getDigitalActionData", js_SteamInput_getDigitalActionData, 0);
 	api_define_func("SteamInput", "getDigitalActionOrigin", js_SteamInput_getDigitalActionOrigin, 0);
+	api_define_func("SteamApp", "getCurrentGameLanguage", js_SteamApps_GetCurrentGameLanguage, 0);
 
 	api_define_subclass("Surface", PEGASUS_SURFACE, PEGASUS_TEXTURE, js_new_Texture, js_Texture_finalize, PEGASUS_SURFACE);
 	api_define_static_prop("Surface", "Screen", js_Surface_get_Screen, NULL, 0);
@@ -6382,5 +6384,12 @@ js_SteamInput_getDigitalActionOrigin(int num_args, bool is_ctor, intptr_t magic)
 		jsal_put_prop_index(-2, i);
 	}
 
+	return true;
+}
+
+static bool
+js_SteamApps_GetCurrentGameLanguage(int num_args, bool is_ctor, intptr_t magic)
+{
+	jsal_push_string(SteamAPI_ISteamApps_GetCurrentGameLanguage());
 	return true;
 }

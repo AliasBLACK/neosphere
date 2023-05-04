@@ -23,7 +23,14 @@ SteamAPI_Init(void)
 {
 	BoolFunc SteamAPI_Init;
 	SteamAPI_Init = (BoolFunc)GetProcAddress(steam_api, "SteamAPI_Init");
-	return SteamAPI_Init ? SteamAPI_Init() ? true : false : false;
+	if (SteamAPI_Init && SteamAPI_Init())
+	{
+		PointerFunc SteamAPI_SteamApp;
+		SteamAPI_SteamApp = (PointerFunc)GetProcAddress(steam_api, "SteamAPI_SteamApps_v008");
+		steam_app = SteamAPI_SteamApp();
+		return true;
+	}
+	return false;
 }
 
 void
@@ -52,6 +59,14 @@ SteamAPI_ISteamInput_Shutdown()
 	ISteamInput_Shutdown_Func SteamAPI_ISteamInput_Shutdown;
 	SteamAPI_ISteamInput_Shutdown = (ISteamInput_Shutdown_Func)GetProcAddress(steam_api, "SteamAPI_ISteamInput_Shutdown");
 	return SteamAPI_ISteamInput_Shutdown(steam_input);
+}
+
+bool
+SteamAPI_RestartAppIfNecessary(uint32_t appId)
+{
+	RestartAppIfNecessary_Func SteamAPI_RestartAppIfNecessary;
+	SteamAPI_RestartAppIfNecessary = (RestartAppIfNecessary_Func)GetProcAddress(steam_api, "SteamAPI_RestartAppIfNecessary");
+	return SteamAPI_RestartAppIfNecessary(appId);
 }
 
 void
@@ -115,4 +130,12 @@ SteamAPI_ISteamInput_GetDigitalActionData(uint64_t controller, uint64_t action)
 	GetDigitalActionData_Func SteamAPI_ISteamInput_GetDigitalActionData;
 	SteamAPI_ISteamInput_GetDigitalActionData = (GetDigitalActionData_Func)GetProcAddress(steam_api, "SteamAPI_ISteamInput_GetDigitalActionData");
 	return SteamAPI_ISteamInput_GetDigitalActionData(steam_input, controller, action);
+}
+
+char*
+SteamAPI_ISteamApps_GetCurrentGameLanguage()
+{
+	GetCurrentGameLanguage_Func SteamAPI_ISteamApps_GetCurrentGameLanguage;
+	SteamAPI_ISteamApps_GetCurrentGameLanguage = (GetCurrentGameLanguage_Func)GetProcAddress(steam_api, "SteamAPI_ISteamApps_GetCurrentGameLanguage");
+	return SteamAPI_ISteamApps_GetCurrentGameLanguage(steam_app);
 }
