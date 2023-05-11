@@ -52,5 +52,7 @@ export { default as Logger } from 'logger';
 export { default as Random } from 'random';
 
 // External Modules
+import { decomp } from 'decomp';
+global.decomp = decomp;
 export { Matter } from 'matter';
 export * as Yoga from 'yoga/api';
