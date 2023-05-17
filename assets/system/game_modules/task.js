@@ -66,6 +66,7 @@ class Task
 		this._priority = options.priority;
 		this._renderJob = null;
 		this._started = false;
+		this._paused = false;
 		this._updateJob = null;
 	}
 
@@ -84,6 +85,11 @@ class Task
 		return this._started;
 	}
 
+	get paused()
+	{
+		return this._paused;
+	}
+
 	on_startUp() {}
 	on_shutDown() {}
 	on_inputCheck() {}
@@ -97,6 +103,7 @@ class Task
 		if (!this.running)
 			throw new Error("Task is not running");
 		this._updateJob.pause();
+		this._paused = true;
 	}
 
 	resume()
@@ -105,6 +112,7 @@ class Task
 			throw new RangeError("Task#resume requires a newer Sphere version");
 		if (!this.running)
 			throw new Error("Task is not running");
+		this._paused = false;
 		this._updateJob.resume();
 		this._renderJob.resume();
 	}
@@ -179,6 +187,7 @@ class Task
 			throw new Error("Task is not running");
 		this._updateJob.pause();
 		this._renderJob.pause();
+		this._paused = true
 	}
 
 	takeFocus()
