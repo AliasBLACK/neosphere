@@ -80,7 +80,7 @@ export class Node extends NodeAbstract
 		this.texture = null
 		this.shape = Array(9).fill(null)
 		this.transform = Array(9).fill(new Transform())
-		this.renderMode = ninePatch
+		this.renderMode = "stretch"
 		return this
 	}
 
@@ -114,20 +114,20 @@ export class Node extends NodeAbstract
 			let y = yOffset + this.getComputedTop()
 			switch (this.renderMode)
 			{
-				case tiled:
+				case "tiled":
 					// TODO: Tiled.
 					break
 				
-				case stretch:
+				case "stretch":
 					if (this.shape[0] == null)
-						this.shape[0] = textureShape(this.texture, false)
+						this.shape[0] = this.textureShape(this.texture, false)
 					this.transform[0].identity()
 					this.transform[0].scale(this.getComputedWidth() / this.texture.width, this.getComputedHeight() / this.texture.height)
 					this.transform[0].translate(x, y)
 					this.shape[0].draw(surface, this.transform[0])
 					break
 				
-				case ninePatch:
+				case "ninePatch":
 					let hor = this.texture.width / 3
 					let ver = this.texture.height / 3
 					let horStretch = (this.getComputedWidth() - hor * 2) / hor
@@ -138,14 +138,14 @@ export class Node extends NodeAbstract
 
 					// Top-left.
 					if (this.shape[0] == null)
-						this.shape[0] = textureShape(this.texture, false, 0, 0, hor, ver)
+						this.shape[0] = this.textureShape(this.texture, false, 0, 0, hor, ver)
 					this.transform[0].identity()
 					this.transform[0].translate(x, y)
 					this.shape[0].draw(surface, this.transform[0])
 
 					// Top-center.
 					if (this.shape[1] == null)
-						this.shape[1] = textureShape(this.texture, false, hor, 0, hor, ver)
+						this.shape[1] = this.textureShape(this.texture, false, hor, 0, hor, ver)
 					this.transform[1].identity()
 					this.transform[1].scale(horStretch, 1.0)
 					this.transform[1].translate(x + hor, y)
@@ -153,14 +153,14 @@ export class Node extends NodeAbstract
 
 					// Top-right.
 					if (this.shape[2] == null)
-						this.shape[2] = textureShape(this.texture, false, hor * 2, 0, hor, ver)
+						this.shape[2] = this.textureShape(this.texture, false, hor * 2, 0, hor, ver)
 					this.transform[2].identity()
 					this.transform[2].translate(x + this.getComputedWidth() - hor, y)
 					this.shape[2].draw(surface, this.transform[2])
 
 					// Center-left.
 					if (this.shape[3] == null)
-						this.shape[3] = textureShape(this.texture, false, 0, ver, hor, ver)
+						this.shape[3] = this.textureShape(this.texture, false, 0, ver, hor, ver)
 					this.transform[3].identity()
 					this.transform[3].scale(1, verStretch)
 					this.transform[3].translate(x, y + ver)
@@ -168,7 +168,7 @@ export class Node extends NodeAbstract
 
 					// Center-center.
 					if (this.shape[4] == null)
-						this.shape[4] = textureShape(this.texture, false, hor, ver, hor, ver)
+						this.shape[4] = this.textureShape(this.texture, false, hor, ver, hor, ver)
 					this.transform[4].identity()
 					this.transform[4].scale(horStretch, verStretch)
 					this.transform[4].translate(x + hor, y + ver)
@@ -176,7 +176,7 @@ export class Node extends NodeAbstract
 
 					// Center-right.
 					if (this.shape[5] == null)
-						this.shape[5] = textureShape(this.texture, false, hor * 2, ver, hor, ver)
+						this.shape[5] = this.textureShape(this.texture, false, hor * 2, ver, hor, ver)
 					this.transform[5].identity()
 					this.transform[5].scale(1, verStretch)
 					this.transform[5].translate(x + this.getComputedWidth() - hor, y + ver)
@@ -184,14 +184,14 @@ export class Node extends NodeAbstract
 
 					// Bottom-left.
 					if (this.shape[6] == null)
-						this.shape[6] = textureShape(this.texture, false, 0, ver * 2, hor, ver)
+						this.shape[6] = this.textureShape(this.texture, false, 0, ver * 2, hor, ver)
 					this.transform[6].identity()
 					this.transform[6].translate(x, y + this.getComputedHeight() - ver)
 					this.shape[6].draw(surface, this.transform[6])
 
 					// Bottom-center.
 					if (this.shape[7] == null)
-						this.shape[7] = textureShape(this.texture, false, hor, ver * 2, hor, ver)
+						this.shape[7] = this.textureShape(this.texture, false, hor, ver * 2, hor, ver)
 					this.transform[7].identity()
 					this.transform[7].scale(horStretch, 1)
 					this.transform[7].translate(x + hor, y + this.getComputedHeight() - ver)
@@ -199,13 +199,37 @@ export class Node extends NodeAbstract
 
 					// Bottom-right.
 					if (this.shape[8] == null)
-						this.shape[8] = textureShape(this.texture, false, hor * 2, ver * 2, hor, ver)
+						this.shape[8] = this.textureShape(this.texture, false, hor * 2, ver * 2, hor, ver)
 					this.transform[8].identity()
 					this.transform[8].translate(x + this.getComputedWidth() - hor, y + this.getComputedHeight() - ver)
 					this.shape[8].draw(surface, this.transform[8])
 					break
 			}
 		}
+	}
+
+	textureShape(texture, originAtCenter = true, sx = 0, sy = 0, sw = 0, sh = 0)
+	{
+		let tex = texture
+		if (sw > 0 && sh > 0)
+		{
+			tex = new Surface(sw, sh)
+			Prim.blitSection(tex, 0, 0, texture, sx, sy, sw, sh)
+		}
+
+		let left = originAtCenter ? -tex.width / 2 : 0
+		let right = originAtCenter ? tex.width / 2  : tex.width
+		let top = originAtCenter ? -tex.height / 2 : 0
+		let bottom = originAtCenter ? tex.height / 2 : tex.height
+
+		return new Shape(ShapeType.Fan, tex, new VertexList(
+			[
+				{x: left, y: top, u: 0, v: 1},
+				{x: right, y: top, u: 1, v: 1},
+				{x: right, y: bottom, u: 1, v: 0},
+				{x: left, y: bottom, u: 0, v: 0}
+			]
+		))
 	}
 }
 
@@ -215,10 +239,11 @@ export class Text extends NodeAbstract
 		super()
         this.text = ""
 		this.multiLine = []
-		this.font = regularFont()
-        this.textAlign = alignLeft
+		this.font = Font.Default
+        this.textAlign = "alignLeft"
         this.color = Color.White
         this.cachedWidth = 0
+		this.isEastAsian = false
         return this
 	}
 
@@ -228,6 +253,12 @@ export class Text extends NodeAbstract
         this.updateText(this.text)
         return this
     }
+
+	setEastAsian(bool)
+	{
+		this.isEastAsian = bool
+		return this
+	}
 
     setTextAlign(align)
     {
@@ -262,8 +293,8 @@ export class Text extends NodeAbstract
         contentWidth -= this.getComputedPadding(Yoga.EDGE_RIGHT)
 
         // Break text up into array of lines limited by width.
-		this.multiLine = isEastAsian ?
-            eastAsianWordWrap(this.font, text, contentWidth) :
+		this.multiLine = this.isEastAsian ?
+            this.eastAsianWordWrap(this.font, text, contentWidth) :
             this.font.wordWrap(text, contentWidth)
 
         // Calculate min height based on text and font.
@@ -271,6 +302,31 @@ export class Text extends NodeAbstract
         contentHeight += this.getComputedPadding(Yoga.EDGE_TOP)
         contentHeight += this.getComputedPadding(Yoga.EDGE_BOTTOM)
         this.setMinHeight(contentHeight)
+	}
+
+	eastAsianWordWrap(font, text, width)
+	{
+		let result = []
+		let currentLength = 0
+		let currentString = ""
+		for (const char of text)
+		{
+			let charWidth = font.widthOf(char)
+			if (currentLength + charWidth > width)
+			{
+				result.push(currentString)
+				currentString = char
+				currentLength = charWidth
+			}
+			else
+			{
+				currentString += char
+				currentLength += charWidth
+			}
+		}
+		if (currentString != "")
+			result.push(currentString)
+		return result
 	}
 	
 	render(surface, xOffset = 0, yOffset = 0)
@@ -293,7 +349,7 @@ export class Text extends NodeAbstract
         let left = xOffset + this.getComputedLeft() + this.getComputedPadding(Yoga.EDGE_LEFT)
 		switch (this.textAlign)
         {
-            case alignLeft:
+            case "alignLeft":
                 for (let i = 0; i < this.multiLine.length; i++)
                     this.font.drawText (
                         surface,
@@ -304,7 +360,7 @@ export class Text extends NodeAbstract
                     )
                 break
             
-            case alignRight:
+            case "alignRight":
                 let right = xOffset + this.getComputedRight() - this.getComputedPadding(Yoga.EDGE_RIGHT)
                 for (let i = 0; i < this.multiLine.length; i++)
                 {
@@ -319,7 +375,7 @@ export class Text extends NodeAbstract
                 }
                 break
             
-            case alignCenter:
+            case "alignCenter":
                 let width = this.getComputedWidth()
                 width -= this.getComputedPadding(Yoga.EDGE_LEFT)
                 width -= this.getComputedPadding(Yoga.EDGE_RIGHT)
