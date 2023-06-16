@@ -7,6 +7,8 @@ class NodeAbstract extends Yoga.Node
     {
         super()
         this.hidden = false
+		this.xOffset = 0
+		this.yOffset = 0
 		this.originalPositionType = Yoga.POSITION_TYPE_ABSOLUTE
 
         // Redefine setters for builder pattern.
@@ -67,9 +69,22 @@ class NodeAbstract extends Yoga.Node
 
     renderChildren(surface, xOffset, yOffset)
 	{
+		this.xOffset = xOffset
+		this.yOffset = yOffset
 		for (let i = 0; i < this.getChildCount(); i++)
 			this.getChild(i).render(surface, xOffset + this.getComputedLeft(), yOffset + this.getComputedTop())
 	}
+
+	updateChildren()
+	{
+		for (let i = 0; i < this.getChildCount(); i++)
+		{
+			this.getChild(i).update()
+			this.getChild(i).updateChildren()
+		}
+	}
+
+	update() {}
 }
 
 export class Node extends NodeAbstract
