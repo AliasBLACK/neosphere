@@ -7,8 +7,12 @@ class NodeAbstract extends Yoga.Node
     {
         super()
         this.hidden = false
+		this.redirectFocus = null
 		this.xOffset = 0
 		this.yOffset = 0
+		this.animXOffset = 0
+		this.animYOffset = 0
+		this.animating = false
 		this.originalPositionType = Yoga.POSITION_TYPE_ABSOLUTE
 
         // Redefine setters for builder pattern.
@@ -33,6 +37,19 @@ class NodeAbstract extends Yoga.Node
 			this.getParent().removeChild(this)
 	}
 
+	takeFocus()
+	{
+		if (this.redirectFocus)
+			this.redirectFocus.takeFocus()
+	}
+
+	setAnimating(animating)
+	{
+		this.animating = animating
+		for (let i = 0; i < this.getChildCount(); i++)
+			this.getChild(i).setAnimating(animating)
+	}
+
     checkIfDirtied() {
 		if (this.isDirty()) {
 			return true
@@ -44,6 +61,18 @@ class NodeAbstract extends Yoga.Node
 			}
 			return false
 		}
+	}
+
+	isHidden()
+	{
+		let result = this.hidden
+		if (!result)
+		{
+			let parent = this.getParent()
+			if (parent && parent.isHidden)
+				result = parent.isHidden()
+		}
+		return result
 	}
 
 	hide()
@@ -72,7 +101,7 @@ class NodeAbstract extends Yoga.Node
 		this.xOffset = xOffset
 		this.yOffset = yOffset
 		for (let i = 0; i < this.getChildCount(); i++)
-			this.getChild(i).render(surface, xOffset + this.getComputedLeft(), yOffset + this.getComputedTop())
+			this.getChild(i).render(surface, xOffset + this.getComputedLeft() + this.animXOffset, yOffset + this.getComputedTop() + this.animYOffset)
 	}
 
 	updateChildren()
@@ -116,7 +145,7 @@ export class Node extends NodeAbstract
 	{
 		if (!this.hidden)
 		{
-			this.renderTexture(surface, xOffset, yOffset)
+			this.renderTexture(surface, xOffset + this.animXOffset, yOffset + this.animYOffset)
 			this.renderChildren(surface, xOffset, yOffset)
 		}
 	}
@@ -129,6 +158,10 @@ export class Node extends NodeAbstract
 			let y = yOffset + this.getComputedTop()
 			switch (this.renderMode)
 			{
+				case "color":
+					PrimNative.drawFilledRectangle(surface, x, y, x + this.getComputedWidth(), y + this.getComputedHeight(), this.texture)
+					break;
+
 				case "tiled":
 					// TODO: Tiled.
 					break
@@ -348,7 +381,7 @@ export class Text extends NodeAbstract
     {
         if (!this.hidden)
 		{
-			this.renderText(surface, xOffset, yOffset)
+			this.renderText(surface, xOffset + this.animXOffset, yOffset + this.animYOffset)
 			this.renderChildren(surface, xOffset, yOffset)
 		}
     }
