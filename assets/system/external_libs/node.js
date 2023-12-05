@@ -84,6 +84,7 @@ class NodeAbstract extends Yoga.Node
 				this.setPositionType(Yoga.POSITION_TYPE_ABSOLUTE)
 			this.hidden = true
 		}
+		return this
 	}
 
 	show()
@@ -94,6 +95,7 @@ class NodeAbstract extends Yoga.Node
 				this.setPositionType(this.originalPositionType)
 			this.hidden = false
 		}
+		return this
 	}
 
     renderChildren(surface, xOffset, yOffset)
@@ -158,6 +160,10 @@ export class Node extends NodeAbstract
 			let y = yOffset + this.getComputedTop()
 			switch (this.renderMode)
 			{
+				case 'colorRounded':
+					PrimNative.drawFilledRoundedRectangle(surface, x, y, x + this.getComputedWidth(), y + this.getComputedHeight(), 5, 5, this.texture)
+					break;
+
 				case "color":
 					PrimNative.drawFilledRectangle(surface, x, y, x + this.getComputedWidth(), y + this.getComputedHeight(), this.texture)
 					break;
