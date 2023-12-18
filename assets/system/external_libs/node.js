@@ -415,7 +415,7 @@ export class Text extends NodeAbstract
                 break
             
             case "alignRight":
-                let right = xOffset + this.getComputedRight() - this.getComputedPadding(Yoga.EDGE_RIGHT)
+                let right = xOffset + this.getComputedLeft() + this.getComputedWidth() - this.getComputedPadding(Yoga.EDGE_RIGHT)
                 for (let i = 0; i < this.multiLine.length; i++)
                 {
                     let line = this.multiLine[i]
