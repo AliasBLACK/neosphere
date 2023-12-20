@@ -506,6 +506,8 @@ static bool js_Transform_translate           (int num_args, bool is_ctor, intptr
 static bool js_new_VertexList                (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Z_deflate                     (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Z_inflate                     (int num_args, bool is_ctor, intptr_t magic);
+
+// Allegro primitives.
 static bool js_Prim_drawLine				 (int num_args, bool is_ctor, intptr_t magic);
 static bool js_drawTriangle					 (int num_args, bool is_ctor, intptr_t magic);
 static bool js_drawFilledTriangle			 (int num_args, bool is_ctor, intptr_t magic);
@@ -518,6 +520,8 @@ static bool js_drawFilledEllipse			 (int num_args, bool is_ctor, intptr_t magic)
 static bool js_drawCircle					 (int num_args, bool is_ctor, intptr_t magic);
 static bool js_drawFilledCircle				 (int num_args, bool is_ctor, intptr_t magic);
 static bool js_drawArc						 (int num_args, bool is_ctor, intptr_t magic);
+
+// Steam API functions.
 static bool js_Steam_init						(int num_args, bool is_ctor, intptr_t magic);
 static bool js_Steam_shutdown					(int num_args, bool is_ctor, intptr_t magic);
 static bool js_SteamInput_init					(int num_args, bool is_ctor, intptr_t magic);
@@ -807,6 +811,8 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_method("Transform", "scale", js_Transform_scale, 0);
 	api_define_method("Transform", "translate", js_Transform_translate, 0);
 	api_define_class("VertexList", PEGASUS_VERTEX_LIST, js_new_VertexList, js_VertexList_finalize, 0);
+
+	// Allegro primitives.
 	api_define_func("PrimNative", "drawLine", js_Prim_drawLine, 0);
 	api_define_func("PrimNative", "drawTriangle", js_drawTriangle, 0);
 	api_define_func("PrimNative", "drawFilledTriangle", js_drawFilledTriangle, 0);
@@ -819,6 +825,8 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_func("PrimNative", "drawCircle", js_drawCircle, 0);
 	api_define_func("PrimNative", "drawFilledCircle", js_drawFilledCircle, 0);
 	api_define_func("PrimNative", "drawArc", js_drawArc, 0);
+
+	// Steam API functions.
 	api_define_func("Steam", "init", js_Steam_init, 0);
 	api_define_func("Steam", "shutdown", js_Steam_shutdown, 0);
 	api_define_func("SteamInput", "init", js_SteamInput_init, 0);
