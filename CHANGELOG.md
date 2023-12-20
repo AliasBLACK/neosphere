@@ -1,12 +1,14 @@
 neoSphere Changelog
 ===================
 
-v5.8.3 - TBD
-------------
+v5.9.0 - May 30, 2023
+---------------------
 
-* Adds new asynchronous, Oozaru-compatible `File` APIs.
+* Adds new experimental asynchronous `File` API for games targeting API 4+.
 * Adds a new predefined color, `Color.CosmicLatte`.
 * Renames `Color.EatyPig` to `Color.EatyPink`.
+* Removes support for calling `FS.readFile`, etc. in games targeting API 4.
+
 
 v5.8.2 - January 27, 2023
 -------------------------
