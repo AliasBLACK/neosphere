@@ -1,6 +1,19 @@
 neoSphere Changelog
 ===================
 
+v5.9.2 - TBD
+------------
+
+* Fixes a bug where `Query` doesn't pass a key to certain callbacks while
+  querying object properties.
+* Fixes a bug that causes `Query#last()` to return the first match instead.
+* Fixes a bug that causes `Query#single()` to incorrectly return `undefined`.
+
+v5.9.1 - December 3, 2023
+-------------------------
+
+* Updates the copyright date to 2024.
+
 v5.9.0 - May 30, 2023
 ---------------------
 
