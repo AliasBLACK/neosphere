@@ -4,6 +4,7 @@
 
 #include "neosphere.h"
 #include "steam_win.h"
+#include "steam.h"
 
 bool
 steam_init(void)

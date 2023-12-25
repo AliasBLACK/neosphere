@@ -54,11 +54,12 @@
 #include "unicode.h"
 #include "wildmatch.h"
 #include "xoroshiro.h"
+#include "steam.h"
 
-#if defined(_WIN32)
-#include "steam_win.h"
-#else
-#endif
+//#if defined(_WIN32)
+//#include "steam_win.h"
+//#else
+//#endif
 
 #define API_VERSION 2
 
