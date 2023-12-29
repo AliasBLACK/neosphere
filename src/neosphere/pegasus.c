@@ -504,19 +504,18 @@ static bool js_Z_deflate                     (int num_args, bool is_ctor, intptr
 static bool js_Z_inflate                     (int num_args, bool is_ctor, intptr_t magic);
 
 // Allegro primitives.
-static bool js_Prim_drawLine				 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_drawTriangle					 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_drawFilledTriangle			 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_drawRectangle				 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_drawFilledRectangle			 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_drawRoundedRectangle			 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_drawFilledRoundedRectangle	 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_drawEllipse					 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_drawFilledEllipse			 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_drawCircle					 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_drawFilledCircle				 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_drawArc						 (int num_args, bool is_ctor, intptr_t magic);
-
+static bool js_PrimNative_drawLine						(int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawTriangle					(int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawFilledTriangle			(int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawRectangle					(int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawFilledRectangle			(int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawRoundedRectangle			(int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawFilledRoundedRectangle	(int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawEllipse					(int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawFilledEllipse				(int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawCircle					(int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawFilledCircle				(int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawArc						(int num_args, bool is_ctor, intptr_t magic);
 
 #if defined(NEOSPHERE_SPHERUN)
 static bool js_SSj_assert     (int num_args, bool is_ctor, intptr_t magic);
@@ -795,19 +794,18 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_class("VertexList", PEGASUS_VERTEX_LIST, js_new_VertexList, js_VertexList_finalize, 0);
 
 	// Allegro primitives.
-	api_define_func("PrimNative", "drawLine", js_Prim_drawLine, 0);
-	api_define_func("PrimNative", "drawTriangle", js_drawTriangle, 0);
-	api_define_func("PrimNative", "drawFilledTriangle", js_drawFilledTriangle, 0);
-	api_define_func("PrimNative", "drawRectangle", js_drawRectangle, 0);
-	api_define_func("PrimNative", "drawFilledRectangle", js_drawFilledRectangle, 0);
-	api_define_func("PrimNative", "drawRoundedRectangle", js_drawRoundedRectangle, 0);
-	api_define_func("PrimNative", "drawFilledRoundedRectangle", js_drawFilledRoundedRectangle, 0);
-	api_define_func("PrimNative", "drawEllipse", js_drawEllipse, 0);
-	api_define_func("PrimNative", "drawFilledEllipse", js_drawFilledEllipse, 0);
-	api_define_func("PrimNative", "drawCircle", js_drawCircle, 0);
-	api_define_func("PrimNative", "drawFilledCircle", js_drawFilledCircle, 0);
-	api_define_func("PrimNative", "drawArc", js_drawArc, 0);
-
+	api_define_func("PrimNative", "drawLine", js_PrimNative_drawLine, 0);
+	api_define_func("PrimNative", "drawTriangle", js_PrimNative_drawTriangle, 0);
+	api_define_func("PrimNative", "drawFilledTriangle", js_PrimNative_drawFilledTriangle, 0);
+	api_define_func("PrimNative", "drawRectangle", js_PrimNative_drawRectangle, 0);
+	api_define_func("PrimNative", "drawFilledRectangle", js_PrimNative_drawFilledRectangle, 0);
+	api_define_func("PrimNative", "drawRoundedRectangle", js_PrimNative_drawRoundedRectangle, 0);
+	api_define_func("PrimNative", "drawFilledRoundedRectangle", js_PrimNative_drawFilledRoundedRectangle, 0);
+	api_define_func("PrimNative", "drawEllipse", js_PrimNative_drawEllipse, 0);
+	api_define_func("PrimNative", "drawFilledEllipse", js_PrimNative_drawFilledEllipse, 0);
+	api_define_func("PrimNative", "drawCircle", js_PrimNative_drawCircle, 0);
+	api_define_func("PrimNative", "drawFilledCircle", js_PrimNative_drawFilledCircle, 0);
+	api_define_func("PrimNative", "drawArc", js_PrimNative_drawArc, 0);
 
 	api_define_subclass("Surface", PEGASUS_SURFACE, PEGASUS_TEXTURE, js_new_Texture, js_Texture_finalize, PEGASUS_SURFACE);
 	api_define_static_prop("Surface", "Screen", js_Surface_get_Screen, NULL, 0);
@@ -971,7 +969,6 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_const("ShapeType", "Triangles", SHAPE_TRIANGLES);
 	api_define_const("ShapeType", "TriStrip", SHAPE_TRI_STRIP);
 
-
 	if (api_level >= 2) {
 		api_define_class("BlendOp", PEGASUS_BLENDER, api_level >= 3 ? js_new_BlendOp : NULL, js_BlendOp_finalize, 0);
 		api_define_static_prop("Joystick", "P1", js_Joystick_get_Default, NULL, 1);
@@ -1076,6 +1073,9 @@ pegasus_init(int api_level, int target_api_level)
 		api_define_const("DepthOp", "NeverPass", DEPTH_NEVER);
 		api_define_const("DepthOp", "NotEqual", DEPTH_NOTEQUAL);
 	}
+
+	// Init steam api.
+	steamapi_init();
 
 	// keep a local reference to Surface.Screen
 	jsal_get_global_string("Surface");
@@ -5841,7 +5841,7 @@ js_Z_inflate(int num_args, bool is_ctor, intptr_t magic)
 }
 
 static bool
-js_Prim_drawLine(int num_args, bool is_ctor, intptr_t magic)
+js_PrimNative_drawLine(int num_args, bool is_ctor, intptr_t magic)
 {
 	ALLEGRO_COLOR	color;
 	float			x1;
@@ -5865,7 +5865,7 @@ js_Prim_drawLine(int num_args, bool is_ctor, intptr_t magic)
 }
 
 static bool
-js_drawTriangle(int num_args, bool is_ctor, intptr_t magic)
+js_PrimNative_drawTriangle(int num_args, bool is_ctor, intptr_t magic)
 {
 	ALLEGRO_COLOR	color;
 	float			x1;
@@ -5893,7 +5893,7 @@ js_drawTriangle(int num_args, bool is_ctor, intptr_t magic)
 }
 
 static bool
-js_drawFilledTriangle(int num_args, bool is_ctor, intptr_t magic)
+js_PrimNative_drawFilledTriangle(int num_args, bool is_ctor, intptr_t magic)
 {
 	ALLEGRO_COLOR	color;
 	float			x1;
@@ -5919,7 +5919,7 @@ js_drawFilledTriangle(int num_args, bool is_ctor, intptr_t magic)
 }
 
 static bool
-js_drawRectangle(int num_args, bool is_ctor, intptr_t magic)
+js_PrimNative_drawRectangle(int num_args, bool is_ctor, intptr_t magic)
 {
 	ALLEGRO_COLOR	color;
 	float			x1;
@@ -5943,7 +5943,7 @@ js_drawRectangle(int num_args, bool is_ctor, intptr_t magic)
 }
 
 static bool
-js_drawFilledRectangle(int num_args, bool is_ctor, intptr_t magic)
+js_PrimNative_drawFilledRectangle(int num_args, bool is_ctor, intptr_t magic)
 {
 	ALLEGRO_COLOR	color;
 	float			x1;
@@ -5965,7 +5965,7 @@ js_drawFilledRectangle(int num_args, bool is_ctor, intptr_t magic)
 }
 
 static bool
-js_drawRoundedRectangle(int num_args, bool is_ctor, intptr_t magic)
+js_PrimNative_drawRoundedRectangle(int num_args, bool is_ctor, intptr_t magic)
 {
 	ALLEGRO_COLOR	color;
 	float			x1;
@@ -5993,7 +5993,7 @@ js_drawRoundedRectangle(int num_args, bool is_ctor, intptr_t magic)
 }
 
 static bool
-js_drawFilledRoundedRectangle(int num_args, bool is_ctor, intptr_t magic)
+js_PrimNative_drawFilledRoundedRectangle(int num_args, bool is_ctor, intptr_t magic)
 {
 	ALLEGRO_COLOR	color;
 	float			x1;
@@ -6019,7 +6019,7 @@ js_drawFilledRoundedRectangle(int num_args, bool is_ctor, intptr_t magic)
 }
 
 static bool
-js_drawEllipse(int num_args, bool is_ctor, intptr_t magic)
+js_PrimNative_drawEllipse(int num_args, bool is_ctor, intptr_t magic)
 {
 	ALLEGRO_COLOR	color;
 	float			cx;
@@ -6043,7 +6043,7 @@ js_drawEllipse(int num_args, bool is_ctor, intptr_t magic)
 }
 
 static bool
-js_drawFilledEllipse(int num_args, bool is_ctor, intptr_t magic)
+js_PrimNative_drawFilledEllipse(int num_args, bool is_ctor, intptr_t magic)
 {
 	ALLEGRO_COLOR	color;
 	float			cx;
@@ -6065,7 +6065,7 @@ js_drawFilledEllipse(int num_args, bool is_ctor, intptr_t magic)
 }
 
 static bool
-js_drawCircle(int num_args, bool is_ctor, intptr_t magic)
+js_PrimNative_drawCircle(int num_args, bool is_ctor, intptr_t magic)
 {
 	ALLEGRO_COLOR	color;
 	float			cx;
@@ -6087,7 +6087,7 @@ js_drawCircle(int num_args, bool is_ctor, intptr_t magic)
 }
 
 static bool
-js_drawFilledCircle(int num_args, bool is_ctor, intptr_t magic)
+js_PrimNative_drawFilledCircle(int num_args, bool is_ctor, intptr_t magic)
 {
 	ALLEGRO_COLOR	color;
 	float			cx;
@@ -6107,7 +6107,7 @@ js_drawFilledCircle(int num_args, bool is_ctor, intptr_t magic)
 }
 
 static bool
-js_drawArc(int num_args, bool is_ctor, intptr_t magic)
+js_PrimNative_drawArc(int num_args, bool is_ctor, intptr_t magic)
 {
 	ALLEGRO_COLOR	color;
 	float			cx;
