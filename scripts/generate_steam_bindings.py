@@ -828,6 +828,12 @@ for category in methods:
 							documentation += "				result." + field['fieldname'] + " (" + js_type_convert(field['fieldtype']) + ")\n"
 				documentation += doc_returntypes
 				documentation += "\n"
+
+			elif returntype in structs:
+				documentation += "		Returns a javascript object with the following members:\n\n"
+				for field in structs[returntype]['fields']:
+					documentation += "			value." + field['fieldname'] + " (" + js_type_convert(field['fieldtype']) + ")\n"
+				documentation += "\n"
 				
 
 

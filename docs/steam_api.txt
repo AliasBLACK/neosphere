@@ -1107,6 +1107,11 @@
 
 		Returns the current state of the supplied digital game action
 
+		Returns a javascript object with the following members:
+
+			value.bState (bool)
+			value.bActive (bool)
+
 	ISteamInput.GetStringForDigitalActionName(int eActionHandle)
 
 		Returns var of type `string`.
@@ -1168,9 +1173,29 @@
 
 		Returns the current state of these supplied analog game action
 
+		Returns a javascript object with the following members:
+
+			value.eMode (int)
+			value.x (float)
+			value.y (float)
+			value.bActive (bool)
+
 	ISteamInput.GetMotionData(int inputHandle)
 
 		Returns raw motion data from the specified device
+
+		Returns a javascript object with the following members:
+
+			value.rotQuatX (float)
+			value.rotQuatY (float)
+			value.rotQuatZ (float)
+			value.rotQuatW (float)
+			value.posAccelX (float)
+			value.posAccelY (float)
+			value.posAccelZ (float)
+			value.rotVelX (float)
+			value.rotVelY (float)
+			value.rotVelZ (float)
 
 	ISteamInput.GetInputTypeForHandle(int inputHandle)
 
