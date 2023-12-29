@@ -1116,7 +1116,9 @@
 		Returns var of type `string`.
 
 		eOrigin is an enum type named EInputActionOrigin.
-		Due to the length of the enum, refer to Steamworks documentation for details.		eSize is an enum with the following members:
+		Due to the length of the enum, refer to Steamworks documentation for details.
+
+		eSize is an enum with the following members:
 
 			ESteamInputGlyphSize.k_ESteamInputGlyphSize_Small
 			ESteamInputGlyphSize.k_ESteamInputGlyphSize_Medium
@@ -1128,17 +1130,23 @@
 		Returns var of type `string`.
 
 		eOrigin is an enum type named EInputActionOrigin.
-		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.GetGlyphForActionOrigin_Legacy(int eOrigin)
+		Due to the length of the enum, refer to Steamworks documentation for details.
+
+	ISteamInput.GetGlyphForActionOrigin_Legacy(int eOrigin)
 
 		Returns var of type `string`.
 
 		eOrigin is an enum type named EInputActionOrigin.
-		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.GetStringForActionOrigin(int eOrigin)
+		Due to the length of the enum, refer to Steamworks documentation for details.
+
+	ISteamInput.GetStringForActionOrigin(int eOrigin)
 
 		Returns var of type `string`.
 
 		eOrigin is an enum type named EInputActionOrigin.
-		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.GetStringForAnalogActionName(int eActionHandle)
+		Due to the length of the enum, refer to Steamworks documentation for details.
+
+	ISteamInput.GetStringForAnalogActionName(int eActionHandle)
 
 		Returns var of type `string`.
 
@@ -1147,12 +1155,16 @@
 		Returns var of type `string`.
 
 		eOrigin is an enum type named EXboxOrigin.
-		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.GetGlyphForXboxOrigin(int eOrigin)
+		Due to the length of the enum, refer to Steamworks documentation for details.
+
+	ISteamInput.GetGlyphForXboxOrigin(int eOrigin)
 
 		Returns var of type `string`.
 
 		eOrigin is an enum type named EXboxOrigin.
-		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.GetAnalogActionData(int inputHandle, int analogActionHandle)
+		Due to the length of the enum, refer to Steamworks documentation for details.
+
+	ISteamInput.GetAnalogActionData(int inputHandle, int analogActionHandle)
 
 		Returns the current state of these supplied analog game action
 
@@ -1173,7 +1185,9 @@
 		non-Steam Input API action games. Note - this only translates the buttons directly and doesn't take into account any remapping a user has made in their configuration
 
 		eOrigin is an enum type named EXboxOrigin.
-		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.TranslateActionOrigin(int eDestinationInputType, int eSourceOrigin)
+		Due to the length of the enum, refer to Steamworks documentation for details.
+
+	ISteamInput.TranslateActionOrigin(int eDestinationInputType, int eSourceOrigin)
 
 		Returns var of type `int`.
 		Convert an origin to another controller type - for inputs not present on the other controller type this will return k_EInputActionOrigin_None
@@ -1201,7 +1215,9 @@
 			ESteamInputType.k_ESteamInputType_MaximumPossibleValue
 
 		eSourceOrigin is an enum type named EInputActionOrigin.
-		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.GetRemotePlaySessionID(int inputHandle)
+		Due to the length of the enum, refer to Steamworks documentation for details.
+
+	ISteamInput.GetRemotePlaySessionID(int inputHandle)
 
 		Returns var of type `int`.
 		Get the Steam Remote Play session ID associated with a device, or 0 if there is no session associated with it

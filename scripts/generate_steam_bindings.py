@@ -712,7 +712,7 @@ for category in methods:
 							doc_enum += "\n"
 						else:
 							doc_enum += "		" + param['paramname'] + " is an enum type named " + param['enumtype'] + ".\n"
-							doc_enum += "		Due to the length of the enum, refer to Steamworks documentation for details."
+							doc_enum += "		Due to the length of the enum, refer to Steamworks documentation for details.\n\n"
 					param_arg_array.append(param['paramname'])
 					jsal_requires.append(jsal_require_function(param['paramtype'], arg_index, param['paramname']))
 					source += "	" + param['paramtype'] + " " + param['paramname'] + ";\n"
