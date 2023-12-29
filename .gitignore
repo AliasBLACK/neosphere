@@ -60,3 +60,4 @@ Temporary Items
 
 # SCons build cruft
 *.dblite
+scripts/steam
