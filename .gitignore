@@ -1,6 +1,5 @@
 *.log
 bin/
-dep/
 dist/
 msw/
 msw64/
