@@ -1,0 +1,1215 @@
+
+`ISteamUser` Interface
+----------------------
+
+	ISteamUser.GetHSteamUser()
+
+		Returns var of type `int`.
+		returns the HSteamUser this interface represents
+		this is only used internally by the API, and by a few select interfaces that support multi-user
+
+	ISteamUser.GetGameBadgeLevel(int nSeries, bool bFoil)
+
+		Returns var of type `int`.
+
+	ISteamUser.GetPlayerSteamLevel()
+
+		Returns var of type `int`.
+		gets the Steam Level of the user, as shown on their profile
+
+	ISteamUser.BLoggedOn()
+
+		Returns var of type `bool`.
+		returns true if the Steam client current has a live connection to the Steam servers.
+		If false, it means there is no active connection due to either a networking issue on the local machine, or the Steam server is down
+		busy.
+		The Steam client will automatically be trying to recreate the connection as often as possible.
+
+	ISteamUser.GetUserDataFolder(int pchBuffer, int cubBuffer)
+
+		Returns var of type `bool`.
+		get the local storage folder for current Steam account to write application data, e.g. save games, configs etc.
+		this will usually be something like "C:\Progam Files\Steam\userdata\<SteamID>\<AppID>\local"
+
+	ISteamUser.BIsBehindNAT()
+
+		Returns var of type `bool`.
+
+	ISteamUser.BIsPhoneVerified()
+
+		Returns var of type `bool`.
+		gets whether the users phone number is verified
+
+	ISteamUser.BIsTwoFactorEnabled()
+
+		Returns var of type `bool`.
+		gets whether the user has two factor enabled on their account
+
+	ISteamUser.BIsPhoneIdentifying()
+
+		Returns var of type `bool`.
+		gets whether the users phone number is identifying
+
+	ISteamUser.BIsPhoneRequiringVerification()
+
+		Returns var of type `bool`.
+
+	ISteamUser.BSetDurationControlOnlineState(int eNewState)
+
+		Returns var of type `bool`.
+		Advise steam china duration control system about the online state of the game.
+		This will prevent offline gameplay time from counting against a user's
+		playtime limits.
+
+		eNewState is an enum with the following members:
+
+			EDurationControlOnlineState.k_EDurationControlOnlineState_Invalid
+			EDurationControlOnlineState.k_EDurationControlOnlineState_Offline
+			EDurationControlOnlineState.k_EDurationControlOnlineState_Online
+			EDurationControlOnlineState.k_EDurationControlOnlineState_OnlineHighPri
+
+	ISteamUser.GetSteamID()
+
+		Returns var of type `int`.
+		returns the CSteamID of the account currently logged into the Steam client
+		a CSteamID is a unique identifier for an account, and used to differentiate users in all parts of the Steamworks API
+
+	ISteamUser.TerminateGameConnection_DEPRECATED(int unIPServer, int usPortServer)
+
+		DEPRECATED!  This function will be removed from the SDK in an upcoming version.
+		Please migrate to BeginAuthSession and related functions.
+
+	ISteamUser.TrackAppUsageEvent(int gameID, int eAppUsageEvent, string pchExtraInfo)
+
+		Legacy functions
+		used by only a few games to track usage events
+
+	ISteamUser.StartVoiceRecording()
+
+
+	ISteamUser.StopVoiceRecording()
+
+		k_eVoiceResultNotRecording
+
+	ISteamUser.EndAuthSession(int steamID)
+
+		Stop tracking started by BeginAuthSession - called when no longer playing game with this entity
+
+	ISteamUser.CancelAuthTicket(int hAuthTicket)
+
+		Cancel auth ticket from GetAuthSessionTicket, called when no longer playing game with the entity you gave the ticket to
+
+	ISteamUser.AdvertiseGame(int steamIDGameServer, int unIPServer, int usPortServer)
+
+		set data to be replicated to friends so that they can join your game
+		CSteamID steamIDGameServer - the steamID of the game server, received from the game server by the client
+		uint32 unIPServer, uint16 usPortServer - the IP address of the game server
+
+	ISteamUser.GetVoiceOptimalSampleRate()
+
+		Returns var of type `int`.
+		You may find that you get the best audio output quality when you ignore
+		this function and use the native sample rate of your audio output device,
+		which is usually 48000 or 44100.
+
+	ISteamUser.GetAuthTicketForWebApi(string pchIdentity)
+
+		Returns var of type `int`.
+		Request a ticket which will be used for webapi "ISteamUserAuth\AuthenticateUserTicket"
+		pchIdentity is an optional input parameter to identify the service the ticket will be sent to
+		the ticket will be returned in callback GetTicketForWebApiResponse_t
+
+	ISteamUser.UserHasLicenseForApp(int steamID, int appID)
+
+		Returns var of type `int`.
+		After receiving a user's authentication data, and passing it to BeginAuthSession, use this function
+		to determine if the user owns downloadable content specified by the provided AppID.
+
+
+`ISteamFriends` Interface
+-------------------------
+
+	ISteamFriends.GetPersonaName()
+
+		Returns var of type `string`.
+
+	ISteamFriends.GetFriendPersonaName(int steamIDFriend)
+
+		Returns var of type `string`.
+
+	ISteamFriends.GetFriendPersonaNameHistory(int steamIDFriend, int iPersonaName)
+
+		Returns var of type `string`.
+
+	ISteamFriends.GetPlayerNickname(int steamIDPlayer)
+
+		Returns var of type `string`.
+
+	ISteamFriends.GetFriendsGroupName(int friendsGroupID)
+
+		Returns var of type `string`.
+
+	ISteamFriends.GetClanName(int steamIDClan)
+
+		Returns var of type `string`.
+
+	ISteamFriends.GetClanTag(int steamIDClan)
+
+		Returns var of type `string`.
+
+	ISteamFriends.GetFriendRichPresence(int steamIDFriend, string pchKey)
+
+		Returns var of type `string`.
+
+	ISteamFriends.GetFriendRichPresenceKeyByIndex(int steamIDFriend, int iKey)
+
+		Returns var of type `string`.
+
+	ISteamFriends.GetProfileItemPropertyString(int steamID, int itemType, int prop)
+
+		Returns var of type `string`.
+
+		itemType is an enum with the following members:
+
+			ECommunityProfileItemType.k_ECommunityProfileItemType_AnimatedAvatar
+			ECommunityProfileItemType.k_ECommunityProfileItemType_AvatarFrame
+			ECommunityProfileItemType.k_ECommunityProfileItemType_ProfileModifier
+			ECommunityProfileItemType.k_ECommunityProfileItemType_ProfileBackground
+			ECommunityProfileItemType.k_ECommunityProfileItemType_MiniProfileBackground
+
+		prop is an enum with the following members:
+
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_ImageSmall
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_ImageLarge
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_InternalName
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_Title
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_Description
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_AppID
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_TypeID
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_Class
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_MovieWebM
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_MovieMP4
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_MovieWebMSmall
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_MovieMP4Small
+
+	ISteamFriends.GetPersonaState()
+
+		Returns var of type `int`.
+		gets the status of the current user
+
+	ISteamFriends.GetFriendRelationship(int steamIDFriend)
+
+		Returns var of type `int`.
+		returns a relationship to a user
+
+	ISteamFriends.GetFriendPersonaState(int steamIDFriend)
+
+		Returns var of type `int`.
+		returns the current status of the specified user
+		this will only be known by the local user if steamIDFriend is in their friends list; on the same game server; in a chat room or lobby; or in a small group with the local user
+
+	ISteamFriends.GetUserRestrictions()
+
+		Returns var of type `int`.
+		if current user is chat restricted, he can't send or receive any text
+		voice chat messages.
+		the user can't see custom avatars. But the user can be online and send
+		recv game invites.
+		a chat restricted user can't add friends or join any groups.
+
+	ISteamFriends.GetFriendCoplayGame(int steamIDFriend)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetProfileItemPropertyUint(int steamID, int itemType, int prop)
+
+		Returns var of type `int`.
+
+		itemType is an enum with the following members:
+
+			ECommunityProfileItemType.k_ECommunityProfileItemType_AnimatedAvatar
+			ECommunityProfileItemType.k_ECommunityProfileItemType_AvatarFrame
+			ECommunityProfileItemType.k_ECommunityProfileItemType_ProfileModifier
+			ECommunityProfileItemType.k_ECommunityProfileItemType_ProfileBackground
+			ECommunityProfileItemType.k_ECommunityProfileItemType_MiniProfileBackground
+
+		prop is an enum with the following members:
+
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_ImageSmall
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_ImageLarge
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_InternalName
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_Title
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_Description
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_AppID
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_TypeID
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_Class
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_MovieWebM
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_MovieMP4
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_MovieWebMSmall
+			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_MovieMP4Small
+
+	ISteamFriends.GetFriendCount(int iFriendFlags)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetFriendSteamLevel(int steamIDFriend)
+
+		Returns var of type `int`.
+		friends steam level
+
+	ISteamFriends.GetFriendsGroupCount()
+
+		Returns var of type `int`.
+		returns the number of friends groups
+
+	ISteamFriends.GetFriendsGroupMembersCount(int friendsGroupID)
+
+		Returns var of type `int`.
+		returns the number of members in a given friends group
+
+	ISteamFriends.GetClanCount()
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetFriendCountFromSource(int steamIDSource)
+
+		Returns var of type `int`.
+		iterators for getting users in a chat room, lobby, game server or clan
+		note that large clans that cannot be iterated by the local user
+		note that the current user must be in a lobby to retrieve CSteamIDs of other users in that lobby
+		steamIDSource can be the steamID of a group, game server, lobby or chat room
+
+	ISteamFriends.GetSmallFriendAvatar(int steamIDFriend)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetMediumFriendAvatar(int steamIDFriend)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetLargeFriendAvatar(int steamIDFriend)
+
+		Returns var of type `int`.
+		returns -1 if this image has yet to be loaded, in this case wait for a AvatarImageLoaded_t callback and then call this again
+
+	ISteamFriends.GetClanOfficerCount(int steamIDClan)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetFriendRichPresenceKeyCount(int steamIDFriend)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetCoplayFriendCount()
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetFriendCoplayTime(int steamIDFriend)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetClanChatMemberCount(int steamIDClan)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetNumChatsWithUnreadPriorityMessages()
+
+		Returns var of type `int`.
+		A "priority" message is one that would generate some sort of toast or
+		notification, and depends on user settings.
+		You can register for UnreadChatMessagesChanged_t callbacks to know when this
+		has potentially changed.
+
+	ISteamFriends.GetFriendByIndex(int iFriend, int iFriendFlags)
+
+		Returns var of type `int`.
+		the returned CSteamID can then be used by all the functions below to access details about the user
+
+	ISteamFriends.GetClanByIndex(int iClan)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetFriendFromSourceByIndex(int steamIDSource, int iFriend)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetClanOwner(int steamIDClan)
+
+		Returns var of type `int`.
+		returns the steamID of the clan owner
+
+	ISteamFriends.GetClanOfficerByIndex(int steamIDClan, int iOfficer)
+
+		Returns var of type `int`.
+		returns the steamID of a clan officer, by index, of range [0,GetClanOfficerCount)
+
+	ISteamFriends.GetCoplayFriend(int iCoplayFriend)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetChatMemberByIndex(int steamIDClan, int iUser)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetFriendsGroupIDByIndex(int iFG)
+
+		Returns var of type `int`.
+
+	ISteamFriends.HasFriend(int steamIDFriend, int iFriendFlags)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.GetClanActivityCounts(int steamIDClan)
+
+		returns the most recent information we have about what's happening in a clan
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pnOnline (int)
+			value.pnInGame (int)
+			value.pnChatting (int)
+
+	ISteamFriends.IsUserInSource(int steamIDUser, int steamIDSource)
+
+		Returns var of type `bool`.
+		returns true if the local user can see that steamIDUser is a member or in steamIDSource
+
+	ISteamFriends.RequestUserInformation(int steamIDUser, bool bRequireNameOnly)
+
+		Returns var of type `bool`.
+		requests information about a user - persona name & avatar
+		if bRequireNameOnly is set, then the avatar of a user isn't downloaded
+		- it's a lot slower to download avatars and churns the local cache, so if you don't need avatars, don't request them
+		if returns true, it means that data is being requested, and a PersonaStateChanged_t callback will be posted when it's retrieved
+		if returns false, it means that we already have all the details about that user, and functions can be called immediately
+
+	ISteamFriends.SetRichPresence(string pchKey, string pchValue)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.InviteUserToGame(int steamIDFriend, string pchConnectString)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.LeaveClanChatRoom(int steamIDClan)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.SendClanChatMessage(int steamIDClanChat, string pchText)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.IsClanChatAdmin(int steamIDClanChat, int steamIDUser)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.IsClanChatWindowOpenInSteam(int steamIDClanChat)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.OpenClanChatWindowInSteam(int steamIDClanChat)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.CloseClanChatWindowInSteam(int steamIDClanChat)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.SetListenForFriendsMessages(bool bInterceptEnabled)
+
+		Returns var of type `bool`.
+		peer-to-peer chat interception
+		this is so you can show P2P chats inline in the game
+
+	ISteamFriends.ReplyToFriendMessage(int steamIDFriend, string pchMsgToSend)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.IsClanPublic(int steamIDClan)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.IsClanOfficialGameGroup(int steamIDClan)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.RegisterProtocolInOverlayBrowser(string pchProtocol)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.BHasEquippedProfileItem(int steamID, int itemType)
+
+		Returns var of type `bool`.
+
+		itemType is an enum with the following members:
+
+			ECommunityProfileItemType.k_ECommunityProfileItemType_AnimatedAvatar
+			ECommunityProfileItemType.k_ECommunityProfileItemType_AvatarFrame
+			ECommunityProfileItemType.k_ECommunityProfileItemType_ProfileModifier
+			ECommunityProfileItemType.k_ECommunityProfileItemType_ProfileBackground
+			ECommunityProfileItemType.k_ECommunityProfileItemType_MiniProfileBackground
+
+	ISteamFriends.SetInGameVoiceSpeaking(int steamIDUser, bool bSpeaking)
+
+
+	ISteamFriends.ActivateGameOverlay(string pchDialog)
+
+		activates the game overlay, with an optional dialog to open
+		valid options include "Friends", "Community", "Players", "Settings", "OfficialGameGroup", "Stats", "Achievements",
+		"chatroomgroup
+		nnnn"
+
+	ISteamFriends.ActivateGameOverlayToUser(string pchDialog, int steamID)
+
+		activates game overlay to a specific place
+		valid options are
+		"steamid" - opens the overlay web browser to the specified user or groups profile
+		"chat" - opens a chat window to the specified user, or joins the group chat
+		"jointrade" - opens a window to a Steam Trading session that was started with the ISteamEconomy
+		StartTrade Web API
+		"stats" - opens the overlay web browser to the specified user's stats
+		"achievements" - opens the overlay web browser to the specified user's achievements
+		"friendadd" - opens the overlay in minimal mode prompting the user to add the target user as a friend
+		"friendremove" - opens the overlay in minimal mode prompting the user to remove the target friend
+		"friendrequestaccept" - opens the overlay in minimal mode prompting the user to accept an incoming friend invite
+		"friendrequestignore" - opens the overlay in minimal mode prompting the user to ignore an incoming friend invite
+
+	ISteamFriends.ActivateGameOverlayToWebPage(string pchURL, int eMode)
+
+		activates game overlay web browser directly to the specified URL
+		full address with protocol type is required, e.g. http:
+		www.steamgames.com
+
+		eMode is an enum with the following members:
+
+			EActivateGameOverlayToWebPageMode.k_EActivateGameOverlayToWebPageMode_Default
+			EActivateGameOverlayToWebPageMode.k_EActivateGameOverlayToWebPageMode_Modal
+
+	ISteamFriends.ActivateGameOverlayToStore(int nAppID, int eFlag)
+
+		activates game overlay to store page for app
+
+		eFlag is an enum with the following members:
+
+			EOverlayToStoreFlag.k_EOverlayToStoreFlag_None
+			EOverlayToStoreFlag.k_EOverlayToStoreFlag_AddToCart
+			EOverlayToStoreFlag.k_EOverlayToStoreFlag_AddToCartAndShow
+
+	ISteamFriends.SetPlayedWith(int steamIDUserPlayedWith)
+
+		Mark a target user as 'played with'. This is a client-side only feature that requires that the calling user is
+		in game
+
+	ISteamFriends.ActivateGameOverlayInviteDialog(int steamIDLobby)
+
+		activates game overlay to open the invite dialog. Invitations will be sent for the provided lobby.
+
+	ISteamFriends.ClearRichPresence()
+
+
+	ISteamFriends.RequestFriendRichPresence(int steamIDFriend)
+
+		Requests rich presence for a specific user.
+
+	ISteamFriends.ActivateGameOverlayRemotePlayTogetherInviteDialog(int steamIDLobby)
+
+		activates game overlay to open the remote play together invite dialog. Invitations will be sent for remote play together
+
+	ISteamFriends.ActivateGameOverlayInviteDialogConnectString(string pchConnectString)
+
+		Activates the game overlay to open an invite dialog that will send the provided Rich Presence connect string to selected friends
+
+
+`ISteamUserStats` Interface
+---------------------------
+
+	ISteamUserStats.RequestCurrentStats()
+
+		Returns var of type `bool`.
+
+	ISteamUserStats.GetStat(string pchName)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pData (int)
+
+	ISteamUserStats.GetStat(string pchName)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pData (float)
+
+	ISteamUserStats.SetStat(string pchName, int nData)
+
+		Returns var of type `bool`.
+
+	ISteamUserStats.SetStat(string pchName, float fData)
+
+		Returns var of type `bool`.
+
+	ISteamUserStats.UpdateAvgRateStat(string pchName, float flCountThisSession, int dSessionLength)
+
+		Returns var of type `bool`.
+
+	ISteamUserStats.GetAchievement(string pchName)
+
+		Achievement flag accessors
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pbAchieved (bool)
+
+	ISteamUserStats.SetAchievement(string pchName)
+
+		Returns var of type `bool`.
+
+	ISteamUserStats.ClearAchievement(string pchName)
+
+		Returns var of type `bool`.
+
+	ISteamUserStats.GetAchievementAndUnlockTime(string pchName)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pbAchieved (bool)
+			value.punUnlockTime (int)
+
+	ISteamUserStats.StoreStats()
+
+		Returns var of type `bool`.
+		Store the current data on the server, will get a callback when set
+		And one callback for every new achievement
+		If the callback has a result of k_EResultInvalidParam, one or more stats
+		uploaded has been rejected, either because they broke constraints
+		or were out of date. In this case the server sends back updated values.
+		The stats should be re-iterated to keep in sync.
+
+	ISteamUserStats.IndicateAchievementProgress(string pchName, int nCurProgress, int nMaxProgress)
+
+		Returns var of type `bool`.
+		Achievement progress - triggers an AchievementProgress callback, that is all.
+		Calling this w
+		N out of N progress will NOT set the achievement, the game must still do that.
+
+	ISteamUserStats.GetUserStat(int steamIDUser, string pchName)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pData (int)
+
+	ISteamUserStats.GetUserStat(int steamIDUser, string pchName)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pData (float)
+
+	ISteamUserStats.GetUserAchievement(int steamIDUser, string pchName)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pbAchieved (bool)
+
+	ISteamUserStats.GetUserAchievementAndUnlockTime(int steamIDUser, string pchName)
+
+		See notes for GetAchievementAndUnlockTime above
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pbAchieved (bool)
+			value.punUnlockTime (int)
+
+	ISteamUserStats.ResetAllStats(bool bAchievementsToo)
+
+		Returns var of type `bool`.
+		Reset stats
+
+	ISteamUserStats.GetAchievementAchievedPercent(string pchName)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pflPercent (float)
+
+	ISteamUserStats.GetGlobalStat(string pchStatName)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pData (int)
+
+	ISteamUserStats.GetGlobalStat(string pchStatName)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pData (int)
+
+	ISteamUserStats.GetAchievementProgressLimits(string pchName)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pnMinProgress (int)
+			value.pnMaxProgress (int)
+
+	ISteamUserStats.GetAchievementProgressLimits(string pchName)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pfMinProgress (float)
+			value.pfMaxProgress (float)
+
+	ISteamUserStats.GetAchievementIcon(string pchName)
+
+		Returns var of type `int`.
+		A return value of 0 may indicate we are still fetching data, and you can wait for the UserAchievementIconFetched_t callback
+		which will notify you when the bits are ready. If the callback still returns zero, then there is no image set for the
+		specified achievement.
+
+	ISteamUserStats.GetLeaderboardEntryCount(int hSteamLeaderboard)
+
+		Returns var of type `int`.
+		returns the total number of entries in a leaderboard, as of the last request
+
+	ISteamUserStats.GetMostAchievedAchievementInfo(int pchName, int unNameBufLen)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pflPercent (float)
+			value.pbAchieved (bool)
+
+	ISteamUserStats.GetNextMostAchievedAchievementInfo(int iIteratorPrevious, int pchName, int unNameBufLen)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pflPercent (float)
+			value.pbAchieved (bool)
+
+	ISteamUserStats.GetAchievementDisplayAttribute(string pchName, string pchKey)
+
+		Returns var of type `string`.
+
+	ISteamUserStats.GetAchievementName(int iAchievement)
+
+		Returns var of type `string`.
+
+	ISteamUserStats.GetLeaderboardName(int hSteamLeaderboard)
+
+		Returns var of type `string`.
+
+	ISteamUserStats.GetNumAchievements()
+
+		Returns var of type `int`.
+		Used for iterating achievements. In general games should not need these functions because they should have a
+		list of existing achievements compiled into them
+
+	ISteamUserStats.GetLeaderboardSortMethod(int hSteamLeaderboard)
+
+		Returns var of type `int`.
+		returns the sort method of the leaderboard
+
+	ISteamUserStats.GetLeaderboardDisplayType(int hSteamLeaderboard)
+
+		Returns var of type `int`.
+		returns the display type of the leaderboard
+
+
+`ISteamApps` Interface
+----------------------
+
+	ISteamApps.BIsSubscribed()
+
+		Returns var of type `bool`.
+
+	ISteamApps.BIsLowViolence()
+
+		Returns var of type `bool`.
+
+	ISteamApps.BIsCybercafe()
+
+		Returns var of type `bool`.
+
+	ISteamApps.BIsVACBanned()
+
+		Returns var of type `bool`.
+
+	ISteamApps.BIsSubscribedApp(int appID)
+
+		Returns var of type `bool`.
+		only use this member if you need to check ownership of another game related to yours, a demo for example
+
+	ISteamApps.BIsDlcInstalled(int appID)
+
+		Returns var of type `bool`.
+		Takes AppID of DLC and checks if the user owns the DLC & if the DLC is installed
+
+	ISteamApps.BIsSubscribedFromFreeWeekend()
+
+		Returns var of type `bool`.
+		Checks if the user is subscribed to the current app through a free weekend
+		This function will return false for users who have a retail or other type of license
+		Before using, please ask your Valve technical contact how to package and secure your free weekened
+
+	ISteamApps.BGetDLCDataByIndex(int iDLC, int pchName, int cchNameBufferSize)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pAppID (int)
+			value.pbAvailable (bool)
+
+	ISteamApps.GetCurrentBetaName(int pchName, int cchNameBufferSize)
+
+		Returns var of type `bool`.
+
+	ISteamApps.MarkContentCorrupt(bool bMissingFilesOnly)
+
+		Returns var of type `bool`.
+
+	ISteamApps.BIsAppInstalled(int appID)
+
+		Returns var of type `bool`.
+
+	ISteamApps.GetDlcDownloadProgress(int nAppID)
+
+		get download progress for optional DLC
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.punBytesDownloaded (int)
+			value.punBytesTotal (int)
+
+	ISteamApps.BIsSubscribedFromFamilySharing()
+
+		Returns var of type `bool`.
+
+	ISteamApps.BIsTimedTrial()
+
+		check if game is a timed trial with limited playtime
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.punSecondsAllowed (int)
+			value.punSecondsPlayed (int)
+
+	ISteamApps.SetDlcContext(int nAppID)
+
+		Returns var of type `bool`.
+
+	ISteamApps.GetCurrentGameLanguage()
+
+		Returns var of type `string`.
+
+	ISteamApps.GetAvailableGameLanguages()
+
+		Returns var of type `string`.
+
+	ISteamApps.GetLaunchQueryParam(string pchKey)
+
+		Returns var of type `string`.
+
+	ISteamApps.GetEarliestPurchaseUnixTime(int nAppID)
+
+		Returns var of type `int`.
+		returns the Unix time of the purchase of the app
+
+	ISteamApps.GetInstalledDepots(int appID, int cMaxDepots)
+
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pvecDepots (int)
+
+	ISteamApps.GetAppInstallDir(int appID, int pchFolder, int cchFolderBufferSize)
+
+		Returns var of type `int`.
+		returns current app install folder for AppID, returns folder name length
+
+	ISteamApps.GetDLCCount()
+
+		Returns var of type `int`.
+		Returns the number of DLC pieces for the running app
+
+	ISteamApps.GetAppBuildId()
+
+		Returns var of type `int`.
+		return the buildid of this app, may change at any time based on backend updates to the game
+
+	ISteamApps.GetLaunchCommandLine(int pszCommandLine, int cubCommandLine)
+
+		Returns var of type `int`.
+		Get command line if game was launched via Steam URL, e.g. steam:
+		run
+		<appid>
+		<command line>
+		.
+		This method of passing a connect string (used when joining via rich presence, accepting an
+		invite, etc) is preferable to passing the connect string on the operating system command
+		line, which is a security risk.  In order for rich presence joins to go through this
+		path and not be placed on the OS command line, you must set a value in your app's
+		configuration on Steam.  Ask Valve for help with this.
+		If game was already running and launched again, the NewUrlLaunchParameters_t will be fired.
+
+	ISteamApps.InstallDLC(int nAppID)
+
+		Install
+		Uninstall control for optional DLC
+
+	ISteamApps.UninstallDLC(int nAppID)
+
+
+	ISteamApps.RequestAppProofOfPurchaseKey(int nAppID)
+
+
+	ISteamApps.RequestAllProofOfPurchaseKeys()
+
+
+	ISteamApps.GetAppOwner()
+
+		Returns var of type `int`.
+		the user has a temporary license borrowed via Family Sharing
+
+
+`ISteamInput` Interface
+-----------------------
+
+	ISteamInput.Init(bool bExplicitlyCallRunFrame)
+
+		Returns var of type `bool`.
+
+	ISteamInput.Shutdown()
+
+		Returns var of type `bool`.
+
+	ISteamInput.SetInputActionManifestFilePath(string pchInputActionManifestAbsolutePath)
+
+		Returns var of type `bool`.
+		Set the absolute path to the Input Action Manifest file containing the in-game actions
+		and file paths to the official configurations. Used in games that bundle Steam Input
+		configurations inside of the game depot instead of using the Steam Workshop
+
+	ISteamInput.BWaitForData(bool bWaitForever, int unTimeout)
+
+		Returns var of type `bool`.
+		Waits on an IPC event from Steam sent when there is new data to be fetched from
+		the data drop. Returns true when data was recievied before the timeout expires.
+		Useful for games with a dedicated input thread
+
+	ISteamInput.BNewDataAvailable()
+
+		Returns var of type `bool`.
+
+	ISteamInput.ShowBindingPanel(int inputHandle)
+
+		Returns var of type `bool`.
+		-----------------------------------------------------------------------------
+		Utility functions available without using the rest of Steam Input API
+		-----------------------------------------------------------------------------
+		Invokes the Steam overlay and brings up the binding screen if the user is using Big Picture Mode
+		If the user is not in Big Picture Mode it will open up the binding in a new window
+
+	ISteamInput.GetDeviceBindingRevision(int inputHandle)
+
+		Get the binding revision for a given device. Returns false if the handle was not valid or if a mapping is not yet loaded for the device
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pMajor (int)
+			value.pMinor (int)
+
+	ISteamInput.RunFrame(bool bReservedValue)
+
+		Synchronize API state with the latest Steam Input action data available. This
+		is performed automatically by SteamAPI_RunCallbacks, but for the absolute lowest
+		possible latency, you call this directly before reading controller state.
+		Note: This must be called from somewhere before GetConnectedControllers will
+		return any handles
+
+	ISteamInput.EnableDeviceCallbacks()
+
+		Enable SteamInputDeviceConnected_t and SteamInputDeviceDisconnected_t callbacks.
+		Each controller that is already connected will generate a device connected
+		callback when you enable them
+
+	ISteamInput.ActivateActionSet(int inputHandle, int actionSetHandle)
+
+		This is cheap, and can be safely called repeatedly. It's often easier to repeatedly call it in
+		your state loops, instead of trying to place it in all of your state transitions.
+
+	ISteamInput.ActivateActionSetLayer(int inputHandle, int actionSetLayerHandle)
+
+		ACTION SET LAYERS
+
+	ISteamInput.DeactivateActionSetLayer(int inputHandle, int actionSetLayerHandle)
+
+
+	ISteamInput.DeactivateAllActionSetLayers(int inputHandle)
+
+
+	ISteamInput.StopAnalogActionMomentum(int inputHandle, int eAction)
+
+		Stop analog momentum for the action if it is a mouse action in trackball mode
+
+	ISteamInput.TriggerVibration(int inputHandle, int usLeftSpeed, int usRightSpeed)
+
+		-----------------------------------------------------------------------------
+		OUTPUTS
+		-----------------------------------------------------------------------------
+		Trigger a vibration event on supported controllers - Steam will translate these commands into haptic pulses for Steam Controllers
+
+	ISteamInput.TriggerVibrationExtended(int inputHandle, int usLeftSpeed, int usRightSpeed, int usLeftTriggerSpeed, int usRightTriggerSpeed)
+
+		Trigger a vibration event on supported controllers including Xbox trigger impulse rumble - Steam will translate these commands into haptic pulses for Steam Controllers
+
+	ISteamInput.TriggerSimpleHapticEvent(int inputHandle, int eHapticLocation, int nIntensity, int nGainDB, int nOtherIntensity, int nOtherGainDB)
+
+		Send a haptic pulse, works on Steam Deck and Steam Controller devices
+
+		eHapticLocation is an enum with the following members:
+
+			EControllerHapticLocation.k_EControllerHapticLocation_Left
+			EControllerHapticLocation.k_EControllerHapticLocation_Right
+			EControllerHapticLocation.k_EControllerHapticLocation_Both
+
+	ISteamInput.SetLEDColor(int inputHandle, int nColorR, int nColorG, int nColorB, int nFlags)
+
+		Set the controller LED color on supported controllers. nFlags is a bitmask of values from ESteamInputLEDFlag - 0 will default to setting a color. Steam will handle
+		the behavior on exit of your program so you don't need to try restore the default as you are shutting down
+
+	ISteamInput.Legacy_TriggerHapticPulse(int inputHandle, int eTargetPad, int usDurationMicroSec)
+
+
+		eTargetPad is an enum with the following members:
+
+			ESteamControllerPad.k_ESteamControllerPad_Left
+			ESteamControllerPad.k_ESteamControllerPad_Right
+
+	ISteamInput.Legacy_TriggerRepeatedHapticPulse(int inputHandle, int eTargetPad, int usDurationMicroSec, int usOffMicroSec, int unRepeat, int nFlags)
+
+		Trigger a haptic pulse with a duty cycle of usDurationMicroSec
+		usOffMicroSec, unRepeat times. If you are approximating rumble you may want to use TriggerVibration instead.
+		nFlags is currently unused and reserved for future use.
+
+		eTargetPad is an enum with the following members:
+
+			ESteamControllerPad.k_ESteamControllerPad_Left
+			ESteamControllerPad.k_ESteamControllerPad_Right
+
+	ISteamInput.GetConnectedControllers()
+
+		the Steam Input settings in the Steamworks site or users can opt-in in their controller settings in Steam.
+		handlesOut should point to a STEAM_INPUT_MAX_COUNT sized array of InputHandle_t handles
+		Returns the number of handles written to handlesOut
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.GetConnectedControllers_handlesOut (int[])
+
+	ISteamInput.GetActiveActionSetLayers(int inputHandle)
+
+		Enumerate currently active layers.
+		handlesOut should point to a STEAM_INPUT_MAX_ACTIVE_LAYERS sized array of InputActionSetHandle_t handles
+		Returns the number of handles written to handlesOut
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.GetActiveActionSetLayers_handlesOut (int[])
+
+	ISteamInput.GetDigitalActionOrigins(int inputHandle, int actionSetHandle, int digitalActionHandle)
+
+		originsOut should point to a STEAM_INPUT_MAX_ORIGINS sized array of EInputActionOrigin handles. The EInputActionOrigin enum will get extended as support for new controller controllers gets added to
+		the Steam client and will exceed the values from this header, please check bounds if you are using a look up table.
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.GetDigitalActionOrigins_originsOut (int[])
+
+	ISteamInput.GetAnalogActionOrigins(int inputHandle, int actionSetHandle, int analogActionHandle)
+
+		originsOut should point to a STEAM_INPUT_MAX_ORIGINS sized array of EInputActionOrigin handles. The EInputActionOrigin enum will get extended as support for new controller controllers gets added to
+		the Steam client and will exceed the values from this header, please check bounds if you are using a look up table.
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.GetAnalogActionOrigins_originsOut (int[])
+
+	ISteamInput.GetGamepadIndexForController(int ulinputHandle)
+
+		Returns var of type `int`.
+		Returns the associated gamepad index for the specified controller, if emulating a gamepad or -1 if not associated with an Xinput index
+
+	ISteamInput.GetActionSetHandle(string pszActionSetName)
+
+		Returns var of type `int`.
+		-----------------------------------------------------------------------------
+		ACTION SETS
+		-----------------------------------------------------------------------------
+		Lookup the handle for an Action Set. Best to do this once on startup, and store the handles for all future API calls.
+
+	ISteamInput.GetCurrentActionSet(int inputHandle)
+
+		Returns var of type `int`.
+
+	ISteamInput.GetDigitalActionHandle(string pszActionName)
+
+		Returns var of type `int`.
+		-----------------------------------------------------------------------------
+		ACTIONS
+		-----------------------------------------------------------------------------
+		Lookup the handle for a digital action. Best to do this once on startup, and store the handles for all future API calls.
+
+	ISteamInput.GetAnalogActionHandle(string pszActionName)
+
+		Returns var of type `int`.
+		Lookup the handle for an analog action. Best to do this once on startup, and store the handles for all future API calls.
+
+	ISteamInput.GetControllerForGamepadIndex(int nIndex)
+
+		Returns var of type `int`.
+		Returns the associated controller handle for the specified emulated gamepad - can be used with the above 2 functions
+		to identify controllers presented to your game over Xinput. Returns 0 if the Xinput index isn't associated with Steam Input
+
+	ISteamInput.GetDigitalActionData(int inputHandle, int digitalActionHandle)
+
+		Returns the current state of the supplied digital game action
+
+	ISteamInput.GetStringForDigitalActionName(int eActionHandle)
+
+		Returns var of type `string`.
+
+	ISteamInput.GetGlyphPNGForActionOrigin(int eOrigin, int eSize, int unFlags)
+
+		Returns var of type `string`.
+
+		eOrigin is an enum type named EInputActionOrigin.
+		Due to the length of the enum, refer to Steamworks documentation for details.		eSize is an enum with the following members:
+
+			ESteamInputGlyphSize.k_ESteamInputGlyphSize_Small
+			ESteamInputGlyphSize.k_ESteamInputGlyphSize_Medium
+			ESteamInputGlyphSize.k_ESteamInputGlyphSize_Large
+			ESteamInputGlyphSize.k_ESteamInputGlyphSize_Count
+
+	ISteamInput.GetGlyphSVGForActionOrigin(int eOrigin, int unFlags)
+
+		Returns var of type `string`.
+
+		eOrigin is an enum type named EInputActionOrigin.
+		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.GetGlyphForActionOrigin_Legacy(int eOrigin)
+
+		Returns var of type `string`.
+
+		eOrigin is an enum type named EInputActionOrigin.
+		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.GetStringForActionOrigin(int eOrigin)
+
+		Returns var of type `string`.
+
+		eOrigin is an enum type named EInputActionOrigin.
+		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.GetStringForAnalogActionName(int eActionHandle)
+
+		Returns var of type `string`.
+
+	ISteamInput.GetStringForXboxOrigin(int eOrigin)
+
+		Returns var of type `string`.
+
+		eOrigin is an enum type named EXboxOrigin.
+		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.GetGlyphForXboxOrigin(int eOrigin)
+
+		Returns var of type `string`.
+
+		eOrigin is an enum type named EXboxOrigin.
+		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.GetAnalogActionData(int inputHandle, int analogActionHandle)
+
+		Returns the current state of these supplied analog game action
+
+	ISteamInput.GetMotionData(int inputHandle)
+
+		Returns raw motion data from the specified device
+
+	ISteamInput.GetInputTypeForHandle(int inputHandle)
+
+		Returns var of type `int`.
+		Returns the input type for a particular handle - unlike EInputActionOrigin which update with Steam and may return unrecognized values
+		ESteamInputType will remain static and only return valid values from your SDK version
+
+	ISteamInput.GetActionOriginFromXboxOrigin(int inputHandle, int eOrigin)
+
+		Returns var of type `int`.
+		Get the equivalent ActionOrigin for a given Xbox controller origin this can be chained with GetGlyphForActionOrigin to provide future proof glyphs for
+		non-Steam Input API action games. Note - this only translates the buttons directly and doesn't take into account any remapping a user has made in their configuration
+
+		eOrigin is an enum type named EXboxOrigin.
+		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.TranslateActionOrigin(int eDestinationInputType, int eSourceOrigin)
+
+		Returns var of type `int`.
+		Convert an origin to another controller type - for inputs not present on the other controller type this will return k_EInputActionOrigin_None
+		When a new input type is added you will be able to pass in k_ESteamInputType_Unknown and the closest origin that your version of the SDK recognized will be returned
+		ex: if a Playstation 5 controller was released this function would return Playstation 4 origins.
+
+		eDestinationInputType is an enum with the following members:
+
+			ESteamInputType.k_ESteamInputType_Unknown
+			ESteamInputType.k_ESteamInputType_SteamController
+			ESteamInputType.k_ESteamInputType_XBox360Controller
+			ESteamInputType.k_ESteamInputType_XBoxOneController
+			ESteamInputType.k_ESteamInputType_GenericGamepad
+			ESteamInputType.k_ESteamInputType_PS4Controller
+			ESteamInputType.k_ESteamInputType_AppleMFiController
+			ESteamInputType.k_ESteamInputType_AndroidController
+			ESteamInputType.k_ESteamInputType_SwitchJoyConPair
+			ESteamInputType.k_ESteamInputType_SwitchJoyConSingle
+			ESteamInputType.k_ESteamInputType_SwitchProController
+			ESteamInputType.k_ESteamInputType_MobileTouch
+			ESteamInputType.k_ESteamInputType_PS3Controller
+			ESteamInputType.k_ESteamInputType_PS5Controller
+			ESteamInputType.k_ESteamInputType_SteamDeckController
+			ESteamInputType.k_ESteamInputType_Count
+			ESteamInputType.k_ESteamInputType_MaximumPossibleValue
+
+		eSourceOrigin is an enum type named EInputActionOrigin.
+		Due to the length of the enum, refer to Steamworks documentation for details.	ISteamInput.GetRemotePlaySessionID(int inputHandle)
+
+		Returns var of type `int`.
+		Get the Steam Remote Play session ID associated with a device, or 0 if there is no session associated with it
+		See isteamremoteplay.h for more information on Steam Remote Play sessions
+
+	ISteamInput.GetSessionInputConfigurationSettings()
+
+		Returns var of type `int`.
+		Get a bitmask of the Steam Input Configuration types opted in for the current session. Returns ESteamInputConfigurationEnableType values.
+		Note: user can override the settings from the Steamworks Partner site so the returned values may not exactly match your default configuration
+
