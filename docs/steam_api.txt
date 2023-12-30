@@ -74,10 +74,7 @@
 		returns the CSteamID of the account currently logged into the Steam client
 		a CSteamID is a unique identifier for an account, and used to differentiate users in all parts of the Steamworks API
 
-	ISteamUser.TerminateGameConnection_DEPRECATED(int unIPServer, int usPortServer)
-
-		DEPRECATED!  This function will be removed from the SDK in an upcoming version.
-		Please migrate to BeginAuthSession and related functions.
+	ISteamUser.DEPRECATED(int unIPServer, int usPortServer)
 
 	ISteamUser.TrackAppUsageEvent(int gameID, int eAppUsageEvent, string pchExtraInfo)
 
@@ -85,7 +82,6 @@
 		used by only a few games to track usage events
 
 	ISteamUser.StartVoiceRecording()
-
 
 	ISteamUser.StopVoiceRecording()
 
@@ -355,6 +351,79 @@
 
 		Returns var of type `int`.
 
+	ISteamFriends.GetFriendsGroupMembersList(int friendsGroupID, int nMembersCount)
+
+		Returns an array of type `int` and size nMembersCount.
+		gets up to nMembersCount members of the given friends group, if fewer exist than requested those positions' SteamIDs will be invalid
+
+	ISteamFriends.SetInGameVoiceSpeaking(int steamIDUser, bool bSpeaking)
+
+	ISteamFriends.ActivateGameOverlay(string pchDialog)
+
+		activates the game overlay, with an optional dialog to open
+		valid options include "Friends", "Community", "Players", "Settings", "OfficialGameGroup", "Stats", "Achievements",
+		"chatroomgroup
+		nnnn"
+
+	ISteamFriends.ActivateGameOverlayToUser(string pchDialog, int steamID)
+
+		activates game overlay to a specific place
+		valid options are
+		"steamid" - opens the overlay web browser to the specified user or groups profile
+		"chat" - opens a chat window to the specified user, or joins the group chat
+		"jointrade" - opens a window to a Steam Trading session that was started with the ISteamEconomy
+		StartTrade Web API
+		"stats" - opens the overlay web browser to the specified user's stats
+		"achievements" - opens the overlay web browser to the specified user's achievements
+		"friendadd" - opens the overlay in minimal mode prompting the user to add the target user as a friend
+		"friendremove" - opens the overlay in minimal mode prompting the user to remove the target friend
+		"friendrequestaccept" - opens the overlay in minimal mode prompting the user to accept an incoming friend invite
+		"friendrequestignore" - opens the overlay in minimal mode prompting the user to ignore an incoming friend invite
+
+	ISteamFriends.ActivateGameOverlayToWebPage(string pchURL, int eMode)
+
+		activates game overlay web browser directly to the specified URL
+		full address with protocol type is required, e.g. http:
+		www.steamgames.com
+
+		eMode is an enum with the following members:
+
+			EActivateGameOverlayToWebPageMode.k_EActivateGameOverlayToWebPageMode_Default
+			EActivateGameOverlayToWebPageMode.k_EActivateGameOverlayToWebPageMode_Modal
+
+	ISteamFriends.ActivateGameOverlayToStore(int nAppID, int eFlag)
+
+		activates game overlay to store page for app
+
+		eFlag is an enum with the following members:
+
+			EOverlayToStoreFlag.k_EOverlayToStoreFlag_None
+			EOverlayToStoreFlag.k_EOverlayToStoreFlag_AddToCart
+			EOverlayToStoreFlag.k_EOverlayToStoreFlag_AddToCartAndShow
+
+	ISteamFriends.SetPlayedWith(int steamIDUserPlayedWith)
+
+		Mark a target user as 'played with'. This is a client-side only feature that requires that the calling user is
+		in game
+
+	ISteamFriends.ActivateGameOverlayInviteDialog(int steamIDLobby)
+
+		activates game overlay to open the invite dialog. Invitations will be sent for the provided lobby.
+
+	ISteamFriends.ClearRichPresence()
+
+	ISteamFriends.RequestFriendRichPresence(int steamIDFriend)
+
+		Requests rich presence for a specific user.
+
+	ISteamFriends.ActivateGameOverlayRemotePlayTogetherInviteDialog(int steamIDLobby)
+
+		activates game overlay to open the remote play together invite dialog. Invitations will be sent for remote play together
+
+	ISteamFriends.ActivateGameOverlayInviteDialogConnectString(string pchConnectString)
+
+		Activates the game overlay to open an invite dialog that will send the provided Rich Presence connect string to selected friends
+
 	ISteamFriends.HasFriend(int steamIDFriend, int iFriendFlags)
 
 		Returns var of type `bool`.
@@ -450,76 +519,6 @@
 			ECommunityProfileItemType.k_ECommunityProfileItemType_ProfileBackground
 			ECommunityProfileItemType.k_ECommunityProfileItemType_MiniProfileBackground
 
-	ISteamFriends.SetInGameVoiceSpeaking(int steamIDUser, bool bSpeaking)
-
-
-	ISteamFriends.ActivateGameOverlay(string pchDialog)
-
-		activates the game overlay, with an optional dialog to open
-		valid options include "Friends", "Community", "Players", "Settings", "OfficialGameGroup", "Stats", "Achievements",
-		"chatroomgroup
-		nnnn"
-
-	ISteamFriends.ActivateGameOverlayToUser(string pchDialog, int steamID)
-
-		activates game overlay to a specific place
-		valid options are
-		"steamid" - opens the overlay web browser to the specified user or groups profile
-		"chat" - opens a chat window to the specified user, or joins the group chat
-		"jointrade" - opens a window to a Steam Trading session that was started with the ISteamEconomy
-		StartTrade Web API
-		"stats" - opens the overlay web browser to the specified user's stats
-		"achievements" - opens the overlay web browser to the specified user's achievements
-		"friendadd" - opens the overlay in minimal mode prompting the user to add the target user as a friend
-		"friendremove" - opens the overlay in minimal mode prompting the user to remove the target friend
-		"friendrequestaccept" - opens the overlay in minimal mode prompting the user to accept an incoming friend invite
-		"friendrequestignore" - opens the overlay in minimal mode prompting the user to ignore an incoming friend invite
-
-	ISteamFriends.ActivateGameOverlayToWebPage(string pchURL, int eMode)
-
-		activates game overlay web browser directly to the specified URL
-		full address with protocol type is required, e.g. http:
-		www.steamgames.com
-
-		eMode is an enum with the following members:
-
-			EActivateGameOverlayToWebPageMode.k_EActivateGameOverlayToWebPageMode_Default
-			EActivateGameOverlayToWebPageMode.k_EActivateGameOverlayToWebPageMode_Modal
-
-	ISteamFriends.ActivateGameOverlayToStore(int nAppID, int eFlag)
-
-		activates game overlay to store page for app
-
-		eFlag is an enum with the following members:
-
-			EOverlayToStoreFlag.k_EOverlayToStoreFlag_None
-			EOverlayToStoreFlag.k_EOverlayToStoreFlag_AddToCart
-			EOverlayToStoreFlag.k_EOverlayToStoreFlag_AddToCartAndShow
-
-	ISteamFriends.SetPlayedWith(int steamIDUserPlayedWith)
-
-		Mark a target user as 'played with'. This is a client-side only feature that requires that the calling user is
-		in game
-
-	ISteamFriends.ActivateGameOverlayInviteDialog(int steamIDLobby)
-
-		activates game overlay to open the invite dialog. Invitations will be sent for the provided lobby.
-
-	ISteamFriends.ClearRichPresence()
-
-
-	ISteamFriends.RequestFriendRichPresence(int steamIDFriend)
-
-		Requests rich presence for a specific user.
-
-	ISteamFriends.ActivateGameOverlayRemotePlayTogetherInviteDialog(int steamIDLobby)
-
-		activates game overlay to open the remote play together invite dialog. Invitations will be sent for remote play together
-
-	ISteamFriends.ActivateGameOverlayInviteDialogConnectString(string pchConnectString)
-
-		Activates the game overlay to open an invite dialog that will send the provided Rich Presence connect string to selected friends
-
 
 `ISteamUserStats` Interface
 ---------------------------
@@ -528,27 +527,25 @@
 
 		Returns var of type `bool`.
 
-	ISteamUserStats.GetStat(string pchName)
-
+	ISteamUserStats.GetStatInt32(string pchName)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
 			value.pData (int)
 
-	ISteamUserStats.GetStat(string pchName)
-
+	ISteamUserStats.GetStatFloat(string pchName)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
 			value.pData (float)
 
-	ISteamUserStats.SetStat(string pchName, int nData)
+	ISteamUserStats.SetStatInt32(string pchName, int nData)
 
 		Returns var of type `bool`.
 
-	ISteamUserStats.SetStat(string pchName, float fData)
+	ISteamUserStats.SetStatFloat(string pchName, float fData)
 
 		Returns var of type `bool`.
 
@@ -575,7 +572,6 @@
 
 	ISteamUserStats.GetAchievementAndUnlockTime(string pchName)
 
-
 		Returns a javascript object with the following members:
 
 			value.result (bool)
@@ -599,16 +595,14 @@
 		Calling this w
 		N out of N progress will NOT set the achievement, the game must still do that.
 
-	ISteamUserStats.GetUserStat(int steamIDUser, string pchName)
-
+	ISteamUserStats.GetUserStatInt32(int steamIDUser, string pchName)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
 			value.pData (int)
 
-	ISteamUserStats.GetUserStat(int steamIDUser, string pchName)
-
+	ISteamUserStats.GetUserStatFloat(int steamIDUser, string pchName)
 
 		Returns a javascript object with the following members:
 
@@ -616,7 +610,6 @@
 			value.pData (float)
 
 	ISteamUserStats.GetUserAchievement(int steamIDUser, string pchName)
-
 
 		Returns a javascript object with the following members:
 
@@ -640,30 +633,26 @@
 
 	ISteamUserStats.GetAchievementAchievedPercent(string pchName)
 
-
 		Returns a javascript object with the following members:
 
 			value.result (bool)
 			value.pflPercent (float)
 
-	ISteamUserStats.GetGlobalStat(string pchStatName)
-
-
-		Returns a javascript object with the following members:
-
-			value.result (bool)
-			value.pData (int)
-
-	ISteamUserStats.GetGlobalStat(string pchStatName)
-
+	ISteamUserStats.GetGlobalStatInt64(string pchStatName)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
 			value.pData (int)
 
-	ISteamUserStats.GetAchievementProgressLimits(string pchName)
+	ISteamUserStats.GetGlobalStatDouble(string pchStatName)
 
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pData (int)
+
+	ISteamUserStats.GetAchievementProgressLimitsInt32(string pchName)
 
 		Returns a javascript object with the following members:
 
@@ -671,8 +660,7 @@
 			value.pnMinProgress (int)
 			value.pnMaxProgress (int)
 
-	ISteamUserStats.GetAchievementProgressLimits(string pchName)
-
+	ISteamUserStats.GetAchievementProgressLimitsFloat(string pchName)
 
 		Returns a javascript object with the following members:
 
@@ -694,7 +682,6 @@
 
 	ISteamUserStats.GetMostAchievedAchievementInfo(int pchName, int unNameBufLen)
 
-
 		Returns a javascript object with the following members:
 
 			value.result (int)
@@ -703,12 +690,25 @@
 
 	ISteamUserStats.GetNextMostAchievedAchievementInfo(int iIteratorPrevious, int pchName, int unNameBufLen)
 
-
 		Returns a javascript object with the following members:
 
 			value.result (int)
 			value.pflPercent (float)
 			value.pbAchieved (bool)
+
+	ISteamUserStats.GetGlobalStatHistoryInt64(string pchStatName, int cubData)
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pData (int[cubData])
+
+	ISteamUserStats.GetGlobalStatHistoryDouble(string pchStatName, int cubData)
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pData (int[cubData])
 
 	ISteamUserStats.GetAchievementDisplayAttribute(string pchName, string pchKey)
 
@@ -777,7 +777,6 @@
 
 	ISteamApps.BGetDLCDataByIndex(int iDLC, int pchName, int cchNameBufferSize)
 
-
 		Returns a javascript object with the following members:
 
 			value.result (bool)
@@ -843,7 +842,6 @@
 
 	ISteamApps.GetInstalledDepots(int appID, int cMaxDepots)
 
-
 		Returns a javascript object with the following members:
 
 			value.result (int)
@@ -886,12 +884,9 @@
 
 	ISteamApps.UninstallDLC(int nAppID)
 
-
 	ISteamApps.RequestAppProofOfPurchaseKey(int nAppID)
 
-
 	ISteamApps.RequestAllProofOfPurchaseKeys()
-
 
 	ISteamApps.GetAppOwner()
 
@@ -972,9 +967,7 @@
 
 	ISteamInput.DeactivateActionSetLayer(int inputHandle, int actionSetLayerHandle)
 
-
 	ISteamInput.DeactivateAllActionSetLayers(int inputHandle)
-
 
 	ISteamInput.StopAnalogActionMomentum(int inputHandle, int eAction)
 
@@ -1006,19 +999,14 @@
 		Set the controller LED color on supported controllers. nFlags is a bitmask of values from ESteamInputLEDFlag - 0 will default to setting a color. Steam will handle
 		the behavior on exit of your program so you don't need to try restore the default as you are shutting down
 
-	ISteamInput.Legacy_TriggerHapticPulse(int inputHandle, int eTargetPad, int usDurationMicroSec)
-
+	ISteamInput.TriggerHapticPulse(int inputHandle, int eTargetPad, int usDurationMicroSec)
 
 		eTargetPad is an enum with the following members:
 
 			ESteamControllerPad.k_ESteamControllerPad_Left
 			ESteamControllerPad.k_ESteamControllerPad_Right
 
-	ISteamInput.Legacy_TriggerRepeatedHapticPulse(int inputHandle, int eTargetPad, int usDurationMicroSec, int usOffMicroSec, int unRepeat, int nFlags)
-
-		Trigger a haptic pulse with a duty cycle of usDurationMicroSec
-		usOffMicroSec, unRepeat times. If you are approximating rumble you may want to use TriggerVibration instead.
-		nFlags is currently unused and reserved for future use.
+	ISteamInput.TriggerRepeatedHapticPulse(int inputHandle, int eTargetPad, int usDurationMicroSec, int usOffMicroSec, int unRepeat, int nFlags)
 
 		eTargetPad is an enum with the following members:
 
@@ -1034,7 +1022,7 @@
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.GetConnectedControllers_handlesOut (int[])
+			value.handlesOut (int[16])
 
 	ISteamInput.GetActiveActionSetLayers(int inputHandle)
 
@@ -1045,7 +1033,7 @@
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.GetActiveActionSetLayers_handlesOut (int[])
+			value.handlesOut (int[16])
 
 	ISteamInput.GetDigitalActionOrigins(int inputHandle, int actionSetHandle, int digitalActionHandle)
 
@@ -1055,7 +1043,7 @@
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.GetDigitalActionOrigins_originsOut (int[])
+			value.originsOut (int[8])
 
 	ISteamInput.GetAnalogActionOrigins(int inputHandle, int actionSetHandle, int analogActionHandle)
 
@@ -1065,7 +1053,7 @@
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.GetAnalogActionOrigins_originsOut (int[])
+			value.originsOut (int[8])
 
 	ISteamInput.GetGamepadIndexForController(int ulinputHandle)
 
@@ -1137,7 +1125,7 @@
 		eOrigin is an enum type named EInputActionOrigin.
 		Due to the length of the enum, refer to Steamworks documentation for details.
 
-	ISteamInput.GetGlyphForActionOrigin_Legacy(int eOrigin)
+	ISteamInput.Legacy(int eOrigin)
 
 		Returns var of type `string`.
 

@@ -172,7 +172,6 @@ voidfunc = create_function_ptr("void", "void", [])
 # Parse methods.
 methods = {}
 skipped_methods = []
-out_arrays = {}
 js_name_max_length = 0
 def parse_method(method, category, type):
 
@@ -189,7 +188,7 @@ def parse_method(method, category, type):
 	
 	# Parse params.
 	params = []
-	global out_arrays
+	# global out_arrays
 	for param in method['params']:
 
 		# Remove namespace.
@@ -221,18 +220,15 @@ def parse_method(method, category, type):
 		# Check if method outputs an array.
 		if "out_array_count" in param:
 
-			# If fixed sized array, create a static one and keep using it.
+			# Fixed sized array.
 			if param['out_array_count'] in defines:
-				return_array = method['methodname'] + "_" + param['paramname']
-				out_arrays[return_array] = [defines[param['out_array_count']], param['paramtype'].replace("*", "").strip()]
+				param['out_array_fixed'] = True
 				param['out_array_size'] = defines[param['out_array_count']]
-				param['out_array_name'] = return_array
 			
-			# Skip if dynamically typed array.
-			# TODO: Figure out how to do this.
+			# Dynamically sized array.
 			else:
-				skipped_methods.append(method['methodname_flat'] + " (dynamically sized array out)")
-				return
+				param['out_array_fixed'] = False
+				param['out_array_size'] = param['out_array_count']
 		
 		# Skip if require pointer to data blob.
 		# TODO: Figure out how to do this.
@@ -270,7 +266,7 @@ def parse_method(method, category, type):
 		"type": type,
 		"category": category,
 		"js_name": js_name,
-		"name": method['methodname'] if method['methodname'].find("operator") < 0 else method['methodname_flat'].split("_").pop(),
+		"name": method['methodname_flat'].split("_").pop(),
 		"name_flat": method['methodname_flat'],
 		"ptr": ptr_name,
 		"params": method['params']
@@ -320,6 +316,20 @@ def jsal_push_function(type):
 		case _:
 			print("Return type " + type + " not recognized!")
 			return ""
+
+def jsal_push_array(param, initialized_i):
+	result = ""
+	if not initialized_i:
+		initialized_i = True
+		result += "	int i;\n"
+	result += "	jsal_push_new_array();\n"
+	result += "	for (i = 0; i < " + param['out_array_size'] + "; ++i)\n"
+	result += "	{\n"
+	result += "		" + jsal_push_function(param['paramtype'].replace("*", "").strip()) + param['paramname'] + "[i]);\n"
+	result += "		jsal_put_prop_index(-2, i);\n"
+	result += "	}\n"
+	return result
+	
 
 # Return struct as js object.
 def jsal_push_object(type, name, indents = 0):
@@ -536,11 +546,6 @@ for category in methods:
 				header += "void * " + category + ";\n"
 header += "\n"
 
-# Write global arrays in header file.
-for arrayname in out_arrays:
-	header += out_arrays[arrayname][1] + " " + arrayname + "[" + out_arrays[arrayname][0] + "];\n"
-header += "\n"
-
 # Write structs in header file.
 if len(struct_string) > 0:
 	header += struct_string
@@ -672,7 +677,7 @@ for category in methods:
 			initialized_i = False
 			param_arg_array = []
 			jsal_requires = []
-			out_params = []
+			out_params = ["result"] if not returntype == "void" else []
 			arg_index = 0
 
 			# Declare documentation vars.
@@ -689,9 +694,10 @@ for category in methods:
 					param_arg_array.append(category)
 					continue
 
-				# If static array.
+				# If array.
 				elif "out_array_size" in param:
-					param_arg_array.append("&" + param['out_array_name'] if 'out_array_name' in param else param['paramname'])
+					param_arg_array.append(param['paramname'])
+					source += "	" + param['paramtype'] + " " + param['paramname'] + ";\n"
 					out_params.append(param['paramname'])
 					continue
 
@@ -705,34 +711,49 @@ for category in methods:
 				# Else, print param as normal.
 				else:
 					if "enumtype" in param:
+
+						# Prepare additional documentation if type is enum.
 						if len(enums[param['enumtype']]) < 20:
 							doc_enum += "		" + param['paramname'] + " is an enum with the following members:\n\n"
 							for member in enums[param['enumtype']]:
 								doc_enum += "			" + param['enumtype'] + "." + member + "\n"
 							doc_enum += "\n"
+						
+						# If enum list is too long, skip documentation.
 						else:
 							doc_enum += "		" + param['paramname'] + " is an enum type named " + param['enumtype'] + ".\n"
 							doc_enum += "		Due to the length of the enum, refer to Steamworks documentation for details.\n\n"
+					
+					# Print param declaration.
 					param_arg_array.append(param['paramname'])
 					jsal_requires.append(jsal_require_function(param['paramtype'], arg_index, param['paramname']))
 					source += "	" + param['paramtype'] + " " + param['paramname'] + ";\n"
 					doc_params.append(js_type_convert(param['paramtype'].replace("*", "").strip()) + " " + param['paramname'])
 					arg_index += 1
 
-			# Print return type.
+			# Print declaration for return type.
 			if returntype != "void":
 				source += "	" + returntype + " result;\n"
 			
-			# Print function ptr.
+			# Print declaration for function ptr.
 			source += "	" + method['ptr'] + " " + internal_name + ";\n"
 			source += "\n"
 
-			# Print jsal requires.
+			# Print jsal require functions.
 			if len(jsal_requires) > 0:
 				for require in jsal_requires:
 					if len(require) > 0:
 						source += "	" + require
 				source += "\n"
+
+			# Allocate memory to arrays.
+			array_alloc_trailing_newline = ""
+			for param in method['params']:
+				if "out_array_size" in param:
+					array_alloc_trailing_newline = "\n"
+					source += "	if (!(" + param['paramname'] + " = (" + param['paramtype'] + ")calloc(" + param['out_array_size'] + ", sizeof(" + param['paramtype'].replace("*", "").strip() + "))))\n"
+					source += "		return false;\n"
+			source += array_alloc_trailing_newline
 
 			# Execute steam api function.
 			source += "	" + internal_name + " = (" + method['ptr'] + ')GetProcAddress(steam_api, "' + method['name_flat'] + '");\n'
@@ -740,63 +761,82 @@ for category in methods:
 			source += "\n"
 
 			# Push returns.
-			if len(out_params) <= 0:
+			match len(out_params):
 
 				# Nothing returned.
-				if returntype == "void":
-					source += "	return(false);\n"
-				
-				# Returns a struct.
-				elif returntype in structs:
-					source += jsal_push_object(returntype, "result", 1)
-					source += "\n"
-					source += "	return(true);\n"
-
-				# Single var return.
-				else:
-					doc_resulttype = js_type_convert(returntype.replace("*","").strip())
-					source += "	" + jsal_push_function(returntype) + "result);\n"
-					source += "\n"
-					source += "	return(true);\n"
+				case 0:
+					if returntype == "void":
+						source += "	return false;\n"
 			
-			else:
-
-				# If multiple var returned, return a js object.
-				source += "	jsal_push_new_object();\n"
-
-				# Push returned var (if any) as first item in array.
-				if returntype != "void":
-					source += "	" + jsal_push_function(returntype) + "result);\n"
-					source += '	jsal_put_prop_string(-2, "result");\n'
-
-				# Push rest of returned params.
-				for param in method['params']:
-					if param['paramname'] in out_params:
-
-						# If array.
-						if "out_array_size" in param:
-							if not initialized_i:
-								initialized_i = True
-								source += "	int i;\n"
-							source += "	jsal_push_new_array();\n"
-							source += "	for (i = 0; i < " + param['out_array_size'] + "; ++i)\n"
-							source += "	{\n"
-							source += "		" + jsal_push_function(param['paramtype'].replace("*", "").strip()) + (param['out_array_name'] if 'out_array_name' in param else param['paramname']) + "[i]);\n"
-							source += "		jsal_put_prop_index(-2, i);\n"
-							source += "	}\n"
-							doc_returntypes += ("			" + "value." + (param['out_array_name'] if 'out_array_name' in param else param['paramname']) + " (" + js_type_convert(param['paramtype'].replace("*","").strip()) + "[])\n")
-						
-						# Else, return normally based on type.
-						else:
-							source += "	" + jsal_push_function(param['paramtype'].replace("*", "").strip()) + param['paramname'] + ");\n"
-							doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype'].replace("*","").strip()) + ")\n")
-						
-						# Next param please.
-						source += '	jsal_put_prop_string(-2, "' + param['paramname'] + '");\n'
+				# Single var returned.
+				case 1:
 					
-				# Close out return portion of function.
-				source += "\n"
-				source += "	return(true);\n"
+					# Return var returned by steam.
+					if "result" in out_params:
+						if returntype in structs:
+							source += jsal_push_object(returntype, "result", 1)
+							
+						else:
+							doc_resulttype = "		Returns var of type `" + js_type_convert(returntype.replace("*","").strip()) + "`.\n"
+							source += "	" + jsal_push_function(returntype) + "result);\n"
+					
+					# Return out param.
+					for param in method['params']:
+						if param['paramname'] in out_params:
+
+							# If array.
+							if "out_array_size" in param:
+								doc_resulttype = "		Returns an array of type `" + js_type_convert(param['paramtype'].replace("*","").strip()) + "` and size " + param['out_array_size'] + ".\n"
+								source += jsal_push_array(param, initialized_i)
+								source += "\n"
+								source += "	free (" + param['paramname'] + ");\n"
+							
+							# Else, return normally based on type.
+							else:
+								doc_resulttype = "		Returns var of type `" + js_type_convert(param['paramtype'].replace("*","").strip()) + ".\n"
+								source += "	" + jsal_push_function(param['paramtype'].replace("*", "").strip()) + param['paramname'] + ");\n"
+					
+					source += "\n"
+					source += "	return true;\n"
+				
+				# Multiple vars returned.
+				case _:
+
+					# If multiple var returned, return a js object.
+					source += "	jsal_push_new_object();\n"
+
+					# Push returned var (if any) as first item in array.
+					if "result" in out_params:
+						source += "	" + jsal_push_function(returntype) + "result);\n"
+						source += '	jsal_put_prop_string(-2, "result");\n'
+
+					# Push rest of returned params.
+					free_array_pointers_string = ""
+					for param in method['params']:
+						if param['paramname'] in out_params:
+
+							# If array.
+							if "out_array_size" in param:
+								source += jsal_push_array(param, initialized_i)
+								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype'].replace("*","").strip()) + "[" + param['out_array_size'] + "])\n")
+								free_array_pointers_string += "	free(" + param['paramname'] + ");\n"
+							
+							# Else, return normally based on type.
+							else:
+								source += "	" + jsal_push_function(param['paramtype'].replace("*", "").strip()) + param['paramname'] + ");\n"
+								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype'].replace("*","").strip()) + ")\n")
+							
+							# Next param please.
+							source += '	jsal_put_prop_string(-2, "' + param['paramname'] + '");\n'
+					
+					# Free array pointers.
+					if len(free_array_pointers_string) > 0:
+						source += "\n"
+						source += free_array_pointers_string
+
+					# Close out return portion of function defintion.
+					source += "\n"
+					source += "	return true;\n"
 			
 			# Close function definition.
 			source += "}\n\n"
@@ -804,38 +844,49 @@ for category in methods:
 			# Write documentation for function.
 			documentation += "	" + category + "." + method['name'] + "(" + ", ".join(doc_params) + ")\n\n"
 
-			# Print comments to documentation (if any)
+			# Print return var description.
+			desc = ""
 			if len(doc_resulttype) > 0:
-				documentation += "		Returns var of type `" + doc_resulttype + "`.\n"
+				desc += doc_resulttype
+			
+			# Print comments to documentation (if any)
 			if category in comments:
 				if method['name'] in comments[category] and len(comments[category][method['name']]) > 0:
 					for line in comments[category][method['name']]:
-						documentation += "		" + line + "\n"
-			documentation += "\n"
+						desc += "		" + line + "\n"
+			
+			if len(desc) > 0:
+				documentation += desc
+				documentation += "\n"
 			
 			# Print enum documentation, if any.
 			documentation += doc_enum
 
-			# Print output documentation, if any.
-			if len(out_params) > 0:
+			# Print additional output description, if any.
+			if len(out_params) > 1:
 				documentation += "		Returns a javascript object with the following members:\n\n"
-				if not returntype == "void":
+
+				# If first entry is returned var from steam api.
+				if "result" in out_params:
 					if not returntype in structs:
 						documentation += "			value.result (" + js_type_convert(returntype.replace("*", "").strip()) + ")\n"
+					
+					# If struct.
 					else:
 						documentation += "			value.result\n"
 						for field in structs[returntype]['fields']:
 							documentation += "				result." + field['fieldname'] + " (" + js_type_convert(field['fieldtype']) + ")\n"
+				
+				# Print documentation for remaining vars in object.
 				documentation += doc_returntypes
 				documentation += "\n"
 
+			# Print struct information if steam api returned a struct.
 			elif returntype in structs:
 				documentation += "		Returns a javascript object with the following members:\n\n"
 				for field in structs[returntype]['fields']:
 					documentation += "			value." + field['fieldname'] + " (" + js_type_convert(field['fieldtype']) + ")\n"
 				documentation += "\n"
-				
-
 
 # Write header file.
 out = open("..//src/neosphere/steam.h", "w")
