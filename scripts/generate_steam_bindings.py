@@ -273,8 +273,8 @@ def parse_method(method, category, type):
 	})
 
 # Insert tabs to align blocks for neatness.
-def calc_tabs_for_alignment(input):
-	return input + ("	" * (math.ceil(js_name_max_length / 4) - math.floor(len(input) / 4)))
+def calc_spaces_for_alignment(input):
+	return input + (" " * (js_name_max_length + 1 - len(input)))
 
 # Return equivalent jsal require function.
 def jsal_require_function(type, index, param_name):
@@ -562,15 +562,15 @@ for func in skipped_methods:
 	header += "//	- " + func + "\n"
 header += "\n"
 header += "void steamapi_init (void);\n"
-header += "static bool " + calc_tabs_for_alignment("js_SteamAPI_Init") + "(int num_args, bool is_ctor, intptr_t magic);\n"
-header += "static bool " + calc_tabs_for_alignment("js_SteamAPI_Shutdown") + "(int num_args, bool is_ctor, intptr_t magic);\n\n"
+header += "static bool " + calc_spaces_for_alignment("js_SteamAPI_Init") + "(int num_args, bool is_ctor, intptr_t magic);\n"
+header += "static bool " + calc_spaces_for_alignment("js_SteamAPI_Shutdown") + "(int num_args, bool is_ctor, intptr_t magic);\n\n"
 for category in methods:
 	header += "// " + category + "\n"
 	for returntype in methods[category]:
 		for method in methods[category][returntype]:
 			if method['type'] == "accessor":
 				continue
-			header += "static bool " + calc_tabs_for_alignment(method["js_name"]) + "(int num_args, bool is_ctor, intptr_t magic);\n"
+			header += "static bool " + calc_spaces_for_alignment(method["js_name"]) + "(int num_args, bool is_ctor, intptr_t magic);\n"
 	header += "\n"
 
 # ---------------------

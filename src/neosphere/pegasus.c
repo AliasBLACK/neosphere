@@ -504,18 +504,18 @@ static bool js_Z_deflate                     (int num_args, bool is_ctor, intptr
 static bool js_Z_inflate                     (int num_args, bool is_ctor, intptr_t magic);
 
 // Allegro primitives.
-static bool js_PrimNative_drawLine						(int num_args, bool is_ctor, intptr_t magic);
-static bool js_PrimNative_drawTriangle					(int num_args, bool is_ctor, intptr_t magic);
-static bool js_PrimNative_drawFilledTriangle			(int num_args, bool is_ctor, intptr_t magic);
-static bool js_PrimNative_drawRectangle					(int num_args, bool is_ctor, intptr_t magic);
-static bool js_PrimNative_drawFilledRectangle			(int num_args, bool is_ctor, intptr_t magic);
-static bool js_PrimNative_drawRoundedRectangle			(int num_args, bool is_ctor, intptr_t magic);
-static bool js_PrimNative_drawFilledRoundedRectangle	(int num_args, bool is_ctor, intptr_t magic);
-static bool js_PrimNative_drawEllipse					(int num_args, bool is_ctor, intptr_t magic);
-static bool js_PrimNative_drawFilledEllipse				(int num_args, bool is_ctor, intptr_t magic);
-static bool js_PrimNative_drawCircle					(int num_args, bool is_ctor, intptr_t magic);
-static bool js_PrimNative_drawFilledCircle				(int num_args, bool is_ctor, intptr_t magic);
-static bool js_PrimNative_drawArc						(int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawLine                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawTriangle               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawFilledTriangle         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawRectangle              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawFilledRectangle        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawRoundedRectangle       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawFilledRoundedRectangle (int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawEllipse                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawFilledEllipse          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawCircle                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawFilledCircle           (int num_args, bool is_ctor, intptr_t magic);
+static bool js_PrimNative_drawArc                    (int num_args, bool is_ctor, intptr_t magic);
 
 #if defined(NEOSPHERE_SPHERUN)
 static bool js_SSj_assert     (int num_args, bool is_ctor, intptr_t magic);
