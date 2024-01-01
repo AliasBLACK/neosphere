@@ -55,6 +55,7 @@
 #include "wildmatch.h"
 #include "xoroshiro.h"
 #include "steam.h"
+#include "node.h"
 
 #define API_VERSION 2
 
@@ -1076,6 +1077,9 @@ pegasus_init(int api_level, int target_api_level)
 
 	// Init steam api.
 	steamapi_init();
+
+	// Init yoga.
+	init_yoga();
 
 	// keep a local reference to Surface.Screen
 	jsal_get_global_string("Surface");
