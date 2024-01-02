@@ -893,8 +893,8 @@ js_SteamAPI_Init(int num_args, bool is_ctor, intptr_t magic)
 	if (steam_api)
 	{
 		FuncPtr_000 SteamAPI_Init;
-		SteamAPI_Init = (FuncPtr_000)GetProcAddress(steam_api, "SteamAPI_Init");
-		if (SteamAPI_Init())
+		SteamAPI_Init = (FuncPtr_000)GetProcAddress(steam_api, "SteamInternal_SteamAPI_Init");
+		if (SteamAPI_Init(NULL, NULL) == 0)
 		{
 			FuncPtr_001 ISteamUser_Accessor = (FuncPtr_001)GetProcAddress(steam_api, "SteamAPI_SteamUser_v023");
 			ISteamUser = ISteamUser_Accessor();

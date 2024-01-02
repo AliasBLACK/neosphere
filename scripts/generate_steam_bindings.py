@@ -165,7 +165,7 @@ def create_function_ptr(ptr_key, returntype, params):
 		return function_pointers[ptr_key]["name"]
 
 # Create basic function pointers for steam api init functions.
-boolfunc = create_function_ptr("bool", "bool", [])
+initfunc = create_function_ptr("int, const char *, char *", "int", ["const char *", "char *"])
 pointerfunc = create_function_ptr("void *", "void *", [])
 voidfunc = create_function_ptr("void", "void", [])
 
@@ -618,9 +618,9 @@ js_SteamAPI_Init(int num_args, bool is_ctor, intptr_t magic)
 	steam_api = LoadLibrary(TEXT("steam_api64.dll"));
 	if (steam_api)
 	{
-		""" + boolfunc + """ SteamAPI_Init;
-		SteamAPI_Init = (""" + boolfunc + """)GetProcAddress(steam_api, "SteamAPI_Init");
-		if (SteamAPI_Init())
+		""" + initfunc + """ SteamAPI_Init;
+		SteamAPI_Init = (""" + initfunc + """)GetProcAddress(steam_api, "SteamInternal_SteamAPI_Init");
+		if (SteamAPI_Init(NULL, NULL) == 0)
 		{"""
 
 # Write all accessors for interfaces in init function.
