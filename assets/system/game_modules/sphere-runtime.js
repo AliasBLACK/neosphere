@@ -44,6 +44,7 @@ export { default as Prim } from 'prim';
 export { default as Scene } from 'scene';
 export { default as Task, default as Thread } from 'task';
 export { default as Tween, Easing } from 'tween';
+export { Node, Text } from 'node';
 
 // Sphere Runtime shared modules
 export { default as DataStream } from 'data-stream';
@@ -51,9 +52,8 @@ export { default as from, Query } from 'from';
 export { default as Logger } from 'logger';
 export { default as Random } from 'random';
 
-// External Modules
+// 3rd party libraries.
 import { decomp } from 'decomp';
 global.decomp = decomp;
 export { Matter } from 'matter';
-export * as Yoga from 'yoga/api';
-export { Node, Text } from 'node';
+export { Yoga } from 'yoga';

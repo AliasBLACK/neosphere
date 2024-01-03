@@ -1,4 +1,4 @@
-import * as Yoga from 'yoga/api'
+import { Yoga } from 'yoga'
 
 // Some shared functionality between layout nodes.
 class NodeAbstract extends Yoga.Node
