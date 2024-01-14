@@ -2549,7 +2549,7 @@ js_Font_get_Default(int num_args, bool is_ctor, intptr_t magic)
 {
 	ttf_t* font;
 
-	if (!(font = ttf_from_rfn(game_default_font(g_game))))
+	if (!(font = game_default_font(g_game)))
 		jsal_error(JS_REF_ERROR, "No default font is available");
 	jsal_push_class_obj(PEGASUS_FONT, font, false);
 	cache_value_to_this("Default");

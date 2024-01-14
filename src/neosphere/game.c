@@ -59,7 +59,7 @@ struct game
 	image_t*       default_arrow;
 	image_t*       default_arrow_down;
 	image_t*       default_arrow_up;
-	font_t*        default_font;
+	ttf_t*        default_font;
 	windowstyle_t* default_windowstyle;
 	vector_t*      file_type_map;
 	bool           fullscreen;
@@ -1020,9 +1020,9 @@ load_default_assets(game_t* game)
 
 	// system default font
 	path = game_full_path(game,
-		kev_read_string(system_ini, "Font", "system.rfn"),
+		kev_read_string(system_ini, "Font", "system.ttf"),
 		"#/", true);
-	game->default_font = font_load(path_cstr(path));
+	game->default_font = ttf_open(path_cstr(path), 14, true, true);
 	path_free(path);
 
 	// system default windowstyle
