@@ -295,7 +295,7 @@ def require_string(type):
 		case "int64_t" | "uint64_t" | "float" | "double":
 			return  "jsal_require_number("
 		case "char *" | "const char *":
-			return "jsal_require_string("
+			return "(char*)jsal_require_string("
 		case _:
 			print("Input type " + type + " not recognized!")
 			return ""
@@ -323,7 +323,7 @@ def jsal_push_array(param, initialized_i):
 		initialized_i = True
 		result += "	int i;\n"
 	result += "	jsal_push_new_array();\n"
-	result += "	for (i = 0; i < " + param['out_array_size'] + "; ++i)\n"
+	result += "	for (i = 0; i < (int)" + param['out_array_size'] + "; ++i)\n"
 	result += "	{\n"
 	result += "		" + jsal_push_function(param['paramtype'].replace("*", "").strip()) + param['paramname'] + "[i]);\n"
 	result += "		jsal_put_prop_index(-2, i);\n"
