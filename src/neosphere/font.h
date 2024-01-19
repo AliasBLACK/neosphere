@@ -36,35 +36,10 @@
 #include "color.h"
 #include "image.h"
 
-typedef struct font     font_t;
 typedef struct ttf      ttf_t;
 typedef struct wraptext wraptext_t;
 
-typedef
-enum text_align
-{
-	TEXT_ALIGN_LEFT,
-	TEXT_ALIGN_CENTER,
-	TEXT_ALIGN_RIGHT
-} text_align_t;
-
-font_t*     font_load         (const char* path);
-font_t*     font_clone        (const font_t* it);
-font_t*     font_ref          (font_t* it);
-void        font_unref        (font_t* it);
-image_t*    font_glyph        (const font_t* it, uint32_t cp);
-int         font_height       (const font_t* it);
-const char* font_path         (const font_t* it);
-void        font_draw_text    (font_t* it, int x, int y, text_align_t alignment, const char* text);
-color_t     font_get_mask     (const font_t* it);
-void        font_get_metrics  (const font_t* it, int* min_width, int* max_width, int* out_line_height);
-int         font_get_width    (const font_t* it, const char* text);
-void        font_set_glyph    (font_t* it, uint32_t cp, image_t* image);
-void        font_set_mask     (font_t* it, color_t color);
-wraptext_t* font_wrap         (const font_t* font, const char* text, int width);
-
 ttf_t*      ttf_open          (const char* path, int size, bool kerning, bool antialiasing);
-ttf_t*      ttf_from_rfn      (font_t* font);
 ttf_t*      ttf_ref           (ttf_t* it);
 void        ttf_unref         (ttf_t* it);
 int         ttf_height        (const ttf_t* it);

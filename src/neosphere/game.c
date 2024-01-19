@@ -40,7 +40,6 @@
 #include "kev_file.h"
 #include "package.h"
 #include "tinydir.h"
-#include "windowstyle.h"
 
 enum fs_type
 {
@@ -59,8 +58,7 @@ struct game
 	image_t*       default_arrow;
 	image_t*       default_arrow_down;
 	image_t*       default_arrow_up;
-	ttf_t*        default_font;
-	windowstyle_t* default_windowstyle;
+	ttf_t*         default_font;
 	vector_t*      file_type_map;
 	bool           fullscreen;
 	js_ref_t*      manifest;
@@ -385,16 +383,10 @@ game_default_arrow_up(const game_t* it)
 	return it->default_arrow_up;
 }
 
-font_t*
+ttf_t*
 game_default_font(const game_t* it)
 {
 	return it->default_font;
-}
-
-windowstyle_t*
-game_default_windowstyle(const game_t* it)
-{
-	return it->default_windowstyle;
 }
 
 bool
@@ -1023,13 +1015,6 @@ load_default_assets(game_t* game)
 		kev_read_string(system_ini, "Font", "system.ttf"),
 		"#/", true);
 	game->default_font = ttf_open(path_cstr(path), 14, true, true);
-	path_free(path);
-
-	// system default windowstyle
-	path = game_full_path(game,
-		kev_read_string(system_ini, "WindowStyle", "system.rws"),
-		"#/", true);
-	game->default_windowstyle = winstyle_load(path_cstr(path));
 	path_free(path);
 
 	// system default pointer image
