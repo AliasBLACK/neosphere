@@ -160,7 +160,6 @@ xcopy /y /d /e /f "..\dep\lib\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="..\src\cell\image.c" />
     <ClCompile Include="..\src\cell\module.c" />
     <ClCompile Include="..\src\cell\target.c" />
-    <ClCompile Include="..\src\cell\tileset.c" />
     <ClCompile Include="..\src\cell\tool.c" />
     <ClCompile Include="..\src\cell\visor.c" />
     <ClCompile Include="..\src\shared\api.c" />
@@ -183,7 +182,6 @@ xcopy /y /d /e /f "..\dep\lib\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="..\src\cell\image.h" />
     <ClInclude Include="..\src\cell\module.h" />
     <ClInclude Include="..\src\cell\target.h" />
-    <ClInclude Include="..\src\cell\tileset.h" />
     <ClInclude Include="..\src\cell\tool.h" />
     <ClInclude Include="..\src\cell\visor.h" />
     <ClInclude Include="..\src\shared\api.h" />

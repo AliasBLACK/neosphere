@@ -47,7 +47,7 @@ struct screen
 	image_t*         backbuffer;
 	rect_t           clip_rect;
 	ALLEGRO_DISPLAY* display;
-	font_t*          font;
+	ttf_t*           font;
 	int              fps_flips;
 	int              fps_frames;
 	double           fps_poll_time;
@@ -75,7 +75,7 @@ struct screen
 static void refresh_display (screen_t* screen);
 
 screen_t*
-screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, font_t* font)
+screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, ttf_t* font)
 {
 	image_t*             backbuffer = NULL;
 	int                  bitmap_flags;
@@ -264,8 +264,8 @@ screen_draw_status(screen_t* it, const char* text, color_t color)
 
 	screen_cx = al_get_display_width(it->display);
 	screen_cy = al_get_display_height(it->display);
-	width = font_get_width(it->font, text) + 20;
-	height = font_height(it->font) + 10;
+	width = ttf_get_width(it->font, text) + 20;
+	height = ttf_height(it->font) + 10;
 	bounds.x1 = 8 + it->x_offset;
 	bounds.y1 = screen_cy - it->y_offset - height - 8;
 	bounds.x2 = bounds.x1 + width;
@@ -274,12 +274,8 @@ screen_draw_status(screen_t* it, const char* text, color_t color)
 	al_set_target_backbuffer(it->display);
 	al_draw_filled_rounded_rectangle(bounds.x1, bounds.y1, bounds.x2, bounds.y2, 4, 4,
 		al_map_rgba(16, 16, 16, 192));
-	font_set_mask(it->font, mk_color(0, 0, 0, 255));
-	font_draw_text(it->font, (bounds.x1 + bounds.x2) / 2 + 1,
-		bounds.y1 + 6, TEXT_ALIGN_CENTER, text);
-	font_set_mask(it->font, color);
-	font_draw_text(it->font, (bounds.x2 + bounds.x1) / 2,
-		bounds.y1 + 5, TEXT_ALIGN_CENTER, text);
+	ttf_draw_text(it->font, ((bounds.x1 + bounds.x2) - ttf_get_width(it->font, text)) / 2.0f, bounds.y1 + 6, text, mk_color(0, 0, 0, 255));
+	ttf_draw_text(it->font, ((bounds.x2 + bounds.x1) - ttf_get_width(it->font, text)) / 2.0f, bounds.y1 + 5, text, color);
 	al_set_target_bitmap(old_target);
 }
 
@@ -375,14 +371,12 @@ screen_flip(screen_t* it, int framerate, bool need_clear)
 		if (debugger_attached())
 			screen_draw_status(it, debugger_name(), debugger_color());
 		if (it->notify_alpha > 0.0 && it->font != NULL) {
-			width = font_get_width(it->font, it->message) + 20;
+			width = ttf_get_width(it->font, it->message) + 20;
 			x = (screen_cx - width) / 2;
 			y = screen_cy - it->y_offset - 32;
 			al_draw_filled_rounded_rectangle(x, y, x + width, y + 24, 4, 4, al_map_rgba(16, 16, 16, 192 * it->notify_alpha));
-			font_set_mask(it->font, mk_color(0, 0, 0, 255 * it->notify_alpha));
-			font_draw_text(it->font, x + 11, y + 7, TEXT_ALIGN_LEFT, it->message);
-			font_set_mask(it->font, mk_color(192, 192, 192, 255 * it->notify_alpha));
-			font_draw_text(it->font, x + 10, y + 6, TEXT_ALIGN_LEFT, it->message);
+			ttf_draw_text(it->font, x + 11, y + 7, it->message, mk_color(0, 0, 0, 255 * it->notify_alpha));
+			ttf_draw_text(it->font, x + 10, y + 6, it->message, mk_color(192, 192, 192, 255 * it->notify_alpha));
 		}
 		if (it->show_fps && it->font != NULL) {
 			if (framerate > 0)
@@ -392,10 +386,8 @@ screen_flip(screen_t* it, int framerate, bool need_clear)
 			x = screen_cx - it->x_offset - 108;
 			y = screen_cy - it->y_offset - 24;
 			al_draw_filled_rounded_rectangle(x, y, x + 100, y + 16, 4, 4, al_map_rgba(16, 16, 16, 192));
-			font_set_mask(it->font, mk_color(0, 0, 0, 255));
-			font_draw_text(it->font, x + 51, y + 3, TEXT_ALIGN_CENTER, fps_text);
-			font_set_mask(it->font, mk_color(255, 255, 255, 255));
-			font_draw_text(it->font, x + 50, y + 2, TEXT_ALIGN_CENTER, fps_text);
+			ttf_draw_text(it->font, x + 51 - ttf_get_width(it->font, fps_text) / 2.0f, y + 2, fps_text, mk_color(0, 0, 0, 255));
+			ttf_draw_text(it->font, x + 50 - ttf_get_width(it->font, fps_text) / 2.0f, y + 1, fps_text, mk_color(255, 255, 255, 255));
 		}
 		al_set_target_bitmap(old_target);
 		al_flip_display();

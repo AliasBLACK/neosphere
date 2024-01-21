@@ -273,7 +273,6 @@ xcopy /y /d /e /f "..\dep\lib\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="..\src\neosphere\legacy.c" />
     <ClCompile Include="..\src\neosphere\profiler.c" />
     <ClCompile Include="..\src\neosphere\table.c" />
-    <ClCompile Include="..\src\neosphere\vanilla.c" />
     <ClCompile Include="..\src\neosphere\transform.c" />
     <ClCompile Include="..\src\neosphere\pegasus.c" />
     <ClCompile Include="..\src\neosphere\screen.c" />
@@ -304,15 +303,11 @@ xcopy /y /d /e /f "..\dep\lib\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="..\src\neosphere\image.c" />
     <ClCompile Include="..\src\neosphere\input.c" />
     <ClCompile Include="..\src\neosphere\logger.c" />
-    <ClCompile Include="..\src\neosphere\map_engine.c" />
     <ClCompile Include="..\src\neosphere\obstruction.c" />
     <ClCompile Include="..\src\neosphere\script.c" />
     <ClCompile Include="..\src\neosphere\game.c" />
     <ClCompile Include="..\src\neosphere\package.c" />
-    <ClCompile Include="..\src\neosphere\spriteset.c" />
-    <ClCompile Include="..\src\neosphere\tileset.c" />
     <ClCompile Include="..\src\neosphere\utility.c" />
-    <ClCompile Include="..\src\neosphere\windowstyle.c" />
     <ClCompile Include="..\src\shared\wildmatch.c" />
     <ClCompile Include="..\src\shared\xoroshiro.c" />
   </ItemGroup>
@@ -327,7 +322,6 @@ xcopy /y /d /e /f "..\dep\lib\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="..\src\neosphere\legacy.h" />
     <ClInclude Include="..\src\neosphere\profiler.h" />
     <ClInclude Include="..\src\neosphere\table.h" />
-    <ClInclude Include="..\src\neosphere\vanilla.h" />
     <ClInclude Include="..\src\neosphere\transform.h" />
     <ClInclude Include="..\src\neosphere\pegasus.h" />
     <ClInclude Include="..\src\neosphere\screen.h" />
@@ -360,16 +354,12 @@ xcopy /y /d /e /f "..\dep\lib\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="..\src\neosphere\image.h" />
     <ClInclude Include="..\src\neosphere\input.h" />
     <ClInclude Include="..\src\neosphere\logger.h" />
-    <ClInclude Include="..\src\neosphere\map_engine.h" />
     <ClInclude Include="..\src\neosphere\galileo.h" />
     <ClInclude Include="..\src\neosphere\obstruction.h" />
     <ClInclude Include="..\src\neosphere\script.h" />
     <ClInclude Include="..\src\neosphere\game.h" />
     <ClInclude Include="..\src\neosphere\package.h" />
-    <ClInclude Include="..\src\neosphere\spriteset.h" />
-    <ClInclude Include="..\src\neosphere\tileset.h" />
     <ClInclude Include="..\src\neosphere\utility.h" />
-    <ClInclude Include="..\src\neosphere\windowstyle.h" />
     <ClInclude Include="..\src\shared\wildmatch.h" />
     <ClInclude Include="..\src\shared\xoroshiro.h" />
     <ClInclude Include="resource.h" />

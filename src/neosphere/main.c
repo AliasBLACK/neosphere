@@ -46,13 +46,10 @@
 #include "galileo.h"
 #include "input.h"
 #include "jsal.h"
-#include "map_engine.h"
 #include "module.h"
 #include "pegasus.h"
 #include "profiler.h"
 #include "sockets.h"
-#include "spriteset.h"
-#include "vanilla.h"
 
 // enable Windows visual styles (MSVC)
 #ifdef _MSC_VER
@@ -319,8 +316,6 @@ main(int argc, char* argv[])
 	
 	api_init(target_api_level <= 3);
 	modules_init(target_api_level);
-	if (api_version == 1 || (api_version == 2 && target_api_level < 4))
-		vanilla_init();
 	if (api_version >= 2)
 		pegasus_init(api_level, target_api_level);
 
@@ -662,8 +657,6 @@ initialize_engine(void)
 	audio_init();
 	initialize_input();
 	sockets_init(on_socket_idle);
-	spritesets_init();
-	map_engine_init();
 	scripts_init();
 
 	return true;
@@ -689,7 +682,6 @@ shutdown_engine(void)
 	game_unref(g_game);
 	g_game = NULL;
 
-	map_engine_uninit();
 	shutdown_input();
 	scripts_uninit();
 	sockets_uninit();
@@ -700,7 +692,6 @@ shutdown_engine(void)
 	console_log(1, "shutting down Dyad");
 	dyad_shutdown();
 
-	spritesets_uninit();
 	audio_uninit();
 	galileo_uninit();
 	events_uninit();
@@ -980,7 +971,7 @@ show_error_screen(const char* message)
 	blend_op_t*            blend_op;
 	bool                   debugging;
 	wraptext_t*            error_info;
-	font_t*                font;
+	ttf_t*                 font;
 	bool                   is_copied = false;
 	bool                   is_finished;
 	int                    frames_till_close;
@@ -1003,7 +994,7 @@ show_error_screen(const char* message)
 
 	// word-wrap the error message to fit inside the error box
 	resolution = screen_size(g_screen);
-	if (!(error_info = font_wrap(font, message, resolution.width - 84)))
+	if (!(error_info = ttf_wrap(font, message, resolution.width - 84)))
 		goto show_error_box;
 	num_lines = wraptext_len(error_info);
 
@@ -1029,29 +1020,24 @@ show_error_screen(const char* message)
 	frames_till_close = 30;
 	while (!is_finished) {
 		al_draw_filled_rounded_rectangle(32, 48, resolution.width - 32, resolution.height - 32, 5, 5, al_map_rgba(48, 16, 16, 255));
-		font_set_mask(font, mk_color(0, 0, 0, 255));
-		font_draw_text(font, resolution.width / 2 + 1, 11, TEXT_ALIGN_CENTER, title);
-		font_draw_text(font, resolution.width / 2 + 1, 23, TEXT_ALIGN_CENTER, subtitle);
-		font_set_mask(font, mk_color(192, 192, 192, 255));
-		font_draw_text(font, resolution.width / 2, 10, TEXT_ALIGN_CENTER, title);
-		font_draw_text(font, resolution.width / 2, 22, TEXT_ALIGN_CENTER, subtitle);
+		ttf_draw_text(font, (resolution.width - ttf_get_width(font, title)) / 2.0f, 11, title, mk_color(0, 0, 0, 255));
+		ttf_draw_text(font, (resolution.width - ttf_get_width(font, subtitle)) / 2.0f, 23, subtitle, mk_color(0, 0, 0, 255));
+		ttf_draw_text(font, (resolution.width - ttf_get_width(font, title)) / 2.0f, 10, title, mk_color(192, 192, 192, 255));
+		ttf_draw_text(font, (resolution.width - ttf_get_width(font, subtitle)) / 2.0f, 22, subtitle, mk_color(192, 192, 192, 255));
 		for (i = 0; i < num_lines; ++i) {
 			line_text = wraptext_line(error_info, i);
-			font_set_mask(font, mk_color(16, 0, 0, 255));
-			font_draw_text(font,
-				resolution.width / 2 + 1, 59 + i * font_height(font),
-				TEXT_ALIGN_CENTER, line_text);
-			font_set_mask(font, mk_color(192, 192, 192, 255));
-			font_draw_text(font,
-				resolution.width / 2, 58 + i * font_height(font),
-				TEXT_ALIGN_CENTER, line_text);
+			ttf_draw_text(font,
+				(resolution.width - ttf_get_width(font, line_text)) / 2.0f, 59 + i * ttf_height(font),
+				line_text, mk_color(16, 0, 0, 255));
+			ttf_draw_text(font,
+				(resolution.width - ttf_get_width(font, line_text)) / 2.0f, 58 + i * ttf_height(font),
+				line_text, mk_color(192, 192, 192, 255));
 		}
 		if (frames_till_close <= 0) {
-			font_set_mask(font, mk_color(255, 255, 192, 255));
-			font_draw_text(font,
-				resolution.width / 2, resolution.height - 10 - font_height(font),
-				TEXT_ALIGN_CENTER,
-				is_copied ? "[space]/[esc] to close" : "[ctrl+c] to copy  [space]/[esc] to close");
+			const char *close_text = is_copied ? "[space]/[esc] to close" : "[ctrl+c] to copy  [space]/[esc] to close";
+			ttf_draw_text(font,
+				(resolution.width - ttf_get_width(font, close_text)) / 2.0f, resolution.height - 10 - ttf_height(font),
+				close_text, mk_color(255, 255, 192, 255));
 		}
 		debugger_update();
 		screen_flip(g_screen, 30, true);

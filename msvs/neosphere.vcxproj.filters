@@ -63,22 +63,10 @@
     <ClCompile Include="..\src\neosphere\logger.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\neosphere\map_engine.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\neosphere\script.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\neosphere\spriteset.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\neosphere\tileset.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\neosphere\utility.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\neosphere\windowstyle.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\neosphere\screen.c">
@@ -91,9 +79,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\neosphere\pegasus.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\neosphere\vanilla.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\shared\api.c">
@@ -224,16 +209,7 @@
     <ClInclude Include="..\src\neosphere\logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\neosphere\map_engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\neosphere\script.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\neosphere\spriteset.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\neosphere\tileset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\neosphere\utility.h">
@@ -252,9 +228,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\neosphere\pegasus.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\neosphere\vanilla.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\shared\api.h">
@@ -276,9 +249,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\neosphere\kev_file.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\neosphere\windowstyle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\neosphere\game.h">
