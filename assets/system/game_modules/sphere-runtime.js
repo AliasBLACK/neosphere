@@ -44,7 +44,7 @@ export { default as Prim } from 'prim';
 export { default as Scene } from 'scene';
 export { default as Task, default as Thread } from 'task';
 export { default as Tween, Easing } from 'tween';
-export { Node, Text } from 'node';
+export { Widget, Text } from 'widget';
 
 // Sphere Runtime shared modules
 export { default as DataStream } from 'data-stream';
@@ -56,4 +56,3 @@ export { default as Random } from 'random';
 import { decomp } from 'decomp';
 global.decomp = decomp;
 export { Matter } from 'matter';
-export { Yoga } from 'yoga';

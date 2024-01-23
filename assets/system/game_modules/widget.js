@@ -1,7 +1,5 @@
-import { Yoga } from 'yoga'
-
 // Some shared functionality between layout nodes.
-class NodeAbstract extends Yoga.Node
+class NodeAbstract extends Node
 {
     constructor()
     {
@@ -14,15 +12,6 @@ class NodeAbstract extends Yoga.Node
 		this.animYOffset = 0
 		this.animating = false
 		this.originalPositionType = Yoga.POSITION_TYPE_ABSOLUTE
-
-        // Redefine setters for builder pattern.
-		for (const property of Object.getOwnPropertyNames(Yoga.Node.prototype))
-        if (property.includes("set"))
-            this[property] = function(...args)
-            {
-                Yoga.Node.prototype[property].call(this, ...args)
-                return this
-            }
     }
 
 	setChildOf(parent)
@@ -103,13 +92,14 @@ class NodeAbstract extends Yoga.Node
 		this.xOffset = xOffset
 		this.yOffset = yOffset
 		for (let i = 0; i < this.getChildCount(); i++)
-			this.getChild(i).render(surface, xOffset + this.getComputedLeft() + this.animXOffset, yOffset + this.getComputedTop() + this.animYOffset)
+			this.getChild(i).render(surface, xOffset + this.layoutGetLeft() + this.animXOffset, yOffset + this.layoutGetTop() + this.animYOffset)
 	}
 
 	updateChildren()
 	{
 		for (let i = 0; i < this.getChildCount(); i++)
 		{
+			print(this.getChild(i).constructor.name)
 			this.getChild(i).update()
 			this.getChild(i).updateChildren()
 		}
@@ -118,7 +108,7 @@ class NodeAbstract extends Yoga.Node
 	update() {}
 }
 
-export class Node extends NodeAbstract
+export class Widget extends NodeAbstract
 {
 	constructor()
 	{
@@ -156,16 +146,16 @@ export class Node extends NodeAbstract
 	{
 		if (this.texture != null)
 		{
-			let x = xOffset + this.getComputedLeft()
-			let y = yOffset + this.getComputedTop()
+			let x = xOffset + this.layoutGetLeft()
+			let y = yOffset + this.layoutGetTop()
 			switch (this.renderMode)
 			{
 				case 'colorRounded':
-					PrimNative.drawFilledRoundedRectangle(surface, x, y, x + this.getComputedWidth(), y + this.getComputedHeight(), 5, 5, this.texture)
+					PrimNative.drawFilledRoundedRectangle(surface, x, y, x + this.layoutGetWidth(), y + this.layoutGetHeight(), 5, 5, this.texture)
 					break;
 
 				case "color":
-					PrimNative.drawFilledRectangle(surface, x, y, x + this.getComputedWidth(), y + this.getComputedHeight(), this.texture)
+					PrimNative.drawFilledRectangle(surface, x, y, x + this.layoutGetWidth(), y + this.layoutGetHeight(), this.texture)
 					break;
 
 				case "tiled":
@@ -176,7 +166,7 @@ export class Node extends NodeAbstract
 					if (this.shape[0] == null)
 						this.shape[0] = this.textureShape(this.texture, false)
 					this.transform[0].identity()
-					this.transform[0].scale(this.getComputedWidth() / this.texture.width, this.getComputedHeight() / this.texture.height)
+					this.transform[0].scale(this.layoutGetWidth() / this.texture.width, this.layoutGetHeight() / this.texture.height)
 					this.transform[0].translate(x, y)
 					this.shape[0].draw(surface, this.transform[0])
 					break
@@ -184,8 +174,8 @@ export class Node extends NodeAbstract
 				case "ninePatch":
 					let hor = this.texture.width / 3
 					let ver = this.texture.height / 3
-					let horStretch = (this.getComputedWidth() - hor * 2) / hor
-					let verStretch = (this.getComputedHeight() - ver * 2) / ver
+					let horStretch = (this.layoutGetWidth() - hor * 2) / hor
+					let verStretch = (this.layoutGetHeight() - ver * 2) / ver
 
 					if (horStretch <= 0 || verStretch <= 0)
 						break
@@ -209,7 +199,7 @@ export class Node extends NodeAbstract
 					if (this.shape[2] == null)
 						this.shape[2] = this.textureShape(this.texture, false, hor * 2, 0, hor, ver)
 					this.transform[2].identity()
-					this.transform[2].translate(x + this.getComputedWidth() - hor, y)
+					this.transform[2].translate(x + this.layoutGetWidth() - hor, y)
 					this.shape[2].draw(surface, this.transform[2])
 
 					// Center-left.
@@ -233,14 +223,14 @@ export class Node extends NodeAbstract
 						this.shape[5] = this.textureShape(this.texture, false, hor * 2, ver, hor, ver)
 					this.transform[5].identity()
 					this.transform[5].scale(1, verStretch)
-					this.transform[5].translate(x + this.getComputedWidth() - hor, y + ver)
+					this.transform[5].translate(x + this.layoutGetWidth() - hor, y + ver)
 					this.shape[5].draw(surface, this.transform[5])
 
 					// Bottom-left.
 					if (this.shape[6] == null)
 						this.shape[6] = this.textureShape(this.texture, false, 0, ver * 2, hor, ver)
 					this.transform[6].identity()
-					this.transform[6].translate(x, y + this.getComputedHeight() - ver)
+					this.transform[6].translate(x, y + this.layoutGetHeight() - ver)
 					this.shape[6].draw(surface, this.transform[6])
 
 					// Bottom-center.
@@ -248,14 +238,14 @@ export class Node extends NodeAbstract
 						this.shape[7] = this.textureShape(this.texture, false, hor, ver * 2, hor, ver)
 					this.transform[7].identity()
 					this.transform[7].scale(horStretch, 1)
-					this.transform[7].translate(x + hor, y + this.getComputedHeight() - ver)
+					this.transform[7].translate(x + hor, y + this.layoutGetHeight() - ver)
 					this.shape[7].draw(surface, this.transform[7])
 
 					// Bottom-right.
 					if (this.shape[8] == null)
 						this.shape[8] = this.textureShape(this.texture, false, hor * 2, ver * 2, hor, ver)
 					this.transform[8].identity()
-					this.transform[8].translate(x + this.getComputedWidth() - hor, y + this.getComputedHeight() - ver)
+					this.transform[8].translate(x + this.layoutGetWidth() - hor, y + this.layoutGetHeight() - ver)
 					this.shape[8].draw(surface, this.transform[8])
 					break
 			}
@@ -339,12 +329,12 @@ export class Text extends NodeAbstract
         this.text = text
 
         // Updated cached width, so we know if layout has changed.
-        this.cachedWidth = this.getComputedWidth()
+        this.cachedWidth = this.layoutGetWidth()
 
         // Grab allowed width.
         let contentWidth = this.cachedWidth
-        contentWidth -= this.getComputedPadding(Yoga.EDGE_LEFT)
-        contentWidth -= this.getComputedPadding(Yoga.EDGE_RIGHT)
+        contentWidth -= this.layoutGetPadding(Yoga.EDGE_LEFT)
+        contentWidth -= this.layoutGetPadding(Yoga.EDGE_RIGHT)
 
         // Break text up into array of lines limited by width.
 		this.multiLine = this.isEastAsian ?
@@ -353,8 +343,8 @@ export class Text extends NodeAbstract
 
         // Calculate min height based on text and font.
         let contentHeight = this.font.height * this.multiLine.length
-        contentHeight += this.getComputedPadding(Yoga.EDGE_TOP)
-        contentHeight += this.getComputedPadding(Yoga.EDGE_BOTTOM)
+        contentHeight += this.layoutGetPadding(Yoga.EDGE_TOP)
+        contentHeight += this.layoutGetPadding(Yoga.EDGE_BOTTOM)
         this.setMinHeight(contentHeight)
 	}
 
@@ -395,12 +385,12 @@ export class Text extends NodeAbstract
     renderText(surface, xOffset, yOffset)
     {
         // If layout has changed, recalculate text formatting.
-        if (this.getComputedWidth() != this.cachedWidth)
+        if (this.layoutGetWidth() != this.cachedWidth)
             this.updateText(this.text)
         
         // Render text.
-        let top = yOffset + this.getComputedTop() + this.getComputedPadding(Yoga.EDGE_TOP)
-        let left = xOffset + this.getComputedLeft() + this.getComputedPadding(Yoga.EDGE_LEFT)
+        let top = yOffset + this.layoutGetTop() + this.layoutGetPadding(Yoga.EDGE_TOP)
+        let left = xOffset + this.layoutGetLeft() + this.layoutGetPadding(Yoga.EDGE_LEFT)
 		switch (this.textAlign)
         {
             case "alignLeft":
@@ -415,7 +405,7 @@ export class Text extends NodeAbstract
                 break
             
             case "alignRight":
-                let right = xOffset + this.getComputedLeft() + this.getComputedWidth() - this.getComputedPadding(Yoga.EDGE_RIGHT)
+                let right = xOffset + this.layoutGetLeft() + this.layoutGetWidth() - this.layoutGetPadding(Yoga.EDGE_RIGHT)
                 for (let i = 0; i < this.multiLine.length; i++)
                 {
                     let line = this.multiLine[i]
@@ -430,9 +420,9 @@ export class Text extends NodeAbstract
                 break
             
             case "alignCenter":
-                let width = this.getComputedWidth()
-                width -= this.getComputedPadding(Yoga.EDGE_LEFT)
-                width -= this.getComputedPadding(Yoga.EDGE_RIGHT)
+                let width = this.layoutGetWidth()
+                width -= this.layoutGetPadding(Yoga.EDGE_LEFT)
+                width -= this.layoutGetPadding(Yoga.EDGE_RIGHT)
                 for (let i = 0; i < this.multiLine.length; i++)
                 {
                     let line = this.multiLine[i]

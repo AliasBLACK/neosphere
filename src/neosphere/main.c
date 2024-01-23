@@ -50,6 +50,8 @@
 #include "pegasus.h"
 #include "profiler.h"
 #include "sockets.h"
+#include "steam.h"
+#include "node.h"
 
 // enable Windows visual styles (MSVC)
 #ifdef _MSC_VER
@@ -317,7 +319,11 @@ main(int argc, char* argv[])
 	api_init(target_api_level <= 3);
 	modules_init(target_api_level);
 	if (api_version >= 2)
+	{
 		pegasus_init(api_level, target_api_level);
+		steamapi_init();
+		yoga_init();
+	}
 
 	// switch to fullscreen if necessary and initialize clipping
 	if (fullscreen_mode == FULLSCREEN_ON || (fullscreen_mode == FULLSCREEN_AUTO && game_fullscreen(g_game)))
