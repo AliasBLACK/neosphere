@@ -58,8 +58,7 @@ yoga_init()
 	api_define_const("Yoga", "WRAP_WRAP_REVERSE", YGWrapWrapReverse);
 
 	// Functions.
-	api_define_class("Node", YOGA_NODE, NULL, js_node_finalize, 0);
-	api_define_func("Node", "create", js_new_node, 0);
+	api_define_class("Node", YOGA_NODE, js_new_node, js_node_finalize, 0);
 	api_define_method("Node", "insertChild", js_Node_insert_child, 0);
 	api_define_method("Node", "swapChild", js_Node_swap_child, 0);
 	api_define_method("Node", "removeChild", js_Node_remove_child, 0);
@@ -170,13 +169,21 @@ jsal_push_YGValue(YGValue value)
 static bool
 js_new_node(int num_args, bool is_ctor, intptr_t magic)
 {
-	jsal_push_class_obj(YOGA_NODE, YGNodeNew(), is_ctor);
+	YGNodeRef node;
+	js_ref_t* ref;
+
+	node = YGNodeNew();
+	jsal_push_class_obj(YOGA_NODE, node, is_ctor);
+	ref = jsal_ref(-1);
+	YGNodeSetContext(node, ref);
+	jsal_unref(ref);
 	return true;
 }
 
 static void
 js_node_finalize(void* host_ptr)
 {
+	printf("node freed");
 	YGNodeFree(host_ptr);
 }
 

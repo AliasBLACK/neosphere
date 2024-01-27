@@ -44,7 +44,7 @@ export { default as Prim } from 'prim';
 export { default as Scene } from 'scene';
 export { default as Task, default as Thread } from 'task';
 export { default as Tween, Easing } from 'tween';
-export { Widget, Text } from 'widget';
+// export { Widget, Text } from 'widget';
 
 // Sphere Runtime shared modules
 export { default as DataStream } from 'data-stream';
