@@ -959,6 +959,19 @@ file_write(file_t* it, const void* buf, size_t count, size_t size)
 	}
 }
 
+bool
+file_flush(file_t* it)
+{
+	switch (it->fs_type) {
+	case FS_LOCAL:
+		return al_fflush(it->handle);
+	case FS_PACKAGE:
+		return asset_fflush(it->asset);
+	default:
+		return 0;
+	}
+}
+
 static bool
 help_list_dir(vector_t* list, const char* dirname, const path_t* origin_path, bool want_dirs, bool recursive)
 {

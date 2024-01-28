@@ -59,5 +59,6 @@ bool        asset_fseek         (asset_t* file, long long offset, spk_seek_origi
 void*       asset_fslurp        (package_t* it, const char* path, size_t *out_size);
 long long   asset_ftell         (asset_t* file);
 size_t      asset_fwrite        (const void* buf, size_t size, size_t count, asset_t* file);
+bool        asset_fflush        (asset_t* file);
 
 #endif // SPHERE__PACKAGE_H__INCLUDED

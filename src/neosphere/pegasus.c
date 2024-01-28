@@ -338,6 +338,7 @@ static bool js_FileStream_set_position       (int num_args, bool is_ctor, intptr
 static bool js_FileStream_dispose            (int num_args, bool is_ctor, intptr_t magic);
 static bool js_FileStream_read               (int num_args, bool is_ctor, intptr_t magic);
 static bool js_FileStream_write              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_FileStream_flush              (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Font_get_Default              (int num_args, bool is_ctor, intptr_t magic);
 static bool js_new_Font                      (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Font_get_fileName             (int num_args, bool is_ctor, intptr_t magic);
@@ -660,6 +661,7 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_method("FileStream", "dispose", js_FileStream_dispose, 0);
 	api_define_method("FileStream", "read", js_FileStream_read, 0);
 	api_define_method("FileStream", "write", js_FileStream_write, 0);
+	api_define_method("FileStream", "flush", js_FileStream_flush, 0);
 	api_define_class("Font", PEGASUS_FONT, js_new_Font, js_Font_finalize, 0);
 	api_define_static_prop("Font", "Default", js_Font_get_Default, NULL, 0);
 	api_define_prop("Font", "fileName", false, js_Font_get_fileName, NULL);
@@ -2542,6 +2544,20 @@ js_FileStream_write(int num_args, bool is_ctor, intptr_t magic)
 	if (file_write(file, data, num_bytes, 1) != num_bytes)
 		jsal_error(JS_ERROR, "Couldn't write '%zu' bytes to file", num_bytes);
 	return false;
+}
+
+static bool
+js_FileStream_flush(int num_args, bool is_ctor, intptr_t magic)
+{
+	file_t* file;
+
+	jsal_push_this();
+	if (!(file = jsal_require_class_obj(-1, PEGASUS_FILE_STREAM)))
+		jsal_error(JS_ERROR, "FileStream has already been disposed");
+
+	if (!file_flush(file))
+		jsal_error(JS_ERROR, "Couldn't flush file");
+	return true;
 }
 
 static bool

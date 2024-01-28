@@ -449,3 +449,9 @@ asset_fwrite(const void* buf, size_t size, size_t count, asset_t* file)
 {
 	return al_fwrite(file->handle, buf, size * count) / size;
 }
+
+bool
+asset_fflush(asset_t* file)
+{
+	return al_fflush(file->handle);
+}

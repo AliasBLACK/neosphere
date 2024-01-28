@@ -106,5 +106,6 @@ int             file_puts                (file_t* it, const char* string);
 size_t          file_read                (file_t* it, void* buf, size_t count, size_t size);
 bool            file_seek                (file_t* it, long long offset, whence_t whence);
 size_t          file_write               (file_t* it, const void* buf, size_t count, size_t size);
+bool            file_flush               (file_t* it);
 
 #endif // SPHERE__GAME_H__INCLUDED
