@@ -112,8 +112,10 @@ class Console extends Task
 		SSj.log(this.buffer[lineInBuffer]);
 
 		// if we have a logger, write the line to the log file
-		if (this.logger !== null)
+		if (this.logger !== null) {
 			this.logger.write(this.buffer[lineInBuffer]);
+			this.logger.flush();
+		}
 	}
 
 	start()
