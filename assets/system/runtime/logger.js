@@ -35,10 +35,10 @@ class Logger
 {
 	get [Symbol.toStringTag]() { return 'Logger'; }
 
-	constructor(fileName)
+	constructor(fileName, fileOp = FileOp.Update)
 	{
 		this._textEncoder = new TextEncoder();
-		this._stream = new FileStream(fileName, FileOp.Update);
+		this._stream = new FileStream(fileName, fileOp);
 		this._groups = [];
 
 		let timestamp = new Date().toISOString();
@@ -67,5 +67,10 @@ class Logger
 		for (let i = 0; i < this._groups.length; ++i)
 			this._stream.write(this._textEncoder.encode("  "));
 		this._stream.write(this._textEncoder.encode(`${text}\n`));
+	}
+
+	flush()
+	{
+        this._stream.flush();
 	}
 }
