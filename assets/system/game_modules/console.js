@@ -44,6 +44,7 @@ class Console extends Task
 			hotKey:       Key.Tilde,
 			inBackground: true,
 			logFileName:  null,
+			logFileOp:    undefined,
 			mouseKey:     MouseKey.Middle,
 			prompt:       ">",
 			priority:     Infinity,
@@ -59,7 +60,7 @@ class Console extends Task
 		this.entry = "";
 		this.font = Font.Default;
 		this.logger = options.logFileName !== null
-			? new Logger(options.logFileName)
+			? new Logger(options.logFileName, options.logFileOp)
 			: null;
 		this.keyboard = Keyboard.Default;
 		this.mouse = Mouse.Default;
