@@ -360,26 +360,33 @@ export class Text extends NodeAbstract
 
 	eastAsianWordWrap(font, text, width)
 	{
+		let textArray = text.split("\n")
 		let result = []
 		let currentLength = 0
 		let currentString = ""
-		for (const char of text)
+		for (const line of textArray)
 		{
-			let charWidth = font.widthOf(char)
-			if (currentLength + charWidth > width)
+			for (const char of line)
+			{
+				let charWidth = font.widthOf(char)
+				if (currentLength + charWidth > width)
+				{
+					result.push(currentString)
+					currentString = char
+					currentLength = charWidth
+				}
+				else
+				{
+					currentString += char
+					currentLength += charWidth
+				}
+			}
+			if (currentString != "")
 			{
 				result.push(currentString)
-				currentString = char
-				currentLength = charWidth
-			}
-			else
-			{
-				currentString += char
-				currentLength += charWidth
+				currentString = ""
 			}
 		}
-		if (currentString != "")
-			result.push(currentString)
 		return result
 	}
 	
