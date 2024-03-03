@@ -384,6 +384,7 @@ export class Text extends NodeAbstract
 			if (currentString != "")
 			{
 				result.push(currentString)
+				currentLength = 0
 				currentString = ""
 			}
 		}
