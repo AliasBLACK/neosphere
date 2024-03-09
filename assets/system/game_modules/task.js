@@ -184,7 +184,8 @@ class Task
 		if (!canPauseJobs)
 			throw new RangeError("Task#suspend requires a newer Sphere version");
 		if (!this.running)
-			throw new Error("Task is not running");
+			//throw new Error("Task is not running");
+			return;
 		this._updateJob.pause();
 		this._renderJob.pause();
 		this._paused = true
