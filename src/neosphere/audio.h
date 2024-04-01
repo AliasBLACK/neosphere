@@ -48,6 +48,7 @@ mixer_t*    mixer_ref         (mixer_t* mixer);
 void        mixer_unref       (mixer_t* mixer);
 float       mixer_get_gain    (mixer_t* mixer);
 void        mixer_set_gain    (mixer_t* mixer, float gain);
+void		mixer_attach_mixer(mixer_t* mixer, mixer_t* parent);
 sample_t*   sample_new        (const char* path, bool polyphonic);
 sample_t*   sample_ref        (sample_t* sample);
 void        sample_unref      (sample_t* sample);

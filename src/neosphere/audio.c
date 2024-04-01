@@ -296,6 +296,12 @@ mixer_set_gain(mixer_t* mixer, float gain)
 	mixer->gain = gain;
 }
 
+void
+mixer_attach_mixer(mixer_t* mixer, mixer_t* parent)
+{
+	al_attach_mixer_to_mixer(mixer, parent);
+}
+
 sample_t*
 sample_new(const char* path, bool polyphonic)
 {

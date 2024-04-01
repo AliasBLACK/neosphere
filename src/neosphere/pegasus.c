@@ -371,6 +371,7 @@ static bool js_Mixer_get_Default             (int num_args, bool is_ctor, intptr
 static bool js_new_Mixer                     (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Mixer_get_volume              (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Mixer_set_volume              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_Mixer_attach_mixer            (int num_args, bool is_ctor, intptr_t magic);
 static bool js_new_Model                     (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Model_get_shader              (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Model_get_transform           (int num_args, bool is_ctor, intptr_t magic);
@@ -704,6 +705,7 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_class("Mixer", PEGASUS_MIXER, js_new_Mixer, js_Mixer_finalize, 0);
 	api_define_static_prop("Mixer", "Default", js_Mixer_get_Default, NULL, 0);
 	api_define_prop("Mixer", "volume", false, js_Mixer_get_volume, js_Mixer_set_volume);
+	api_define_method("Mixer", "attachMixer", js_Mixer_attach_mixer, 0);
 	api_define_class("Model", PEGASUS_MODEL, js_new_Model, js_Model_finalize, 0);
 	api_define_prop("Model", "shader", false, js_Model_get_shader, js_Model_set_shader);
 	api_define_prop("Model", "transform", false, js_Model_get_transform, js_Model_set_transform);
@@ -3188,6 +3190,19 @@ js_Mixer_set_volume(int num_args, bool is_ctor, intptr_t magic)
 	mixer = jsal_require_class_obj(-1, PEGASUS_MIXER);
 
 	mixer_set_gain(mixer, volume);
+	return false;
+}
+
+static bool
+js_Mixer_attach_mixer(int num_args, bool is_ctor, intptr_t magic)
+{
+	mixer_t* mixer;
+	mixer_t* parent;
+
+	jsal_push_this();
+	mixer = jsal_require_class_obj(-1, PEGASUS_MIXER);
+	parent = jsal_require_class_obj(0, PEGASUS_MIXER);
+	mixer_attach_mixer(mixer, parent);
 	return false;
 }
 
