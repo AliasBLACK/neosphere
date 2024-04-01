@@ -391,6 +391,7 @@ static bool js_RNG_get_state                 (int num_args, bool is_ctor, intptr
 static bool js_RNG_set_state                 (int num_args, bool is_ctor, intptr_t magic);
 static bool js_RNG_iterator                  (int num_args, bool is_ctor, intptr_t magic);
 static bool js_RNG_next                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_SampleInstance_stop           (int num_args, bool is_ctor, intptr_t magic);
 static bool js_new_Sample                    (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Sample_get_fileName           (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Sample_play                   (int num_args, bool is_ctor, intptr_t magic);
@@ -720,6 +721,8 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_prop("RNG", "state", false, js_RNG_get_state, js_RNG_set_state);
 	api_define_method("RNG", "@@iterator", js_RNG_iterator, 0);
 	api_define_method("RNG", "next", js_RNG_next, 0);
+	api_define_class("SampleInstance", PEGASUS_SAMPLE_INSTANCE, NULL, NULL, 0);
+	api_define_method("SampleInstance", "stop", js_SampleInstance_stop, 0);
 	api_define_class("Sample", PEGASUS_SAMPLE, js_new_Sample, js_Sample_finalize, 0);
 	api_define_prop("Sample", "fileName", false, js_Sample_get_fileName, NULL);
 	api_define_method("Sample", "play", js_Sample_play, 0);
@@ -3693,6 +3696,17 @@ js_SSj_profile(int num_args, bool is_ctor, intptr_t magic)
 #endif
 
 static bool
+js_SampleInstance_stop(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_SAMPLE_INSTANCE* instance;
+
+	jsal_push_this();
+	instance = jsal_require_class_obj(-1, PEGASUS_SAMPLE_INSTANCE);
+	al_stop_sample_instance(instance);
+	return false;
+}
+
+static bool
 js_new_Sample(int num_args, bool is_ctor, intptr_t magic)
 {
 	const char* filename;
@@ -3735,6 +3749,7 @@ js_Sample_play(int num_args, bool is_ctor, intptr_t magic)
 	sample_t* sample;
 	float     speed = 1.0;
 	float     volume = 1.0;
+	bool      loop = false;
 
 	jsal_push_this();
 	sample = jsal_require_class_obj(-1, PEGASUS_SAMPLE);
@@ -3750,13 +3765,19 @@ js_Sample_play(int num_args, bool is_ctor, intptr_t magic)
 		jsal_get_prop_string(1, "speed");
 		if (!jsal_is_undefined(-1))
 			speed = jsal_require_number(-1);
+		jsal_get_prop_string(1, "loop");
+		if (!jsal_is_undefined(-1))
+			loop = jsal_require_boolean(-1);
 	}
 
 	sample_set_gain(sample, volume);
 	sample_set_pan(sample, pan);
 	sample_set_speed(sample, speed);
-	sample_play(sample, mixer);
-	return false;
+	sample_set_loop(sample, loop);
+
+	jsal_push_class_obj(PEGASUS_SAMPLE_INSTANCE, sample_play(sample, mixer), false);
+
+	return true;
 }
 
 static bool
