@@ -299,7 +299,7 @@ mixer_set_gain(mixer_t* mixer, float gain)
 void
 mixer_attach_mixer(mixer_t* mixer, mixer_t* parent)
 {
-	al_attach_mixer_to_mixer(mixer, parent);
+	al_attach_mixer_to_mixer(mixer->ptr, parent->ptr);
 }
 
 sample_t*
