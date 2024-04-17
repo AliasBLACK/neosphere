@@ -163,7 +163,10 @@ screen_free(screen_t* it)
 		return;
 
 	console_log(1, "shutting down render context");
-	image_unref(it->backbuffer);
+
+	// Destroying the backbuffer could result in display destruction getting stuck, skip for now
+	//image_unref(it->backbuffer);
+
 	al_destroy_display(it->display);
 	free(it);
 }
