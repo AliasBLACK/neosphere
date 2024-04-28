@@ -805,6 +805,9 @@ parse_command_line(
 			else if (strcmp(argv[i], "--windowed") == 0) {
 				*out_fullscreen = FULLSCREEN_OFF;
 			}
+			else if (strcmp(argv[i], "--streamer") == 0 || strcmp(argv[i], "--ogl31") == 0) {
+				*use_ogl_3_1 = true;
+			}
 #if defined(NEOSPHERE_SPHERUN)
 			else if (strcmp(argv[i], "--version") == 0) {
 				print_banner(true, true);
@@ -827,9 +830,6 @@ parse_command_line(
 				if (++i >= argc)
 					goto missing_argument;
 				*out_verbosity = atoi(argv[i]);
-			}
-			else if (strcmp(argv[i], "--streamer") == 0 || strcmp(argv[i], "--ogl31") == 0) {
-				*use_ogl_3_1 = true;
 			}
 			else {
 				report_error("unrecognized option '%s'\n", argv[i]);
