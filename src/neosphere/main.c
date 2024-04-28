@@ -81,7 +81,7 @@ static void on_socket_idle      (void);
 static bool initialize_engine   (void);
 static void shutdown_engine     (void);
 static bool find_startup_game   (path_t* *out_path);
-static bool parse_command_line  (int argc, char* argv[], path_t* *out_game_path, int *out_fullscreen, int *out_frameskip, int *out_verbosity, ssj_mode_t *out_ssj_mode, bool *out_retro_mode, int *out_extras_offset);
+static bool parse_command_line  (int argc, char* argv[], path_t* *out_game_path, int *out_fullscreen, int *out_frameskip, int *out_verbosity, ssj_mode_t *out_ssj_mode, bool *out_retro_mode, int *out_extras_offset, bool *use_ogl_3_1);
 static void print_banner        (bool want_copyright, bool want_deps);
 static void print_usage         (void);
 static void report_error        (const char* fmt, ...);
@@ -136,6 +136,7 @@ main(int argc, char* argv[])
 	size2_t              resolution;
 	jmp_buf              restart_label;
 	bool                 retro_mode;
+	bool				 use_ogl_3_1;
 	const path_t*        script_path;
 	ssj_mode_t           ssj_mode;
 	int                  target_api_level;
@@ -159,7 +160,7 @@ main(int argc, char* argv[])
 	// parse the command line
 	if (parse_command_line(argc, argv, &s_game_path,
 		&fullscreen_mode, &use_frameskip, &use_verbosity, &ssj_mode, &retro_mode,
-		&game_args_offset))
+		&game_args_offset, &use_ogl_3_1))
 	{
 		if (ssj_mode == SSJ_ACTIVE)
 			fullscreen_mode = FULLSCREEN_OFF;
@@ -287,7 +288,7 @@ main(int argc, char* argv[])
 	resolution = game_resolution(g_game);
 	if (!(icon = image_load("@/icon.png")))
 		icon = image_load("#/icon.png");
-	g_screen = screen_new(game_name(g_game), icon, resolution, use_frameskip, game_default_font(g_game));
+	g_screen = screen_new(game_name(g_game), icon, resolution, use_frameskip, game_default_font(g_game), use_ogl_3_1);
 	if (g_screen == NULL) {
 		al_show_native_message_box(NULL, "Unable to Create Render Context", "The engine couldn't create a render context.",
 			"Your hardware may be too old to run neoSphere, or there could be a problem with the drivers on this system.  Check that your graphics drivers in particular are fully installed and up-to-date.",
@@ -772,7 +773,7 @@ parse_command_line(
 	int argc, char* argv[],
 	path_t* *out_game_path, int *out_fullscreen, int *out_frameskip,
 	int *out_verbosity, ssj_mode_t *out_ssj_mode, bool *out_retro_mode,
-	int *out_extras_offset)
+	int *out_extras_offset, bool *use_ogl_3_1)
 {
 	bool parse_options = true;
 
@@ -784,6 +785,7 @@ parse_command_line(
 	*out_frameskip = 20;
 	*out_game_path = NULL;
 	*out_retro_mode = false;
+	*use_ogl_3_1 = false;
 	*out_ssj_mode = SSJ_PASSIVE;
 	*out_verbosity = 0;
 
@@ -825,6 +827,9 @@ parse_command_line(
 				if (++i >= argc)
 					goto missing_argument;
 				*out_verbosity = atoi(argv[i]);
+			}
+			else if (strcmp(argv[i], "--streamer") == 0 || strcmp(argv[i], "--ogl31") == 0) {
+				*use_ogl_3_1 = true;
 			}
 			else {
 				report_error("unrecognized option '%s'\n", argv[i]);

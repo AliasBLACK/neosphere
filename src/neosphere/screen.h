@@ -39,7 +39,7 @@
 
 typedef struct screen screen_t;
 
-screen_t*        screen_new               (const char* title, image_t* icon, size2_t resolution, int frameskip, ttf_t* font);
+screen_t*        screen_new               (const char* title, image_t* icon, size2_t resolution, int frameskip, ttf_t* font, bool use_ogl_3_1);
 void             screen_free              (screen_t* it);
 image_t*         screen_backbuffer        (const screen_t* it);
 rect_t           screen_bounds            (const screen_t* it);

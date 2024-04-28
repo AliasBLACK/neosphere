@@ -75,7 +75,7 @@ struct screen
 static void refresh_display (screen_t* screen);
 
 screen_t*
-screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, ttf_t* font)
+screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, ttf_t* font, bool use_ogl_3_1)
 {
 	image_t*             backbuffer = NULL;
 	int                  bitmap_flags;
@@ -101,6 +101,13 @@ screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, 
 		y_scale = ((desktop_info.y2 - desktop_info.y1) * 2 / 3) / resolution.height;
 		x_scale = y_scale = fmax(fmin(x_scale, y_scale), 1.0);
 	}
+
+	if (use_ogl_3_1)
+	{
+		al_set_new_display_option(ALLEGRO_OPENGL_MAJOR_VERSION, 3, ALLEGRO_REQUIRE);
+		al_set_new_display_option(ALLEGRO_OPENGL_MINOR_VERSION, 1, ALLEGRO_REQUIRE);
+	}
+
 	display = al_create_display(resolution.width * x_scale, resolution.height * y_scale);
 
 	// using a custom backbuffer allows pixel-perfect rendering regardless of
