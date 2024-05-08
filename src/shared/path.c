@@ -41,7 +41,7 @@
 #include <windows.h>
 #include <direct.h>
 #define PATH_MAX _MAX_PATH
-//#define mkdir(path, m) _mkdir(path)
+#define mkdir(path, m) _mkdir(path)
 #define realpath(name, r) (_access(name, 00) == 0 ? _fullpath((r), (name), PATH_MAX) : NULL)
 #endif
 
@@ -395,41 +395,8 @@ path_mkdir(const path_t* path)
 	// ancestor and working our way down.
 	for (i = 0; i < path->num_hops; ++i) {
 		path_append_dir(parent_path, path_hop(path, i));
-#ifdef _WIN32
-		// Measure the path when converted to UTF16.
-		unsigned len = MultiByteToWideChar(
-			CP_UTF8,
-			WC_ERR_INVALID_CHARS,
-			path_cstr(parent_path),
-			-1,
-			NULL,
-			0);
-		if (len == 0) {
-			is_ok = -1;
-		}
-		else {
-			// Allocate a temporary buffer for the path as UTF16
-			wchar_t* buffer = malloc((len + 1) * sizeof(wchar_t));
-			if (buffer == NULL) {
-				is_ok = -1;
-			}
-			else {
-				// Convert to UTF16
-				MultiByteToWideChar(
-					CP_UTF8,
-					WC_ERR_INVALID_CHARS,
-					path_cstr(parent_path),
-					-1,
-					buffer,
-					(len + 1) * sizeof(wchar_t));
-				// Try to make the directory.
-				is_ok = _wmkdir(buffer) || errno == EEXIST;
-				free(buffer);
-			}
-		}
-#else
-		is_ok = mkdir(path_cstr(parent_path), 0777) == 0 || errno == EEXIST;
-#endif
+		is_ok = mkdir(path_cstr(parent_path), 0777) == 0
+			|| errno == EEXIST;
 	}
 	path_free(parent_path);
 	return is_ok;
