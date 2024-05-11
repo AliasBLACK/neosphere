@@ -520,6 +520,222 @@
 			ECommunityProfileItemType.k_ECommunityProfileItemType_MiniProfileBackground
 
 
+`ISteamUtils` Interface
+-----------------------
+
+	ISteamUtils.GetSecondsSinceAppActive()
+
+		Returns var of type `int`.
+		return the number of seconds since the user
+
+	ISteamUtils.GetSecondsSinceComputerActive()
+
+		Returns var of type `int`.
+
+	ISteamUtils.GetConnectedUniverse()
+
+		Returns var of type `int`.
+		the universe this client is connecting to
+
+	ISteamUtils.GetServerRealTime()
+
+		Returns var of type `int`.
+
+	ISteamUtils.GetAppID()
+
+		Returns var of type `int`.
+		returns the appID of the current process
+
+	ISteamUtils.GetAPICallFailureReason(int hSteamAPICall)
+
+		Returns var of type `int`.
+
+	ISteamUtils.GetIPCCallCount()
+
+		Returns var of type `int`.
+		returns the number of IPC calls made since the last time this function was called
+		Used for perf debugging so you can understand how many IPC calls your game makes per frame
+		Every IPC call is at minimum a thread context switch if not a process one so you want to rate
+		control how often you do them.
+
+	ISteamUtils.GetEnteredGamepadTextLength()
+
+		Returns var of type `int`.
+		Returns previously entered text & length
+
+	ISteamUtils.GetIPv6ConnectivityState(int eProtocol)
+
+		Returns var of type `int`.
+		Return what we believe your current ipv6 connectivity to "the internet" is on the specified protocol.
+		This does NOT tell you if the Steam client is currently connected to Steam via ipv6.
+
+		eProtocol is an enum with the following members:
+
+			ESteamIPv6ConnectivityProtocol.k_ESteamIPv6ConnectivityProtocol_Invalid
+			ESteamIPv6ConnectivityProtocol.k_ESteamIPv6ConnectivityProtocol_HTTP
+			ESteamIPv6ConnectivityProtocol.k_ESteamIPv6ConnectivityProtocol_UDP
+
+	ISteamUtils.GetIPCountry()
+
+		Returns var of type `string`.
+
+	ISteamUtils.GetSteamUILanguage()
+
+		Returns var of type `string`.
+
+	ISteamUtils.GetImageSize(int iImage)
+
+		returns true if the image exists, and valid sizes were filled out
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pnWidth (int)
+			value.pnHeight (int)
+
+	ISteamUtils.GetImageRGBA(int iImage, int nDestBufferSize)
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pubDest (int)
+
+	ISteamUtils.IsAPICallCompleted(int hSteamAPICall)
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pbFailed (bool)
+
+	ISteamUtils.IsOverlayEnabled()
+
+		Returns var of type `bool`.
+		Returns true if the overlay is running & the user can access it. The overlay process could take a few seconds to
+		start & hook the game process, so this function will initially return false while the overlay is loading.
+
+	ISteamUtils.BOverlayNeedsPresent()
+
+		Returns var of type `bool`.
+		refresh the screen with Present or SwapBuffers to allow the overlay to do it's work.
+
+	ISteamUtils.ShowGamepadTextInput(int eInputMode, int eLineInputMode, string pchDescription, int unCharMax, string pchExistingText)
+
+		Returns var of type `bool`.
+		Activates the full-screen text input dialog which takes a initial text string and returns the text the user has typed
+
+		eInputMode is an enum with the following members:
+
+			EGamepadTextInputMode.k_EGamepadTextInputModeNormal
+			EGamepadTextInputMode.k_EGamepadTextInputModePassword
+
+		eLineInputMode is an enum with the following members:
+
+			EGamepadTextInputLineMode.k_EGamepadTextInputLineModeSingleLine
+			EGamepadTextInputLineMode.k_EGamepadTextInputLineModeMultipleLines
+
+	ISteamUtils.GetEnteredGamepadTextInput(int pchText, int cchText)
+
+		Returns var of type `bool`.
+
+	ISteamUtils.IsSteamRunningInVR()
+
+		Returns var of type `bool`.
+		returns true if Steam itself is running in VR mode
+
+	ISteamUtils.IsSteamInBigPictureMode()
+
+		Returns var of type `bool`.
+		returns true if Steam & the Steam Overlay are running in Big Picture mode
+		Games much be launched through the Steam client to enable the Big Picture overlay. During development,
+		a game can be added as a non-steam game to the developers library to test this feature
+
+	ISteamUtils.IsVRHeadsetStreamingEnabled()
+
+		Returns var of type `bool`.
+		Returns true if the HMD content will be streamed via Steam Remote Play
+
+	ISteamUtils.IsSteamChinaLauncher()
+
+		Returns var of type `bool`.
+		Returns whether this steam client is a Steam China specific client, vs the global client.
+
+	ISteamUtils.InitFilterText(int unFilterOptions)
+
+		Returns var of type `bool`.
+		Users can customize the text filter behavior in their Steam Account preferences:
+		https:
+		store.steampowered.com
+		account
+		preferences#CommunityContentPreferences
+
+	ISteamUtils.IsSteamRunningOnSteamDeck()
+
+		Returns var of type `bool`.
+		returns true if currently running on the Steam Deck device
+
+	ISteamUtils.ShowFloatingGamepadTextInput(int eKeyboardMode, int nTextFieldXPosition, int nTextFieldYPosition, int nTextFieldWidth, int nTextFieldHeight)
+
+		Returns var of type `bool`.
+		Opens a floating keyboard over the game content and sends OS keyboard keys directly to the game.
+		The text field position is specified in pixels relative the origin of the game window and is used to position the floating keyboard in a way that doesn't cover the text field
+
+		eKeyboardMode is an enum with the following members:
+
+			EFloatingGamepadTextInputMode.k_EFloatingGamepadTextInputModeModeSingleLine
+			EFloatingGamepadTextInputMode.k_EFloatingGamepadTextInputModeModeMultipleLines
+			EFloatingGamepadTextInputMode.k_EFloatingGamepadTextInputModeModeEmail
+			EFloatingGamepadTextInputMode.k_EFloatingGamepadTextInputModeModeNumeric
+
+	ISteamUtils.DismissFloatingGamepadTextInput()
+
+		Returns var of type `bool`.
+		Dismisses the floating keyboard.
+
+	ISteamUtils.GetCurrentBatteryPower()
+
+		Returns var of type `int`.
+		return the amount of battery power left in the current system in % [0..100], 255 for being on AC power
+
+	ISteamUtils.SetOverlayNotificationPosition(int eNotificationPosition)
+
+		Sets the position where the overlay instance for the currently calling game should show notifications.
+		This position is per-game and if this function is called from outside of a game context it will do nothing.
+
+		eNotificationPosition is an enum with the following members:
+
+			ENotificationPosition.k_EPositionInvalid
+			ENotificationPosition.k_EPositionTopLeft
+			ENotificationPosition.k_EPositionTopRight
+			ENotificationPosition.k_EPositionBottomLeft
+			ENotificationPosition.k_EPositionBottomRight
+
+	ISteamUtils.SetOverlayNotificationInset(int nHorizontalInset, int nVerticalInset)
+
+		Sets the inset of the overlay notification from the corner specified by SetOverlayNotificationPosition.
+
+	ISteamUtils.StartVRDashboard()
+
+		ask SteamUI to create and render its OpenVR dashboard
+
+	ISteamUtils.SetVRHeadsetStreamingEnabled(bool bEnabled)
+
+	ISteamUtils.SetGameLauncherMode(bool bLauncherMode)
+
+		In game launchers that don't have controller support you can call this to have Steam Input translate the controller input into mouse
+		kb to navigate the launcher
+
+	ISteamUtils.FilterText(int eContext, int sourceSteamID, string pchInputMessage, int pchOutFilteredText, int nByteSizeOutFilteredText)
+
+		Returns var of type `int`.
+
+		eContext is an enum with the following members:
+
+			ETextFilteringContext.k_ETextFilteringContextUnknown
+			ETextFilteringContext.k_ETextFilteringContextGameContent
+			ETextFilteringContext.k_ETextFilteringContextChat
+			ETextFilteringContext.k_ETextFilteringContextName
+
+
 `ISteamUserStats` Interface
 ---------------------------
 

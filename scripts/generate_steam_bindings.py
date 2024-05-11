@@ -4,7 +4,8 @@ import os
 import math
 
 # Replace this with your steamworks folder.
-steamworks_dir = "steam"
+steamworks_dir = os.path.join(os.path.dirname(__file__), "steam")
+solution_dir = os.path.join(os.path.dirname(__file__), "../")
 
 # Max array size to reserve for dynamic arrays.
 max_array_size_reserved = 64
@@ -15,7 +16,8 @@ interfaces_to_bind = [
 	"ISteamUser",
 	"ISteamInput",
 	"ISteamFriends",
-	"ISteamUserStats"
+	"ISteamUserStats",
+	"ISteamUtils"
 ]
 
 # Methods to ignore due to deprecation.
@@ -889,16 +891,16 @@ for category in methods:
 				documentation += "\n"
 
 # Write header file.
-out = open("..//src/neosphere/steam.h", "w")
+out = open(solution_dir + "/src/neosphere/steam.h", "w")
 out.write(header)
 out.close()
 
 # Write source file.
-out = open("..//src/neosphere/steam.c", "w")
+out = open(solution_dir + "/src/neosphere/steam.c", "w")
 out.write(source)
 out.close()
 
 # Write documentation file.
-out = open("..//docs/steam_api.txt", "w")
+out = open(solution_dir + "/docs/steam_api.txt", "w")
 out.write(documentation)
 out.close()
