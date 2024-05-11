@@ -373,8 +373,15 @@ header = """// WARNING: This file is auto-generated. Do not edit.
 // Generator script is located at scripts/generate_steam_bindings.py
 
 #include <stdbool.h>
-#include <windows.h>
 #include <stdint.h>
+
+#ifdef _WIN32
+	#include <windows.h>
+	#define GETADDRESS(lib, proc) GetProcAddress(lib, proc)
+#else
+	#include <dlfcn.h>
+	#define GETADDRESS(lib, proc) dlsym(lib, proc)
+#endif
 
 HMODULE steam_api;
 
@@ -617,11 +624,17 @@ source += "}\n\n"
 source += """static bool
 js_SteamAPI_Init(int num_args, bool is_ctor, intptr_t magic)
 {
+#ifdef _WIN32
 	steam_api = LoadLibrary(TEXT("steam_api64.dll"));
+#elif defined(__APPLE__)
+	steam_api = dlopen(TEXT("libsteam_api.dylib"));
+#else
+	steam_api = dlopen(TEXT("libsteam_api.so"));
+#endif
 	if (steam_api)
 	{
 		""" + initfunc + """ SteamAPI_Init;
-		SteamAPI_Init = (""" + initfunc + """)GetProcAddress(steam_api, "SteamInternal_SteamAPI_Init");
+		SteamAPI_Init = (""" + initfunc + """)GETADDRESS(steam_api, "SteamInternal_SteamAPI_Init");
 		if (SteamAPI_Init(NULL, NULL) == 0)
 		{"""
 
@@ -630,7 +643,7 @@ for category in methods:
 	for returntype in methods[category]:
 		for method in methods[category][returntype]:
 			if method['type'] == "accessor":
-				source += "\n			" + pointerfunc + ' ' + category + "_Accessor = (" + pointerfunc + ')GetProcAddress(steam_api, "' + method['name_flat'] + '");\n'
+				source += "\n			" + pointerfunc + ' ' + category + "_Accessor = (" + pointerfunc + ')GETADDRESS(steam_api, "' + method['name_flat'] + '");\n'
 				source += "			" + category + " = " + category + "_Accessor();\n"
 
 source += """		}
@@ -650,7 +663,7 @@ source += """static bool
 js_SteamAPI_Shutdown(int num_args, bool is_ctor, intptr_t magic)
 {
 	""" + voidfunc + """ SteamAPI_Shutdown;
-	SteamAPI_Shutdown = (""" + voidfunc + """)GetProcAddress(steam_api, "SteamAPI_Shutdown");
+	SteamAPI_Shutdown = (""" + voidfunc + """)GETADDRESS(steam_api, "SteamAPI_Shutdown");
 	SteamAPI_Shutdown();
 
 	return false;
@@ -758,7 +771,7 @@ for category in methods:
 			source += array_alloc_trailing_newline
 
 			# Execute steam api function.
-			source += "	" + internal_name + " = (" + method['ptr'] + ')GetProcAddress(steam_api, "' + method['name_flat'] + '");\n'
+			source += "	" + internal_name + " = (" + method['ptr'] + ')GETADDRESS(steam_api, "' + method['name_flat'] + '");\n'
 			source += "	" + ("result = " if returntype != "void" else "") + internal_name + "(" + ", ".join(param_arg_array) + ");\n"
 			source += "\n"
 

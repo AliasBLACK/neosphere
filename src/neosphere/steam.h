@@ -2,8 +2,15 @@
 // Generator script is located at scripts/generate_steam_bindings.py
 
 #include <stdbool.h>
-#include <windows.h>
 #include <stdint.h>
+
+#ifdef _WIN32
+	#include <windows.h>
+	#define GETADDRESS(lib, proc) GetProcAddress(lib, proc)
+#else
+	#include <dlfcn.h>
+	#define GETADDRESS(lib, proc) dlsym(lib, proc)
+#endif
 
 HMODULE steam_api;
 
