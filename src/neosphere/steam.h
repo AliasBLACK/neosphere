@@ -7,12 +7,12 @@
 #ifdef _WIN32
 	#include <windows.h>
 	#define GETADDRESS(lib, proc) GetProcAddress(lib, proc)
+	HMODULE steam_api;
 #else
 	#include <dlfcn.h>
 	#define GETADDRESS(lib, proc) dlsym(lib, proc)
+	void* steam_api;
 #endif
-
-HMODULE steam_api;
 
 void * ISteamUser;
 void * ISteamFriends;
