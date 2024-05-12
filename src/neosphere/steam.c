@@ -979,9 +979,9 @@ js_SteamAPI_Init(int num_args, bool is_ctor, intptr_t magic)
 #ifdef _WIN32
 	steam_api = LoadLibrary(TEXT("steam_api64.dll"));
 #elif defined(__APPLE__)
-	steam_api = dlopen(TEXT("libsteam_api.dylib"));
+	steam_api = dlopen("libsteam_api.dylib", RTLD_LAZY);
 #else
-	steam_api = dlopen(TEXT("libsteam_api.so"));
+	steam_api = dlopen("libsteam_api.so", RTLD_LAZY);
 #endif
 	if (steam_api)
 	{
