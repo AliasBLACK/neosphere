@@ -53,7 +53,6 @@ engine_sources=src/neosphere/main.c \
    src/neosphere/kev_file.c \
    src/neosphere/legacy.c \
    src/neosphere/logger.c \
-   src/neosphere/map_engine.c \
    src/neosphere/module.c \
    src/neosphere/obstruction.c \
    src/neosphere/package.c \
@@ -62,13 +61,10 @@ engine_sources=src/neosphere/main.c \
    src/neosphere/screen.c \
    src/neosphere/script.c \
    src/neosphere/source_map.c \
-   src/neosphere/spriteset.c \
    src/neosphere/table.c \
-   src/neosphere/tileset.c \
    src/neosphere/transform.c \
+   src/neosphere/steam.c \
    src/neosphere/utility.c \
-   src/neosphere/vanilla.c \
-   src/neosphere/windowstyle.c
 engine_libs= \
    -lallegro_acodec \
    -lallegro_audio \
