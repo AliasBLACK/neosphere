@@ -98,7 +98,6 @@ cell_sources=src/cell/main.c \
    src/cell/module.c \
    src/cell/spk_writer.c \
    src/cell/target.c \
-   src/cell/tileset.c \
    src/cell/tool.c \
    src/cell/utility.c \
    src/cell/visor.c
@@ -206,6 +205,7 @@ bin/neosphere:
 	      $(LINKER_ARGS) \
 	      $(OPTIONS) \
 	      $(engine_sources) $(engine_libs)
+	install_name_tool -add_rpath @executable_path/ bin/neosphere
 	cp -r assets/system bin
 
 bin/spherun:
