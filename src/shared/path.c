@@ -39,13 +39,12 @@
 
 #if defined(_WIN32)
 #include <windows.h>
-#include <direct.h>
 #define PATH_MAX _MAX_PATH
-#define mkdir(path, m) _mkdir(path)
-#define realpath(name, r) (_access(name, 00) == 0 ? _fullpath((r), (name), PATH_MAX) : NULL)
 #endif
 
 #include "path.h"
+
+#include <allegro5/allegro.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -74,6 +73,18 @@
 static path_t* construct_path       (path_t* path, const char* pathname, bool force_dir);
 static void    convert_to_directory (path_t* path);
 static void    refresh_pathname     (path_t* path);
+
+char* path_inner_realpath(const char* path)
+{
+	ALLEGRO_FS_ENTRY* entry = al_create_fs_entry(path);
+	const char* entry_name = al_get_fs_entry_name(entry);
+	return strdup(entry_name);
+}
+
+bool path_inner_mkdir(const char* path)
+{
+	return al_make_directory(path);
+}
 
 struct path
 {
@@ -395,7 +406,7 @@ path_mkdir(const path_t* path)
 	// ancestor and working our way down.
 	for (i = 0; i < path->num_hops; ++i) {
 		path_append_dir(parent_path, path_hop(path, i));
-		is_ok = mkdir(path_cstr(parent_path), 0777) == 0
+		is_ok = path_inner_mkdir(path_cstr(parent_path))
 			|| errno == EEXIST;
 	}
 	path_free(parent_path);
@@ -471,7 +482,7 @@ path_resolve(path_t* path, const path_t* relative_to)
 	char*       pathname;
 	struct stat stat_buf;
 
-	if (!(pathname = realpath(path_cstr(path), NULL)))
+	if (!(pathname = path_inner_realpath(path_cstr(path))))
 		return NULL;
 	if (stat(path_cstr(path), &stat_buf) != 0)
 		return NULL;
