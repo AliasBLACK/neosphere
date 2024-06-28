@@ -48,11 +48,11 @@ struct key_queue
 struct char_queue
 {
 	int num_char;
-	char chars[255];
+	const char* chars[255];
 };
 
 static void queue_key       (int keycode);
-static void queue_char      (char character);
+static void queue_char      (const char* character);
 static void queue_mouse_key (mouse_key_t key, int x, int y, int delta);
 
 static vector_t*            s_bound_buttons;
@@ -405,16 +405,16 @@ kb_get_key(void)
 	return keycode;
 }
 
-char
+const char*
 kb_get_char(void)
 {
-	char character;
+	const char* character;
 	
 	if (s_char_queue.num_char == 0)
 		return 0;
 	character = s_char_queue.chars[0];
 	--s_char_queue.num_char;
-	memmove(s_char_queue.chars, &s_char_queue.chars[1], sizeof(char) * s_char_queue.num_char);
+	memmove(s_char_queue.chars, &s_char_queue.chars[1], sizeof(const char*) * s_char_queue.num_char);
 	return character;
 }
 
@@ -592,7 +592,7 @@ update_input(void)
 	ALLEGRO_EVENT       event;
 	bool                is_button_down;
 	int                 keycode;
-	char                unichar;
+	ALLEGRO_USTR*       unichar;
 	mouse_key_t         mouse_key;
 	ALLEGRO_MOUSE_STATE mouse_state;
 
@@ -662,8 +662,9 @@ update_input(void)
 					jsal_debug_breakpoint_inject();
 				break;
 			default:
-				al_utf8_encode(&unichar, event.keyboard.unichar);
-				queue_char(unichar);
+				unichar = al_ustr_new("");
+				al_ustr_append_chr(unichar, event.keyboard.unichar);
+				queue_char(al_cstr(unichar));
 				queue_key(keycode);
 				break;
 			}
@@ -745,7 +746,7 @@ queue_key(int keycode)
 }
 
 static void
-queue_char(char character)
+queue_char(const char* character)
 {
 	int char_index;
 

@@ -104,7 +104,7 @@ void          kb_bind_key        (int keycode, script_t* on_down_script, script_
 void          kb_clear_queue     (void);
 void          kb_clear_char_queue(void);
 int           kb_get_key         (void);
-char          kb_get_char        (void);
+const char*   kb_get_char        (void);
 void          kb_load_keymap     (void);
 void          kb_save_keymap     (void);
 bool          mouse_is_key_down  (mouse_key_t key);

@@ -3140,7 +3140,7 @@ js_Keyboard_getKey(int num_args, bool is_ctor, intptr_t magic)
 static bool
 js_Keyboard_getChar(int num_args, bool is_ctor, intptr_t magic)
 {
-	char character;
+	const char* character;
 
 	jsal_push_this();
 	jsal_require_class_obj(-1, PEGASUS_KEYBOARD);
@@ -3148,7 +3148,7 @@ js_Keyboard_getChar(int num_args, bool is_ctor, intptr_t magic)
 	if (kb_char_queue_len() > 0)
 	{
 		character = kb_get_char();
-		jsal_push_string(&character);
+		jsal_push_string(character);
 	}
 	else
 		jsal_push_null();
