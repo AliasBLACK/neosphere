@@ -367,6 +367,7 @@ static bool js_Keyboard_get_scrollLock       (int num_args, bool is_ctor, intptr
 static bool js_Keyboard_charOf               (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Keyboard_clearQueue           (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Keyboard_getKey               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_Keyboard_getChar              (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Keyboard_isPressed            (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Mixer_get_Default             (int num_args, bool is_ctor, intptr_t magic);
 static bool js_new_Mixer                     (int num_args, bool is_ctor, intptr_t magic);
@@ -703,6 +704,7 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_method("Keyboard", "charOf", js_Keyboard_charOf, 0);
 	api_define_method("Keyboard", "clearQueue", js_Keyboard_clearQueue, 0);
 	api_define_method("Keyboard", "getKey", js_Keyboard_getKey, 0);
+	api_define_method("Keyboard", "getChar", js_Keyboard_getChar, 0);
 	api_define_method("Keyboard", "isPressed", js_Keyboard_isPressed, 0);
 	api_define_class("Mixer", PEGASUS_MIXER, js_new_Mixer, js_Mixer_finalize, 0);
 	api_define_static_prop("Mixer", "Default", js_Mixer_get_Default, NULL, 0);
@@ -3118,6 +3120,7 @@ js_Keyboard_clearQueue(int num_args, bool is_ctor, intptr_t magic)
 	jsal_require_class_obj(-1, PEGASUS_KEYBOARD);
 
 	kb_clear_queue();
+	kb_clear_char_queue();
 	return false;
 }
 
@@ -3129,6 +3132,24 @@ js_Keyboard_getKey(int num_args, bool is_ctor, intptr_t magic)
 
 	if (kb_queue_len() > 0)
 		jsal_push_int(kb_get_key());
+	else
+		jsal_push_null();
+	return true;
+}
+
+static bool
+js_Keyboard_getChar(int num_args, bool is_ctor, intptr_t magic)
+{
+	char character;
+
+	jsal_push_this();
+	jsal_require_class_obj(-1, PEGASUS_KEYBOARD);
+
+	if (kb_char_queue_len() > 0)
+	{
+		character = kb_get_char();
+		jsal_push_string(&character);
+	}
 	else
 		jsal_push_null();
 	return true;

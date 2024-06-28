@@ -45,7 +45,14 @@ struct key_queue
 	int keys[255];
 };
 
+struct char_queue
+{
+	int num_char;
+	char chars[255];
+};
+
 static void queue_key       (int keycode);
+static void queue_char      (char character);
 static void queue_mouse_key (mouse_key_t key, int x, int y, int delta);
 
 static vector_t*            s_bound_buttons;
@@ -58,6 +65,7 @@ static bool                 s_have_mouse;
 static ALLEGRO_JOYSTICK*    s_joy_handles[MAX_JOYSTICKS];
 static int                  s_key_map[4][PLAYER_KEY_MAX];
 static struct key_queue     s_key_queue;
+static struct char_queue    s_char_queue;
 static bool                 s_key_state[ALLEGRO_KEY_MAX];
 static int                  s_keymod_state;
 static int                  s_last_wheel_pos = 0;
@@ -366,10 +374,22 @@ kb_queue_len(void)
 	return s_key_queue.num_keys;
 }
 
+int
+kb_char_queue_len(void)
+{
+	return s_char_queue.num_char;
+}
+
 void
 kb_clear_queue(void)
 {
 	s_key_queue.num_keys = 0;
+}
+
+void
+kb_clear_char_queue(void)
+{
+	s_char_queue.num_char = 0;
 }
 
 int
@@ -383,6 +403,19 @@ kb_get_key(void)
 	--s_key_queue.num_keys;
 	memmove(s_key_queue.keys, &s_key_queue.keys[1], sizeof(int) * s_key_queue.num_keys);
 	return keycode;
+}
+
+char
+kb_get_char(void)
+{
+	char character;
+	
+	if (s_char_queue.num_char == 0)
+		return 0;
+	character = s_char_queue.chars[0];
+	--s_char_queue.num_char;
+	memmove(s_char_queue.chars, &s_char_queue.chars[1], sizeof(char) * s_char_queue.num_char);
+	return character;
 }
 
 void
@@ -559,6 +592,7 @@ update_input(void)
 	ALLEGRO_EVENT       event;
 	bool                is_button_down;
 	int                 keycode;
+	char                unichar;
 	mouse_key_t         mouse_key;
 	ALLEGRO_MOUSE_STATE mouse_state;
 
@@ -574,6 +608,7 @@ update_input(void)
 			break;
 		case ALLEGRO_EVENT_KEY_DOWN:
 			keycode = event.keyboard.keycode;
+
 			if (keycode == ALLEGRO_KEY_BACKQUOTE)
 				keycode = ALLEGRO_KEY_TILDE;
 			s_key_state[keycode] = true;
@@ -627,6 +662,8 @@ update_input(void)
 					jsal_debug_breakpoint_inject();
 				break;
 			default:
+				al_utf8_encode(&unichar, event.keyboard.unichar);
+				queue_char(unichar);
 				queue_key(keycode);
 				break;
 			}
@@ -704,6 +741,18 @@ queue_key(int keycode)
 		key_index = s_key_queue.num_keys;
 		++s_key_queue.num_keys;
 		s_key_queue.keys[key_index] = keycode;
+	}
+}
+
+static void
+queue_char(char character)
+{
+	int char_index;
+
+	if (s_char_queue.num_char < 255) {
+		char_index = s_char_queue.num_char;
+		++s_char_queue.num_char;
+		s_char_queue.chars[char_index] = character;
 	}
 }
 
