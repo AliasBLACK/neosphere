@@ -1019,7 +1019,6 @@ help_list_dir(vector_t* list, const char* dirname, const path_t* origin_path, bo
 		if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
 		{
 			al_destroy_fs_entry(dir_item);
-			free(name);
 			continue;
 		}
 
