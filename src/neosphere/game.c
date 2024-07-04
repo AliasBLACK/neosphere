@@ -41,8 +41,6 @@
 #include "package.h"
 #include "tinydir.h"
 
-#include "allegro5/fshook.h"
-
 enum fs_type
 {
 	FS_UNKNOWN,
@@ -345,23 +343,16 @@ game_dir_exists(const game_t* it, const char* dirname)
 {
 	path_t*      dir_path = NULL;
 	enum fs_type fs_type;
-	ALLEGRO_FS_ENTRY* fs_entry;
-	bool isDir;
+	struct stat  stats;
 
 	if (!resolve_pathname(it, dirname, &dir_path, &fs_type))
 		goto on_error;
 	switch (fs_type) {
 	case FS_LOCAL:
-		fs_entry = al_create_fs_entry(path_cstr(dir_path));
-		if (!al_fs_entry_exists(fs_entry))
-		{
-			al_destroy_fs_entry(fs_entry);
+		if (stat(path_cstr(dir_path), &stats) != 0)
 			goto on_error;
-		}
 		path_free(dir_path);
-		isDir = al_get_fs_entry_mode(fs_entry) & ALLEGRO_FILEMODE_ISDIR;
-		al_destroy_fs_entry(fs_entry);
-		return isDir;
+		return (stats.st_mode & S_IFDIR) == S_IFDIR;
 	case FS_PACKAGE:
 		if (!package_dir_exists(it->package, path_cstr(dir_path)))
 			goto on_error;
@@ -403,23 +394,16 @@ game_file_exists(const game_t* it, const char* filename)
 {
 	enum fs_type fs_type;
 	path_t*      path = NULL;
-	ALLEGRO_FS_ENTRY* fs_entry;
-	bool isFile;
+	struct stat  stats;
 
 	if (!resolve_pathname(it, filename, &path, &fs_type))
 		goto on_error;
 	switch (fs_type) {
 	case FS_LOCAL:
-		fs_entry = al_create_fs_entry(path_cstr(path));
-		if (!al_fs_entry_exists(fs_entry))
-		{
-			al_destroy_fs_entry(fs_entry);
+		if (stat(path_cstr(path), &stats) != 0)
 			goto on_error;
-		}
 		path_free(path);
-		isFile = al_get_fs_entry_mode(fs_entry) & ALLEGRO_FILEMODE_ISFILE;
-		al_destroy_fs_entry(fs_entry);
-		return isFile;
+		return (stats.st_mode & S_IFREG) == S_IFREG;
 	case FS_PACKAGE:
 		if (!package_file_exists(it->package, path_cstr(path)))
 			goto on_error;
@@ -991,65 +975,43 @@ file_flush(file_t* it)
 static bool
 help_list_dir(vector_t* list, const char* dirname, const path_t* origin_path, bool want_dirs, bool recursive)
 {
+	tinydir_dir  dir_info;
+	tinydir_file file_info;
 	path_t*      path;
 	path_t*      subdir_origin;
 	path_t*      subdir_path;
-	ALLEGRO_FS_ENTRY* fs_entry = NULL;
-	ALLEGRO_FS_ENTRY* dir_item = NULL;
-	bool is_dir;
-	const char* fullname;
-	const char* name = NULL;
 
 	size_t i;
 
-	fs_entry = al_create_fs_entry(dirname);
-	if (!(al_fs_entry_exists(fs_entry) && al_get_fs_entry_mode(fs_entry) & ALLEGRO_FILEMODE_ISDIR))
-		goto on_error;
-
-	if (!al_open_directory(fs_entry))
-		goto on_error;
-
-	while (dir_item = al_read_directory(fs_entry)) {
-		fullname = al_get_fs_entry_name(dir_item);
-		path = path_new_dir(fullname);
-		name = strdup(path_hop(path, path_num_hops(path) - 1));
-		path_free(path);
-		path = NULL;
-
-		if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
-		{
-			al_destroy_fs_entry(dir_item);
+	if (tinydir_open_sorted(&dir_info, dirname) != 0)
+		return false;
+	for (i = 0; i < dir_info.n_files; ++i) {
+		tinydir_readfile_n(&dir_info, &file_info, i);
+		if (strcmp(file_info.name, ".") == 0 || strcmp(file_info.name, "..") == 0)
 			continue;
-		}
-
-		is_dir = (bool)(al_get_fs_entry_mode(dir_item) & ALLEGRO_FILEMODE_ISDIR);
-		if (want_dirs == is_dir) {
-			path = is_dir
-				? path_new_dir(name)
-				: path_new(name);
+		if ((bool)file_info.is_dir == want_dirs) {
+			path = file_info.is_dir
+				? path_new_dir(file_info.name)
+				: path_new(file_info.name);
 			path_rebase(path, origin_path);
 			vector_push(list, &path);
 		}
-		if (is_dir && recursive) {
+		if (file_info.is_dir && recursive) {
 			subdir_path = path_new_dir(dirname);
 			subdir_origin = path_dup(origin_path);
-			path_append_dir(subdir_path, name);
-			path_append_dir(subdir_origin, name);
+			path_append_dir(subdir_path, file_info.name);
+			path_append_dir(subdir_origin, file_info.name);
 			if (!help_list_dir(list, path_cstr(subdir_path), subdir_origin, want_dirs, recursive))
 				goto on_error;
 			path_free(subdir_path);
 			path_free(subdir_origin);
 		}
-		free(name);
-		al_destroy_fs_entry(dir_item);
 	}
-	al_destroy_fs_entry(fs_entry);
+	tinydir_close(&dir_info);
 	return true;
 
 on_error:
-	al_destroy_fs_entry(fs_entry);
-	al_destroy_fs_entry(dir_item);
-	free(name);
+	tinydir_close(&dir_info);
 	return false;
 }
 
