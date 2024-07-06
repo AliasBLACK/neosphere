@@ -46,6 +46,7 @@ struct screen
 {
 	image_t*         backbuffer;
 	rect_t           clip_rect;
+	int				 monitor;
 	ALLEGRO_DISPLAY* display;
 	ttf_t*           font;
 	int              fps_flips;
@@ -86,6 +87,7 @@ screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, 
 	screen_t*            screen;
 	int                  x_scale = 1;
 	int                  y_scale = 1;
+	int					 monitor = 0;
 
 	if (!(screen = calloc(1, sizeof(screen_t)))) {
 		fprintf(stderr, "FATAL: couldn't allocate memory for screen_t");
@@ -96,7 +98,7 @@ screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, 
 
 	al_set_new_window_title(title);
 	al_set_new_display_flags(ALLEGRO_OPENGL | ALLEGRO_PROGRAMMABLE_PIPELINE);
-	if (al_get_monitor_info(0, &desktop_info)) {
+	if (al_get_monitor_info(monitor, &desktop_info)) {
 		x_scale = ((desktop_info.x2 - desktop_info.x1) * 2 / 3) / resolution.width;
 		y_scale = ((desktop_info.y2 - desktop_info.y1) * 2 / 3) / resolution.height;
 		x_scale = y_scale = fmax(fmin(x_scale, y_scale), 1.0);
@@ -137,6 +139,7 @@ screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, 
 		al_set_display_icon(display, icon_bitmap);
 	}
 
+	screen->monitor = monitor;
 	screen->display = display;
 	screen->backbuffer = backbuffer;
 	screen->font = font;
@@ -188,6 +191,12 @@ rect_t
 screen_bounds(const screen_t* it)
 {
 	return mk_rect(0, 0, it->x_size, it->y_size);
+}
+
+int
+screen_get_monitor(const screen_t* it)
+{
+	return it->monitor;
 }
 
 ALLEGRO_DISPLAY*

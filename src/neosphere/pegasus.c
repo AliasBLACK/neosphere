@@ -271,6 +271,7 @@ static bool js_Sphere_get_Version            (int num_args, bool is_ctor, intptr
 static bool js_Sphere_get_frameRate          (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Sphere_get_frameSkip          (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Sphere_get_fullScreen         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_Sphere_get_desktopResolution  (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Sphere_get_main               (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Sphere_set_frameRate          (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Sphere_set_frameSkip          (int num_args, bool is_ctor, intptr_t magic);
@@ -627,6 +628,7 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_static_prop("Sphere", "frameRate", js_Sphere_get_frameRate, js_Sphere_set_frameRate, 0);
 	api_define_static_prop("Sphere", "frameSkip", js_Sphere_get_frameSkip, js_Sphere_set_frameSkip, 0);
 	api_define_static_prop("Sphere", "fullScreen", js_Sphere_get_fullScreen, js_Sphere_set_fullScreen, 0);
+	api_define_static_prop("Sphere", "desktopResolution", js_Sphere_get_desktopResolution, NULL, 0);
 	api_define_static_prop("Sphere", "main", js_Sphere_get_main, NULL, 0);
 	api_define_func("Sphere", "openURL", js_Sphere_openURL, 0);
 	api_define_func("Sphere", "abort", js_Sphere_abort, 0);
@@ -1262,6 +1264,24 @@ static bool
 js_Sphere_get_fullScreen(int num_args, bool is_ctor, intptr_t magic)
 {
 	jsal_push_boolean(screen_get_fullscreen(g_screen));
+	return true;
+}
+
+static bool
+js_Sphere_get_desktopResolution(int num_args, bool is_ctor, intptr_t magic)
+{
+	ALLEGRO_MONITOR_INFO desktop_info;
+	al_get_monitor_info(screen_get_monitor(g_screen), &desktop_info);
+	int x, y;
+
+	x = (desktop_info.x2 - desktop_info.x1);
+	y = (desktop_info.y2 - desktop_info.y1);
+
+	jsal_push_new_object();
+	jsal_push_int(x);
+	jsal_put_prop_string(-2, "width");
+	jsal_push_int(y);
+	jsal_put_prop_string(-2, "height");
 	return true;
 }
 
