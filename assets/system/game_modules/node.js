@@ -308,7 +308,7 @@ export class Text extends NodeAbstract
         this.text = ""
 		this.multiLine = []
 		this.font = Font.Default
-        this.textAlign = "alignLeft"
+        this.textAlign = textAlign.left
         this.color = Color.White
         this.cachedWidth = 0
 		this.isEastAsian = false
