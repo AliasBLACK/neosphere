@@ -1,5 +1,19 @@
 import { Yoga } from 'yoga'
 
+// Enums
+globalThis.renderMode = {
+	colorRounded: 0,
+	color: 1,
+	tiled: 2,
+	stretch: 3,
+	ninePatch: 4
+}
+globalThis.textAlign = {
+	left: 0,
+	right: 1,
+	center: 2
+}
+
 // Some shared functionality between layout nodes.
 class NodeAbstract extends Yoga.Node
 {
@@ -160,19 +174,19 @@ export class Node extends NodeAbstract
 			let y = yOffset + this.getComputedTop()
 			switch (this.renderMode)
 			{
-				case 'colorRounded':
+				case renderMode.colorRounded:
 					PrimNative.drawFilledRoundedRectangle(surface, x, y, x + this.getComputedWidth(), y + this.getComputedHeight(), 5, 5, this.texture)
 					break;
 
-				case "color":
+				case renderMode.color:
 					PrimNative.drawFilledRectangle(surface, x, y, x + this.getComputedWidth(), y + this.getComputedHeight(), this.texture)
 					break;
 
-				case "tiled":
+				case renderMode.tiled:
 					// TODO: Tiled.
 					break
 				
-				case "stretch":
+				case renderMode.stretch:
 					if (this.shape[0] == null)
 						this.shape[0] = this.textureShape(this.texture, false)
 					this.transform[0].identity()
@@ -181,7 +195,7 @@ export class Node extends NodeAbstract
 					this.shape[0].draw(surface, this.transform[0])
 					break
 				
-				case "ninePatch":
+				case renderMode.ninePatch:
 					let hor = this.texture.width / 3
 					let ver = this.texture.height / 3
 					let horStretch = (this.getComputedWidth() - hor * 2) / hor
@@ -411,7 +425,7 @@ export class Text extends NodeAbstract
         let left = xOffset + this.getComputedLeft() + this.getComputedPadding(Yoga.EDGE_LEFT)
 		switch (this.textAlign)
         {
-            case "alignLeft":
+            case textAlign.left:
                 for (let i = 0; i < this.multiLine.length; i++)
                     this.font.drawText (
                         surface,
@@ -422,7 +436,7 @@ export class Text extends NodeAbstract
                     )
                 break
             
-            case "alignRight":
+            case textAlign.right:
                 let right = xOffset + this.getComputedLeft() + this.getComputedWidth() - this.getComputedPadding(Yoga.EDGE_RIGHT)
                 for (let i = 0; i < this.multiLine.length; i++)
                 {
@@ -437,7 +451,7 @@ export class Text extends NodeAbstract
                 }
                 break
             
-            case "alignCenter":
+            case textAlign.center:
                 let width = this.getComputedWidth()
                 width -= this.getComputedPadding(Yoga.EDGE_LEFT)
                 width -= this.getComputedPadding(Yoga.EDGE_RIGHT)
