@@ -374,14 +374,25 @@ export class Text extends NodeAbstract
 
 	eastAsianWordWrap(font, text, width)
 	{
+		let isNumeric = (string) => /^[\.\d+\-%]$/.test(string)
+		let isAsianPunctuation = (string) => /^[\u3000-\u303F]$/.test(string)
 		let textArray = text.split("\n")
 		let result = []
 		let currentLength = 0
 		let currentString = ""
 		for (const line of textArray)
 		{
-			for (const char of line)
+			for (let i = 0; i < line.length; i++)
 			{
+				let char = line[i]
+
+				// Check for non-breaking character patterns.
+				if (isNumeric(char))
+					while(i + 1 < line.length && isNumeric(line[i + 1]))
+						char += line[++i]
+				else if (i + 1 < line.length && isAsianPunctuation(line[i + 1]))
+					char += line[++i]
+
 				let charWidth = font.widthOf(char)
 				if (currentLength + charWidth > width)
 				{
@@ -395,12 +406,9 @@ export class Text extends NodeAbstract
 					currentLength += charWidth
 				}
 			}
-			if (currentString != "")
-			{
-				result.push(currentString)
-				currentLength = 0
-				currentString = ""
-			}
+			result.push(currentString)
+			currentLength = 0
+			currentString = ""
 		}
 		return result
 	}
