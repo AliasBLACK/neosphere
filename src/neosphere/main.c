@@ -67,6 +67,7 @@ double    g_idle_time = 0.0;
 js_ref_t* g_main_object = NULL;
 screen_t* g_screen = NULL;
 uint32_t  g_tick_count = 0;
+bool	  g_no_aa = false;
 
 enum fullscreen_mode
 {
@@ -81,7 +82,7 @@ static void on_socket_idle      (void);
 static bool initialize_engine   (void);
 static void shutdown_engine     (void);
 static bool find_startup_game   (path_t* *out_path);
-static bool parse_command_line  (int argc, char* argv[], path_t* *out_game_path, int *out_fullscreen, int *out_frameskip, int *out_verbosity, ssj_mode_t *out_ssj_mode, bool *out_retro_mode, int *out_extras_offset, bool *use_ogl_3_1);
+static bool parse_command_line  (int argc, char* argv[], path_t* *out_game_path, int *out_fullscreen, int *out_frameskip, int *out_verbosity, ssj_mode_t *out_ssj_mode, bool *out_retro_mode, int *out_extras_offset, bool *use_ogl_3_1, bool *no_aa);
 static void print_banner        (bool want_copyright, bool want_deps);
 static void print_usage         (void);
 static void report_error        (const char* fmt, ...);
@@ -160,7 +161,7 @@ main(int argc, char* argv[])
 	// parse the command line
 	if (parse_command_line(argc, argv, &s_game_path,
 		&fullscreen_mode, &use_frameskip, &use_verbosity, &ssj_mode, &retro_mode,
-		&game_args_offset, &use_ogl_3_1))
+		&game_args_offset, &use_ogl_3_1, &g_no_aa))
 	{
 		if (ssj_mode == SSJ_ACTIVE)
 			fullscreen_mode = FULLSCREEN_OFF;
@@ -773,7 +774,7 @@ parse_command_line(
 	int argc, char* argv[],
 	path_t* *out_game_path, int *out_fullscreen, int *out_frameskip,
 	int *out_verbosity, ssj_mode_t *out_ssj_mode, bool *out_retro_mode,
-	int *out_extras_offset, bool *use_ogl_3_1)
+	int *out_extras_offset, bool *use_ogl_3_1, bool *no_aa)
 {
 	bool parse_options = true;
 
@@ -786,6 +787,7 @@ parse_command_line(
 	*out_game_path = NULL;
 	*out_retro_mode = false;
 	*use_ogl_3_1 = false;
+	*no_aa = false;
 	*out_ssj_mode = SSJ_PASSIVE;
 	*out_verbosity = 0;
 
@@ -807,6 +809,9 @@ parse_command_line(
 			}
 			else if (strcmp(argv[i], "--streamer") == 0 || strcmp(argv[i], "--ogl31") == 0) {
 				*use_ogl_3_1 = true;
+			}
+			else if (strcmp(argv[i], "--no_aa") == 0) {
+				*no_aa = true;
 			}
 #if defined(NEOSPHERE_SPHERUN)
 			else if (strcmp(argv[i], "--version") == 0) {

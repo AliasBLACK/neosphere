@@ -38,6 +38,8 @@
 #include "galileo.h"
 #include "transform.h"
 
+extern bool g_no_aa;
+
 struct image
 {
 	unsigned int    refcount;
@@ -82,7 +84,10 @@ image_new_ms(int width, int height, const color_t* pixels, int samples)
 	if (!(image = calloc(1, sizeof(image_t))))
 		goto on_error;
 	al_set_new_bitmap_depth(16);
-	al_set_new_bitmap_samples(samples);
+
+	if (!g_no_aa)
+		al_set_new_bitmap_samples(samples);
+
 	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	if ((image->bitmap = al_create_bitmap(width, height)) == NULL)
 		goto on_error;
