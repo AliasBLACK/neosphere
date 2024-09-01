@@ -228,6 +228,7 @@ bin/cell:
 	      -Ldep/lib \
 	      $(LINKER_ARGS) \
 	      $(cell_sources) $(cell_libs)
+	install_name_tool -add_rpath @executable_path/ bin/cell
 
 bin/ssj:
 	mkdir -p bin
