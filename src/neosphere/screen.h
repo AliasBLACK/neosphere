@@ -63,5 +63,6 @@ void             screen_show_mouse        (screen_t* it, bool visible);
 void             screen_toggle_fps        (screen_t* it);
 void             screen_toggle_fullscreen (screen_t* it);
 void             screen_unskip_frame      (screen_t* it);
+int	             get_main_monitor         ();
 
 #endif // SPHERE__DISPLAY_H__INCLUDED

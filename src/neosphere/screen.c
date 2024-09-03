@@ -87,7 +87,7 @@ screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, 
 	screen_t*            screen;
 	int                  x_scale = 1;
 	int                  y_scale = 1;
-	int					 monitor = 0;
+	int					 monitor = get_main_monitor();
 
 	if (!(screen = calloc(1, sizeof(screen_t)))) {
 		fprintf(stderr, "FATAL: couldn't allocate memory for screen_t");
@@ -538,7 +538,7 @@ refresh_display(screen_t* screen)
 		screen->y_scale = 1.0;
 		screen->x_offset = 0;
 		screen->y_offset = 0;
-		if (al_get_monitor_info(0, &desktop_info)) {
+		if (al_get_monitor_info(screen->monitor, &desktop_info)) {
 			screen->x_scale = trunc(((desktop_info.x2 - desktop_info.x1) * 2 / 3) / screen->x_size);
 			screen->y_scale = trunc(((desktop_info.y2 - desktop_info.y1) * 2 / 3) / screen->y_size);
 			screen->x_scale = screen->y_scale = fmax(fmin(screen->x_scale, screen->y_scale), 1.0);
@@ -552,4 +552,23 @@ refresh_display(screen_t* screen)
 	}
 
 	image_render_to(screen->backbuffer, NULL);
+}
+
+int
+get_main_monitor()
+{
+	ALLEGRO_MONITOR_INFO info;
+	int result = 0;
+
+	for (int i = 0; i < al_get_num_video_adapters(); i++)
+	{
+		if (!al_get_monitor_info(i, &info))
+			continue;
+		if (info.x1 == 0 && info.y1 == 0)
+		{
+			result = i;
+			break;
+		}
+	}
+	return result;
 }
