@@ -82,7 +82,9 @@ image_new_ms(int width, int height, const color_t* pixels, int samples)
 	if (!(image = calloc(1, sizeof(image_t))))
 		goto on_error;
 	al_set_new_bitmap_depth(16);
+#if !defined(__APPLE__)
 	al_set_new_bitmap_samples(samples);
+#endif
 	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	if ((image->bitmap = al_create_bitmap(width, height)) == NULL)
 		goto on_error;
