@@ -39,12 +39,13 @@
 
 #if defined(_WIN32)
 #include <windows.h>
+#include <direct.h>
 #define PATH_MAX _MAX_PATH
+#define mkdir(path, m) _mkdir(path)
+#define realpath(name, r) (_access(name, 00) == 0 ? _fullpath((r), (name), PATH_MAX) : NULL)
 #endif
 
 #include "path.h"
-
-#include <allegro5/allegro.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -73,11 +74,6 @@
 static path_t* construct_path       (path_t* path, const char* pathname, bool force_dir);
 static void    convert_to_directory (path_t* path);
 static void    refresh_pathname     (path_t* path);
-
-bool path_inner_mkdir(const char* path)
-{
-	return al_make_directory(path);
-}
 
 struct path
 {
@@ -399,7 +395,7 @@ path_mkdir(const path_t* path)
 	// ancestor and working our way down.
 	for (i = 0; i < path->num_hops; ++i) {
 		path_append_dir(parent_path, path_hop(path, i));
-		is_ok = path_inner_mkdir(path_cstr(parent_path))
+		is_ok = mkdir(path_cstr(parent_path), 0777) == 0
 			|| errno == EEXIST;
 	}
 	path_free(parent_path);
@@ -470,40 +466,28 @@ path_remove_hop(path_t* path, int idx)
 path_t*
 path_resolve(path_t* path, const path_t* relative_to)
 {
-	path_t*     new_path = NULL;
-	path_t*     origin = NULL;
-	char*       pathname = NULL;
-	ALLEGRO_FS_ENTRY* fs_entry = NULL;
+	path_t*     new_path;
+	path_t*     origin;
+	char*       pathname;
+	struct stat stat_buf;
 
-	fs_entry = al_create_fs_entry(path_cstr(path));
-
-	if (!al_fs_entry_exists(fs_entry)) {
-		goto on_error;
-	}
-
-	if (!(pathname = al_get_fs_entry_name(fs_entry)))
-		goto on_error;
-
-	new_path = al_get_fs_entry_mode(fs_entry) & ALLEGRO_FILEMODE_ISDIR
+	if (!(pathname = realpath(path_cstr(path), NULL)))
+		return NULL;
+	if (stat(path_cstr(path), &stat_buf) != 0)
+		return NULL;
+	new_path = stat_buf.st_mode & S_IFDIR
 		? path_new_dir(pathname)
 		: path_new(pathname);
-
+	free(pathname);
 	if (relative_to != NULL) {
 		if (!(origin = path_resolve(path_dup(relative_to), NULL)))
-			goto on_error;
+			return NULL;
 		path_relativize(new_path, origin);
 		path_free(origin);
 	}
 	construct_path(path, path_cstr(new_path), false);
 	path_free(new_path);
-	al_destroy_fs_entry(fs_entry);
 	return path;
-
-on_error:
-	al_destroy_fs_entry(fs_entry);
-	path_free(origin);
-	path_free(new_path);
-	return NULL;
 }
 
 path_t*
