@@ -88,7 +88,7 @@ cell_sources=src/cell/main.c \
    src/shared/encoding.c \
    src/shared/jsal.c \
    src/shared/lstring.c \
-   src/shared/path.c \
+   src/shared/path_no_unicode.c \
    src/shared/unicode.c \
    src/shared/vector.c \
    src/shared/wildmatch.c \
@@ -112,7 +112,7 @@ ssj_sources=src/ssj/main.c \
    src/shared/console.c \
    src/shared/dyad.c \
    src/shared/ki.c \
-   src/shared/path.c \
+   src/shared/path_no_unicode.c \
    src/shared/sockets.c \
    src/shared/vector.c \
    src/shared/xoroshiro.c \
