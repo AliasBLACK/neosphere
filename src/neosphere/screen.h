@@ -64,5 +64,6 @@ void             screen_toggle_fps        (screen_t* it);
 void             screen_toggle_fullscreen (screen_t* it);
 void             screen_unskip_frame      (screen_t* it);
 int	             get_main_monitor         ();
+int              get_current_monitor      (screen_t* it);
 
 #endif // SPHERE__DISPLAY_H__INCLUDED

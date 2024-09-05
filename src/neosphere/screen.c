@@ -572,3 +572,26 @@ get_main_monitor()
 	}
 	return result;
 }
+
+int
+get_current_monitor(screen_t* it)
+{
+	ALLEGRO_MONITOR_INFO info;
+	int x;
+	int y;
+	int result = 0;
+
+	al_get_window_position(it->display, &x, &y);
+
+	for (int i = 0; i < al_get_num_video_adapters(); i++)
+	{
+		if (!al_get_monitor_info(i, &info))
+			continue;
+		if (info.x1 <= x && info.x2 > x && info.y1 <= y && info.y2 > y)
+		{
+			result = i;
+			break;
+		}
+	}
+	return result;
+}
