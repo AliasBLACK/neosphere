@@ -516,7 +516,7 @@ refresh_display(screen_t* screen)
 	int                  real_width;
 	int                  real_height;
 
-	al_set_display_flag(screen->display, ALLEGRO_FULLSCREEN_WINDOW, screen->fullscreen);
+	al_set_display_flag(screen->display, ALLEGRO_FRAMELESS, screen->fullscreen);
 	if (al_get_monitor_info(get_current_monitor(screen), &desktop_info))
 	{
 		if (screen->fullscreen) {
@@ -534,6 +534,9 @@ refresh_display(screen_t* screen)
 				screen->y_offset = (real_height - screen->y_size * screen->y_scale) / 2;
 				screen->x_offset = 0;
 			}
+
+			// Move to screen origin.
+			al_set_window_position(screen->display, desktop_info.x1, desktop_info.y1);
 		}
 		else {
 			screen->x_scale = 1.0;
@@ -544,14 +547,13 @@ refresh_display(screen_t* screen)
 			screen->y_scale = trunc(((desktop_info.y2 - desktop_info.y1) * 2 / 3) / screen->y_size);
 			screen->x_scale = screen->y_scale = fmax(fmin(screen->x_scale, screen->y_scale), 1.0);
 
-			// size and recenter the window
-			al_resize_display(screen->display, screen->x_size * screen->x_scale, screen->y_size * screen->y_scale);
+			// Recenter the window.
 			al_set_window_position(screen->display,
 				(desktop_info.x1 + desktop_info.x2) / 2 - screen->x_size * screen->x_scale / 2,
 				(desktop_info.y1 + desktop_info.y2) / 2 - screen->y_size * screen->y_scale / 2);
 		}
 	}
-
+	al_resize_display(screen->display, screen->x_size * screen->x_scale, screen->y_size * screen->y_scale);
 	image_render_to(screen->backbuffer, NULL);
 }
 
@@ -583,6 +585,7 @@ get_current_monitor(screen_t* it)
 	int result = 0;
 
 	al_get_window_position(it->display, &x, &y);
+	x += al_get_display_width(it->display) / 2;
 
 	for (int i = 0; i < al_get_num_video_adapters(); i++)
 	{
