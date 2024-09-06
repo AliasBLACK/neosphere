@@ -87,7 +87,7 @@ screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, 
 	screen_t*            screen;
 	int                  x_scale = 1;
 	int                  y_scale = 1;
-	int					 monitor = 0;
+	int					 monitor = get_main_monitor();
 
 	if (!(screen = calloc(1, sizeof(screen_t)))) {
 		fprintf(stderr, "FATAL: couldn't allocate memory for screen_t");
@@ -517,39 +517,82 @@ refresh_display(screen_t* screen)
 	int                  real_height;
 
 	al_set_display_flag(screen->display, ALLEGRO_FULLSCREEN_WINDOW, screen->fullscreen);
-	if (screen->fullscreen) {
-		real_width = al_get_display_width(screen->display);
-		real_height = al_get_display_height(screen->display);
-		screen->x_scale = (float)real_width / screen->x_size;
-		screen->y_scale = (float)real_height / screen->y_size;
-		if (screen->x_scale > screen->y_scale) {
-			screen->x_scale = screen->y_scale;
-			screen->x_offset = (real_width - screen->x_size * screen->x_scale) / 2;
-			screen->y_offset = 0;
+	if (al_get_monitor_info(get_current_monitor(screen), &desktop_info))
+	{
+		if (screen->fullscreen) {
+			real_width = desktop_info.x2 - desktop_info.x1;
+			real_height = desktop_info.y2 - desktop_info.y1;
+			screen->x_scale = (float)real_width / screen->x_size;
+			screen->y_scale = (float)real_height / screen->y_size;
+			if (screen->x_scale > screen->y_scale) {
+				screen->x_scale = screen->y_scale;
+				screen->x_offset = (real_width - screen->x_size * screen->x_scale) / 2;
+				screen->y_offset = 0;
+			}
+			else {
+				screen->y_scale = screen->x_scale;
+				screen->y_offset = (real_height - screen->y_size * screen->y_scale) / 2;
+				screen->x_offset = 0;
+			}
 		}
 		else {
-			screen->y_scale = screen->x_scale;
-			screen->y_offset = (real_height - screen->y_size * screen->y_scale) / 2;
+			screen->x_scale = 1.0;
+			screen->y_scale = 1.0;
 			screen->x_offset = 0;
-		}
-	}
-	else {
-		screen->x_scale = 1.0;
-		screen->y_scale = 1.0;
-		screen->x_offset = 0;
-		screen->y_offset = 0;
-		if (al_get_monitor_info(0, &desktop_info)) {
+			screen->y_offset = 0;
 			screen->x_scale = trunc(((desktop_info.x2 - desktop_info.x1) * 2 / 3) / screen->x_size);
 			screen->y_scale = trunc(((desktop_info.y2 - desktop_info.y1) * 2 / 3) / screen->y_size);
 			screen->x_scale = screen->y_scale = fmax(fmin(screen->x_scale, screen->y_scale), 1.0);
+
+			// Recenter the window.
+			al_resize_display(screen->display, screen->x_size * screen->x_scale, screen->y_size * screen->y_scale);
+			al_set_window_position(screen->display,
+				(desktop_info.x1 + desktop_info.x2) / 2 - screen->x_size * screen->x_scale / 2,
+				(desktop_info.y1 + desktop_info.y2) / 2 - screen->y_size * screen->y_scale / 2);
 		}
-
-		// size and recenter the window
-		al_resize_display(screen->display, screen->x_size * screen->x_scale, screen->y_size * screen->y_scale);
-		al_set_window_position(screen->display,
-			(desktop_info.x1 + desktop_info.x2) / 2 - screen->x_size * screen->x_scale / 2,
-			(desktop_info.y1 + desktop_info.y2) / 2 - screen->y_size * screen->y_scale / 2);
 	}
-
 	image_render_to(screen->backbuffer, NULL);
+}
+
+int
+get_main_monitor()
+{
+	ALLEGRO_MONITOR_INFO info;
+	int result = 0;
+
+	for (int i = 0; i < al_get_num_video_adapters(); i++)
+	{
+		if (!al_get_monitor_info(i, &info))
+			continue;
+		if (info.x1 == 0 && info.y1 == 0)
+		{
+			result = i;
+			break;
+		}
+	}
+	return result;
+}
+
+int
+get_current_monitor(screen_t* it)
+{
+	ALLEGRO_MONITOR_INFO info;
+	int x;
+	int y;
+	int result = 0;
+
+	al_get_window_position(it->display, &x, &y);
+	x += al_get_display_width(it->display) / 2;
+
+	for (int i = 0; i < al_get_num_video_adapters(); i++)
+	{
+		if (!al_get_monitor_info(i, &info))
+			continue;
+		if (info.x1 <= x && info.x2 > x && info.y1 <= y && info.y2 > y)
+		{
+			result = i;
+			break;
+		}
+	}
+	return result;
 }
