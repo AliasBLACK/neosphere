@@ -546,9 +546,9 @@ refresh_display(screen_t* screen)
 
 			// Recenter the window.
 			al_resize_display(screen->display, screen->x_size * screen->x_scale, screen->y_size * screen->y_scale);
-			al_set_window_position(screen->display,
-				(desktop_info.x1 + desktop_info.x2) / 2 - screen->x_size * screen->x_scale / 2,
-				(desktop_info.y1 + desktop_info.y2) / 2 - screen->y_size * screen->y_scale / 2);
+			// al_set_window_position(screen->display,
+			// 	(desktop_info.x1 + desktop_info.x2) / 2 - screen->x_size * screen->x_scale / 2,
+			// 	(desktop_info.y1 + desktop_info.y2) / 2 - screen->y_size * screen->y_scale / 2);
 		}
 	}
 	image_render_to(screen->backbuffer, NULL);
