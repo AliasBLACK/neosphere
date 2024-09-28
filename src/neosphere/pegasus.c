@@ -1417,15 +1417,17 @@ static bool
 js_Sphere_openURL(int num_args, bool is_ctor, intptr_t magic)
 {
 	const char* url;
+	const char* cmd;
 
 	url = jsal_require_string(0);
 #if defined(_WIN32)
-	system(strnewf("start %s", url));
+	cmd = (const char*)strnewf("start %s", url);
 #elif defined(__APPLE__)
-	system(strnewf("open %s", url));
+	cmd = (const char*)strnewf("open %s", url);
 #else
-	system(strnewf("xdg-open %s", url));
+	cmd = (const char*)strnewf("xdg-open %s", url);
 #endif
+	system(cmd);
 	return false;
 }
 
