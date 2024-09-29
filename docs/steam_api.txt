@@ -1,3 +1,13 @@
+Recurring Callbacks
+-------------------
+
+	GameOverlayActivated
+
+		int m_bActive
+		bool m_bUserInitiated
+		int m_nAppID
+		int m_dwOverlayPID
+
 
 `ISteamUser` Interface
 ----------------------
@@ -73,6 +83,18 @@
 		Returns var of type `int`.
 		returns the CSteamID of the account currently logged into the Steam client
 		a CSteamID is a unique identifier for an account, and used to differentiate users in all parts of the Steamworks API
+
+	ISteamUser.RequestStoreAuthURL(string pchRedirectURL)
+
+		Returns var of type `int`.
+
+	ISteamUser.GetMarketEligibility()
+
+		Returns var of type `int`.
+
+	ISteamUser.GetDurationControl()
+
+		Returns var of type `int`.
 
 	ISteamUser.TrackAppUsageEvent(int gameID, int eAppUsageEvent, string pchExtraInfo)
 
@@ -185,6 +207,72 @@
 			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_MovieMP4
 			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_MovieWebMSmall
 			ECommunityProfileItemProperty.k_ECommunityProfileItemProperty_MovieMP4Small
+
+	ISteamFriends.SetPersonaName(string pchPersonaName)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetFriendByIndex(int iFriend, int iFriendFlags)
+
+		Returns var of type `int`.
+		the returned CSteamID can then be used by all the functions below to access details about the user
+
+	ISteamFriends.GetClanByIndex(int iClan)
+
+		Returns var of type `int`.
+
+	ISteamFriends.DownloadClanActivityCounts(int cClansToRequest)
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.psteamIDClans (int)
+
+	ISteamFriends.GetFriendFromSourceByIndex(int steamIDSource, int iFriend)
+
+		Returns var of type `int`.
+
+	ISteamFriends.RequestClanOfficerList(int steamIDClan)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetClanOwner(int steamIDClan)
+
+		Returns var of type `int`.
+		returns the steamID of the clan owner
+
+	ISteamFriends.GetClanOfficerByIndex(int steamIDClan, int iOfficer)
+
+		Returns var of type `int`.
+		returns the steamID of a clan officer, by index, of range [0,GetClanOfficerCount)
+
+	ISteamFriends.GetCoplayFriend(int iCoplayFriend)
+
+		Returns var of type `int`.
+
+	ISteamFriends.JoinClanChatRoom(int steamIDClan)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetChatMemberByIndex(int steamIDClan, int iUser)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetFollowerCount(int steamID)
+
+		Returns var of type `int`.
+
+	ISteamFriends.IsFollowing(int steamID)
+
+		Returns var of type `int`.
+
+	ISteamFriends.EnumerateFollowingList(int unStartIndex)
+
+		Returns var of type `int`.
+
+	ISteamFriends.RequestEquippedProfileItems(int steamID)
+
+		Returns var of type `int`.
 
 	ISteamFriends.GetPersonaState()
 
@@ -313,37 +401,6 @@
 		notification, and depends on user settings.
 		You can register for UnreadChatMessagesChanged_t callbacks to know when this
 		has potentially changed.
-
-	ISteamFriends.GetFriendByIndex(int iFriend, int iFriendFlags)
-
-		Returns var of type `int`.
-		the returned CSteamID can then be used by all the functions below to access details about the user
-
-	ISteamFriends.GetClanByIndex(int iClan)
-
-		Returns var of type `int`.
-
-	ISteamFriends.GetFriendFromSourceByIndex(int steamIDSource, int iFriend)
-
-		Returns var of type `int`.
-
-	ISteamFriends.GetClanOwner(int steamIDClan)
-
-		Returns var of type `int`.
-		returns the steamID of the clan owner
-
-	ISteamFriends.GetClanOfficerByIndex(int steamIDClan, int iOfficer)
-
-		Returns var of type `int`.
-		returns the steamID of a clan officer, by index, of range [0,GetClanOfficerCount)
-
-	ISteamFriends.GetCoplayFriend(int iCoplayFriend)
-
-		Returns var of type `int`.
-
-	ISteamFriends.GetChatMemberByIndex(int steamIDClan, int iUser)
-
-		Returns var of type `int`.
 
 	ISteamFriends.GetFriendsGroupIDByIndex(int iFG)
 
@@ -722,6 +779,10 @@
 		In game launchers that don't have controller support you can call this to have Steam Input translate the controller input into mouse
 		kb to navigate the launcher
 
+	ISteamUtils.CheckFileSignature(string szFileName)
+
+		Returns var of type `int`.
+
 	ISteamUtils.FilterText(int eContext, int sourceSteamID, string pchInputMessage, int pchOutFilteredText, int nByteSizeOutFilteredText)
 
 		Returns var of type `int`.
@@ -952,6 +1013,78 @@
 		Returns var of type `int`.
 		returns the display type of the leaderboard
 
+	ISteamUserStats.RequestUserStats(int steamIDUser)
+
+		Returns var of type `int`.
+
+	ISteamUserStats.FindOrCreateLeaderboard(string pchLeaderboardName, int eLeaderboardSortMethod, int eLeaderboardDisplayType)
+
+		Returns var of type `int`.
+
+		eLeaderboardSortMethod is an enum with the following members:
+
+			ELeaderboardSortMethod.k_ELeaderboardSortMethodNone
+			ELeaderboardSortMethod.k_ELeaderboardSortMethodAscending
+			ELeaderboardSortMethod.k_ELeaderboardSortMethodDescending
+
+		eLeaderboardDisplayType is an enum with the following members:
+
+			ELeaderboardDisplayType.k_ELeaderboardDisplayTypeNone
+			ELeaderboardDisplayType.k_ELeaderboardDisplayTypeNumeric
+			ELeaderboardDisplayType.k_ELeaderboardDisplayTypeTimeSeconds
+			ELeaderboardDisplayType.k_ELeaderboardDisplayTypeTimeMilliSeconds
+
+	ISteamUserStats.FindLeaderboard(string pchLeaderboardName)
+
+		Returns var of type `int`.
+
+	ISteamUserStats.DownloadLeaderboardEntries(int hSteamLeaderboard, int eLeaderboardDataRequest, int nRangeStart, int nRangeEnd)
+
+		Returns var of type `int`.
+
+		eLeaderboardDataRequest is an enum with the following members:
+
+			ELeaderboardDataRequest.k_ELeaderboardDataRequestGlobal
+			ELeaderboardDataRequest.k_ELeaderboardDataRequestGlobalAroundUser
+			ELeaderboardDataRequest.k_ELeaderboardDataRequestFriends
+			ELeaderboardDataRequest.k_ELeaderboardDataRequestUsers
+
+	ISteamUserStats.DownloadLeaderboardEntriesForUsers(int hSteamLeaderboard, int cUsers)
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.prgUsers (int)
+
+	ISteamUserStats.UploadLeaderboardScore(int hSteamLeaderboard, int eLeaderboardUploadScoreMethod, int nScore, int cScoreDetailsCount)
+
+		eLeaderboardUploadScoreMethod is an enum with the following members:
+
+			ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodNone
+			ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodKeepBest
+			ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodForceUpdate
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pScoreDetails (int)
+
+	ISteamUserStats.AttachLeaderboardUGC(int hSteamLeaderboard, int hUGC)
+
+		Returns var of type `int`.
+
+	ISteamUserStats.GetNumberOfCurrentPlayers()
+
+		Returns var of type `int`.
+
+	ISteamUserStats.RequestGlobalAchievementPercentages()
+
+		Returns var of type `int`.
+
+	ISteamUserStats.RequestGlobalStats(int nHistoryDays)
+
+		Returns var of type `int`.
+
 
 `ISteamApps` Interface
 ----------------------
@@ -1106,6 +1239,10 @@
 
 		Returns var of type `int`.
 		the user has a temporary license borrowed via Family Sharing
+
+	ISteamApps.GetFileDetails(string pszFileName)
+
+		Returns var of type `int`.
 
 
 `ISteamInput` Interface
