@@ -22,13 +22,15 @@ interfaces_to_bind = [
 
 # Methods to ignore due to deprecation.
 methods_to_ignore = [
-	"SteamAPI_ISteamUser_GetAvailableVoice"
+	"SteamAPI_ISteamUser_GetAvailableVoice",
+	"SteamAPI_ISteamUser_TerminateGameConnection_DEPRECATED"
 ]
 
 # Typedef dictionary.
 typedefs = {
 	"CSteamID": "uint64_t",
 	"CGameID": "uint64_t",
+	"SteamAPICall_t": "uint64_t"
 }
 
 # Params to ignore (too much work to get them working)
@@ -38,7 +40,10 @@ forbidden_types = [
 
 # Convert type to one already defined or base C type.
 enums_to_bind = []
-structs_to_bind = []
+structs_to_bind = [
+	"GameOverlayActivated_t",
+	"SteamAPICallCompleted_t"
+]
 def convert_type(type):
 
 	# Check if type is pointer and/or const.
@@ -102,7 +107,14 @@ def convert_base_type(type):
 
 # Parse struct.
 unparsed_methods = []
-struct_string = ""
+struct_string = """typedef struct {
+	int32_t m_steamUser;
+	int32_t m_iCallback;
+	uint8_t* m_pubParam;
+	int32_t m_cubParam;
+} CallbackMsg_t;
+
+"""
 def parse_struct(struct):
 
 	# If struct has no fields, ignore.
@@ -167,9 +179,13 @@ def create_function_ptr(ptr_key, returntype, params):
 		return function_pointers[ptr_key]["name"]
 
 # Create basic function pointers for steam api init functions.
-initfunc = create_function_ptr("int, const char *, char *", "int", ["const char *", "char *"])
+initfunc = create_function_ptr("int32_t, const char *, char *", "int32_t", ["const char *", "char *"])
 pointerfunc = create_function_ptr("void *", "void *", [])
 voidfunc = create_function_ptr("void", "void", [])
+intfunc = create_function_ptr("int32_t", "int32_t", [])
+callbackRunFunc = create_function_ptr("void, int32_t", "void", ["int32_t"])
+callbackGetFunc = create_function_ptr("bool, int32_t, CallbackMsg_t *", "bool", ["int32_t", "CallbackMsg_t *"])
+callbackAPIFunc = create_function_ptr("bool, int32_t, uint64_t, void *, int32_t, int32_t, bool", "bool", ["int32_t", "uint64_t", "void *", "int32_t", "int32_t", "bool"])
 
 # Parse methods.
 methods = {}
@@ -182,11 +198,12 @@ def parse_method(method, category, type):
 		skipped_methods.append(method['methodname_flat'] + " (listed in methods_to_ignore)")
 		return
 	
-	# Skip if method returns a SteamAPICall_t.
-	# TODO: Figure out how to do this.
+	# If method returns a SteamAPICall_t.
 	if "SteamAPICall_t" in method['returntype']:
-		skipped_methods.append(method['methodname_flat'] + " (returns SteamAPICall_t)")
-		return
+		# skipped_methods.append(method['methodname_flat'] + " (returns SteamAPICall_t)")
+		if not (method['callresult'] in structs_to_bind):
+			structs_to_bind.append(method['callresult'])
+		structs[method['callresult']]['is_api_callback'] = True
 	
 	# Parse params.
 	params = []
@@ -307,7 +324,7 @@ def jsal_push_function(type):
 	match(type):
 		case "bool":
 			return "jsal_push_boolean("
-		case "int8_t" | "int16_t" | "int32_t" | "int" | "char":
+		case "int8_t" | "int16_t" | "int32_t" | "int" | "char" | "const int32_t":
 			return "jsal_push_int("
 		case "uint8_t" | "uint16_t" | "uint32_t" | "unsigned int":
 			return  "jsal_push_uint("
@@ -350,7 +367,7 @@ def js_type_convert(type):
 	match(type):
 		case "bool":
 			return "bool"
-		case "int8_t" | "int16_t" | "int32_t" | "int" | "char" | "uint8_t" | "uint16_t" | "uint32_t" | "unsigned int" | "int64_t" | "uint64_t" | "double":
+		case "int8_t" | "int16_t" | "int32_t" | "const int32_t" | "int" | "char" | "uint8_t" | "uint16_t" | "uint32_t" | "unsigned int" | "int64_t" | "uint64_t" | "double":
 			return "int"
 		case "float":
 			return "float"
@@ -378,12 +395,14 @@ header = """// WARNING: This file is auto-generated. Do not edit.
 #ifdef _WIN32
 	#include <windows.h>
 	#define GETADDRESS(lib, proc) GetProcAddress(lib, proc)
+	HMODULE steam_api;
 #else
 	#include <dlfcn.h>
 	#define GETADDRESS(lib, proc) dlsym(lib, proc)
+	void* steam_api;
 #endif
 
-HMODULE steam_api;
+int32_t hSteamPipe;
 
 """
 source = """// WARNING: This file is auto-generated. Do not edit.
@@ -460,14 +479,15 @@ for i in data['typedefs']:
 	# Append type to dictionary.
 	typedefs[i['typedef']] = type
 
-# Callbacks.
-# Ignore all for now, not sure how to pass callbacks to js.
-for i in data['callback_structs']:
-	forbidden_types.append(i['struct'])
-
 # Structs.
 structs = {}
 for i in data['structs']:
+	structs[i['struct']] = i
+
+# Callbacks.
+callbackID = {}
+for i in data['callback_structs']:
+	callbackID[i['struct']] = i['callback_id']
 	structs[i['struct']] = i
 
 # Constants.
@@ -531,8 +551,72 @@ for method in unparsed_methods:
 	parse_method(method[0], method[1], method[2])
 
 # Parse all structs.
+callback_switch_string = ""
+api_callback_switch_string = ""
+callback_documentation = ""
 for struct in structs_to_bind:
 	parse_struct(structs[struct])
+
+	# For callback structs specifically...
+	if (struct in callbackID):
+		
+		# Create the switch to be run on manual callback polling.
+		if ("is_api_callback" in structs[struct]):
+			api_callback_switch_string += '						case ' + str(callbackID[struct]) + ':\n'
+			api_callback_switch_string += '						{\n'
+			api_callback_switch_string += '							' + struct + '* callbackStruct = (' + struct + ' *)pTmpCallResult;\n'
+			api_callback_switch_string += '							jsal_push_new_object();\n'
+			api_callback_switch_string += '							uint64_t callID = pCallCompleted->m_hAsyncCall;\n'
+			api_callback_switch_string += '							jsal_push_number(callID);\n'
+			api_callback_switch_string += '							jsal_put_prop_string(-2, "callID");\n'
+			
+			for prop in structs[struct]['fields']:
+				if (re.search(r'\[\d+\]', prop['fieldname'])): # If array...
+					sanitizedName = re.sub(r'\[\d+\]', '', prop['fieldname']).strip()
+					api_callback_switch_string += "							int k;\n"
+					api_callback_switch_string += "							size_t n = sizeof(callbackStruct->" + sanitizedName + ")/sizeof(" + prop['fieldtype'] + ");\n"
+					api_callback_switch_string += "							jsal_push_new_array();\n"
+					api_callback_switch_string += "							for (k = 0; k < n; k++)\n"
+					api_callback_switch_string += "							{\n"
+					api_callback_switch_string += "								" + jsal_push_function(prop['fieldtype']) + "callbackStruct->" + sanitizedName + "[k]);\n"
+					api_callback_switch_string += "								jsal_put_prop_index(-2, k);\n"
+					api_callback_switch_string += "							}\n"
+					api_callback_switch_string += '							jsal_put_prop_string(-2, "' + sanitizedName + '");\n'
+				else:
+					api_callback_switch_string += "							" + jsal_push_function(prop['fieldtype']) + "callbackStruct->" + prop['fieldname'] + ");\n"
+					api_callback_switch_string += '							jsal_put_prop_string(-2, "' + prop['fieldname'] + '");\n'
+
+			api_callback_switch_string += '							jsal_put_prop_index(-2, i);\n'
+			api_callback_switch_string += '							i++;\n'
+			api_callback_switch_string += '							break;\n'
+			api_callback_switch_string += '						}\n'
+
+		elif (callbackID[struct] == 703):
+			continue
+
+		else:
+			callback_switch_string += '			case ' + str(callbackID[struct]) + ':\n'
+			callback_switch_string += '			{\n'
+			callback_switch_string += '				' + struct + '* callbackStruct = (' + struct + ' *)callback.m_pubParam;\n'
+			callback_switch_string += '				jsal_push_new_object();\n'
+			callback_switch_string += '				const char* name = "' + struct.replace("_t", "") + '";\n'
+			callback_switch_string += '				jsal_push_string(name);\n'
+			callback_switch_string += '				jsal_put_prop_string(-2, "name");\n'
+			
+			for prop in structs[struct]['fields']:
+				callback_switch_string += "				" + jsal_push_function(prop['fieldtype']) + "callbackStruct->" + prop['fieldname'] + ");\n"
+				callback_switch_string += '				jsal_put_prop_string(-2, "' + prop['fieldname'] + '");\n'
+
+			callback_switch_string += '				jsal_put_prop_index(-2, i);\n'
+			callback_switch_string += '				i++;\n'
+			callback_switch_string += '				break;\n'
+			callback_switch_string += '			}\n'
+
+			# Create documentation.
+			callback_documentation += '	' + struct.replace("_t", "") + '\n\n'
+			for prop in structs[struct]['fields']:
+				callback_documentation += '		' + js_type_convert(prop['fieldtype'].replace("*", "").strip()) + ' ' + prop['fieldname'] + '\n'
+			callback_documentation += '\n'
 
 # Sort function pointers by returntype.
 function_pointers = sorted(function_pointers.items(), key = lambda x: x[1]['returntype'], reverse = True)
@@ -572,7 +656,8 @@ for func in skipped_methods:
 header += "\n"
 header += "void steamapi_init (void);\n"
 header += "static bool " + calc_spaces_for_alignment("js_SteamAPI_Init") + "(int num_args, bool is_ctor, intptr_t magic);\n"
-header += "static bool " + calc_spaces_for_alignment("js_SteamAPI_Shutdown") + "(int num_args, bool is_ctor, intptr_t magic);\n\n"
+header += "static bool " + calc_spaces_for_alignment("js_SteamAPI_Shutdown") + "(int num_args, bool is_ctor, intptr_t magic);\n"
+header += "static bool " + calc_spaces_for_alignment("js_SteamAPI_RunCallbacks") + "(int num_args, bool is_ctor, intptr_t magic);\n\n"
 for category in methods:
 	header += "// " + category + "\n"
 	for returntype in methods[category]:
@@ -608,6 +693,7 @@ source += "\n"
 source += "	// API Init/Shutdown functions.\n"
 source += '	api_define_func("SteamAPI", "Init", js_SteamAPI_Init, 0);\n'
 source += '	api_define_func("SteamAPI", "Shutdown", js_SteamAPI_Shutdown, 0);\n'
+source += '	api_define_func("SteamAPI", "RunCallbacks", js_SteamAPI_RunCallbacks, 0);\n'
 for category in methods:
 	source += "\n"
 	source += "	// " + category + "\n"
@@ -627,16 +713,22 @@ js_SteamAPI_Init(int num_args, bool is_ctor, intptr_t magic)
 #ifdef _WIN32
 	steam_api = LoadLibrary(TEXT("steam_api64.dll"));
 #elif defined(__APPLE__)
-	steam_api = dlopen(TEXT("libsteam_api.dylib"));
+	steam_api = dlopen("libsteam_api.dylib", RTLD_LAZY);
 #else
-	steam_api = dlopen(TEXT("libsteam_api.so"));
+	steam_api = dlopen("libsteam_api.so", RTLD_LAZY);
 #endif
 	if (steam_api)
 	{
 		""" + initfunc + """ SteamAPI_Init;
 		SteamAPI_Init = (""" + initfunc + """)GETADDRESS(steam_api, "SteamInternal_SteamAPI_Init");
 		if (SteamAPI_Init(NULL, NULL) == 0)
-		{"""
+		{
+			""" + voidfunc + """ SteamAPI_ManualDispatch_Init = (""" + voidfunc + """)GETADDRESS(steam_api, "SteamAPI_ManualDispatch_Init");
+			SteamAPI_ManualDispatch_Init();
+
+			""" + intfunc + """ SteamAPI_GetHSteamPipe = (""" + intfunc + """)GETADDRESS(steam_api, "SteamAPI_GetHSteamPipe");
+			hSteamPipe = SteamAPI_GetHSteamPipe();
+			"""
 
 # Write all accessors for interfaces in init function.
 for category in methods:
@@ -658,6 +750,53 @@ source += """		}
 
 """
 
+# Write steam run callbacks function.
+source += """static bool
+js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
+{
+	CallbackMsg_t callback;
+
+	""" + callbackRunFunc + """ SteamAPI_ManualDispatch_RunFrame;
+	SteamAPI_ManualDispatch_RunFrame = (""" + callbackRunFunc + """)GETADDRESS(steam_api, "SteamAPI_ManualDispatch_RunFrame");
+	SteamAPI_ManualDispatch_RunFrame(hSteamPipe);
+
+	""" + callbackGetFunc + """ SteamAPI_ManualDispatch_GetNextCallback;
+	SteamAPI_ManualDispatch_GetNextCallback = (""" + callbackGetFunc + """)GETADDRESS(steam_api, "SteamAPI_ManualDispatch_GetNextCallback");
+
+	int i = 0;
+	jsal_push_new_array();
+
+	while (SteamAPI_ManualDispatch_GetNextCallback(hSteamPipe, &callback))
+	{
+		switch (callback.m_iCallback)
+		{
+			case 703:
+			{
+				SteamAPICallCompleted_t * pCallCompleted = (SteamAPICallCompleted_t *)callback.m_pubParam;
+				void * pTmpCallResult = malloc(pCallCompleted->m_cubParam);
+				bool bFailed;
+				""" + callbackAPIFunc + """ SteamAPI_ManualDispatch_GetAPICallResult;
+				SteamAPI_ManualDispatch_GetAPICallResult = (""" + callbackAPIFunc + """)GETADDRESS(steam_api, "SteamAPI_ManualDispatch_GetAPICallResult");
+				if (SteamAPI_ManualDispatch_GetAPICallResult(hSteamPipe, pCallCompleted->m_hAsyncCall, pTmpCallResult, pCallCompleted->m_cubParam, pCallCompleted->m_iCallback, &bFailed))
+				{
+					switch (pCallCompleted->m_iCallback)
+					{
+""" + api_callback_switch_string + """					}
+				}
+				free( pTmpCallResult );
+			}
+""" + callback_switch_string + """		}
+
+		""" + callbackRunFunc + """ SteamAPI_ManualDispatch_FreeLastCallback;
+		SteamAPI_ManualDispatch_FreeLastCallback = (""" + callbackRunFunc + """)GETADDRESS(steam_api, "SteamAPI_ManualDispatch_FreeLastCallback");
+		SteamAPI_ManualDispatch_FreeLastCallback(hSteamPipe);
+	}
+
+	return true;
+}
+
+"""
+
 # Write steam shutdown function.
 source += """static bool
 js_SteamAPI_Shutdown(int num_args, bool is_ctor, intptr_t magic)
@@ -671,6 +810,12 @@ js_SteamAPI_Shutdown(int num_args, bool is_ctor, intptr_t magic)
 
 """
 
+# Write general callback structs in documentation file.
+documentation += 'Recurring Callbacks\n'
+documentation += '-------------------\n\n'
+documentation += callback_documentation
+
+# Print methods.
 for category in methods:
 
 	# Write interface header in documentation.
