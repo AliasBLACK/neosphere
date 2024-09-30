@@ -199,8 +199,9 @@ def parse_method(method, category, type):
 		return
 	
 	# If method returns a SteamAPICall_t.
+	steamAPICall = None
 	if "SteamAPICall_t" in method['returntype']:
-		# skipped_methods.append(method['methodname_flat'] + " (returns SteamAPICall_t)")
+		steamAPICall = method['callresult']
 		if not (method['callresult'] in structs_to_bind):
 			structs_to_bind.append(method['callresult'])
 		structs[method['callresult']]['is_api_callback'] = True
@@ -288,7 +289,8 @@ def parse_method(method, category, type):
 		"name": method['methodname_flat'].split("_").pop(),
 		"name_flat": method['methodname_flat'],
 		"ptr": ptr_name,
-		"params": method['params']
+		"params": method['params'],
+		"steamAPICall": steamAPICall
 	})
 
 # Insert tabs to align blocks for neatness.
@@ -937,7 +939,15 @@ for category in methods:
 							source += jsal_push_object(returntype, "result", 1)
 							
 						else:
-							doc_resulttype = "		Returns var of type `" + js_type_convert(returntype.replace("*","").strip()) + "`.\n"
+							if (method['steamAPICall'] != None):
+								callbackStruct = method['steamAPICall']
+								if (callbackStruct in structs):
+									doc_resulttype = "		Returns var of type `int`.\n"
+									doc_resulttype += "		Returns a callback ID that eventually returns a Javascript object with the following members:\n\n"
+									for field in structs[callbackStruct]['fields']:
+										doc_resulttype += "			result." + field['fieldname'] + " (" + js_type_convert(field['fieldtype']) + ")\n"
+							else:
+								doc_resulttype = "		Returns var of type `" + js_type_convert(returntype.replace("*","").strip()) + "`.\n"
 							source += "	" + jsal_push_function(returntype) + "result);\n"
 					
 					# Return out param.

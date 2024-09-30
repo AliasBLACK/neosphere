@@ -87,14 +87,34 @@ Recurring Callbacks
 	ISteamUser.RequestStoreAuthURL(string pchRedirectURL)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_szURL [512] (int)
 
 	ISteamUser.GetMarketEligibility()
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_bAllowed (bool)
+			result.m_eNotAllowedReason (int)
+			result.m_rtAllowedAtTime (int)
+			result.m_cdaySteamGuardRequiredDays (int)
+			result.m_cdayNewDeviceCooldown (int)
 
 	ISteamUser.GetDurationControl()
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_appid (int)
+			result.m_bApplicable (bool)
+			result.m_csecsLast5h (int)
+			result.m_progress (int)
+			result.m_notification (int)
+			result.m_csecsToday (int)
+			result.m_csecsRemaining (int)
 
 	ISteamUser.TrackAppUsageEvent(int gameID, int eAppUsageEvent, string pchExtraInfo)
 
@@ -211,6 +231,11 @@ Recurring Callbacks
 	ISteamFriends.SetPersonaName(string pchPersonaName)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_bSuccess (bool)
+			result.m_bLocalSuccess (bool)
+			result.m_result (int)
 
 	ISteamFriends.GetFriendByIndex(int iFriend, int iFriendFlags)
 
@@ -235,6 +260,11 @@ Recurring Callbacks
 	ISteamFriends.RequestClanOfficerList(int steamIDClan)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_steamIDClan (int)
+			result.m_cOfficers (int)
+			result.m_bSuccess (int)
 
 	ISteamFriends.GetClanOwner(int steamIDClan)
 
@@ -253,6 +283,10 @@ Recurring Callbacks
 	ISteamFriends.JoinClanChatRoom(int steamIDClan)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_steamIDClanChat (int)
+			result.m_eChatRoomEnterResponse (int)
 
 	ISteamFriends.GetChatMemberByIndex(int steamIDClan, int iUser)
 
@@ -261,18 +295,43 @@ Recurring Callbacks
 	ISteamFriends.GetFollowerCount(int steamID)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_steamID (int)
+			result.m_nCount (int)
 
 	ISteamFriends.IsFollowing(int steamID)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_steamID (int)
+			result.m_bIsFollowing (bool)
 
 	ISteamFriends.EnumerateFollowingList(int unStartIndex)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_rgSteamID [50] (int)
+			result.m_nResultsReturned (int)
+			result.m_nTotalResultCount (int)
 
 	ISteamFriends.RequestEquippedProfileItems(int steamID)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_steamID (int)
+			result.m_bHasAnimatedAvatar (bool)
+			result.m_bHasAvatarFrame (bool)
+			result.m_bHasProfileModifier (bool)
+			result.m_bHasProfileBackground (bool)
+			result.m_bHasMiniProfileBackground (bool)
 
 	ISteamFriends.GetPersonaState()
 
@@ -782,6 +841,9 @@ Recurring Callbacks
 	ISteamUtils.CheckFileSignature(string szFileName)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eCheckFileSignature (int)
 
 	ISteamUtils.FilterText(int eContext, int sourceSteamID, string pchInputMessage, int pchOutFilteredText, int nByteSizeOutFilteredText)
 
@@ -1016,10 +1078,19 @@ Recurring Callbacks
 	ISteamUserStats.RequestUserStats(int steamIDUser)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_nGameID (int)
+			result.m_eResult (int)
+			result.m_steamIDUser (int)
 
 	ISteamUserStats.FindOrCreateLeaderboard(string pchLeaderboardName, int eLeaderboardSortMethod, int eLeaderboardDisplayType)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_hSteamLeaderboard (int)
+			result.m_bLeaderboardFound (int)
 
 		eLeaderboardSortMethod is an enum with the following members:
 
@@ -1037,10 +1108,19 @@ Recurring Callbacks
 	ISteamUserStats.FindLeaderboard(string pchLeaderboardName)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_hSteamLeaderboard (int)
+			result.m_bLeaderboardFound (int)
 
 	ISteamUserStats.DownloadLeaderboardEntries(int hSteamLeaderboard, int eLeaderboardDataRequest, int nRangeStart, int nRangeEnd)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_hSteamLeaderboard (int)
+			result.m_hSteamLeaderboardEntries (int)
+			result.m_cEntryCount (int)
 
 		eLeaderboardDataRequest is an enum with the following members:
 
@@ -1072,18 +1152,34 @@ Recurring Callbacks
 	ISteamUserStats.AttachLeaderboardUGC(int hSteamLeaderboard, int hUGC)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_hSteamLeaderboard (int)
 
 	ISteamUserStats.GetNumberOfCurrentPlayers()
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_bSuccess (int)
+			result.m_cPlayers (int)
 
 	ISteamUserStats.RequestGlobalAchievementPercentages()
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_nGameID (int)
+			result.m_eResult (int)
 
 	ISteamUserStats.RequestGlobalStats(int nHistoryDays)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_nGameID (int)
+			result.m_eResult (int)
 
 
 `ISteamApps` Interface
@@ -1243,6 +1339,12 @@ Recurring Callbacks
 	ISteamApps.GetFileDetails(string pszFileName)
 
 		Returns var of type `int`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_ulFileSize (int)
+			result.m_FileSHA [20] (int)
+			result.m_unFlags (int)
 
 
 `ISteamInput` Interface
