@@ -96,7 +96,7 @@
     <Allegro_AddonMemfile>true</Allegro_AddonMemfile>
     <Allegro_AddonColor>true</Allegro_AddonColor>
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>neoSphere</TargetName>
+    <TargetName>neosphere</TargetName>
     <OutDir>..\msw\</OutDir>
     <IntDir>obj\release\neosphere\</IntDir>
     <Allegro_AddonTTF>true</Allegro_AddonTTF>
