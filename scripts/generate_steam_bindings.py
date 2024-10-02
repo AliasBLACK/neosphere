@@ -35,7 +35,8 @@ typedefs = {
 
 # Params to ignore (too much work to get them working)
 forbidden_types = [
-	"ScePadTriggerEffectParam"
+	"ScePadTriggerEffectParam",
+	"SteamAPIWarningMessageHook_t"
 ]
 
 # Convert type to one already defined or base C type.
@@ -252,7 +253,10 @@ def parse_method(method, category, type):
 			else:
 				param['out_array_fixed'] = False
 				param['out_array_size'] = param['out_array_count']
-		
+
+		if "array_count" in param:
+			param['out_array_size'] = param['array_count']
+
 		# Skip if require pointer to data blob.
 		# TODO: Figure out how to do this.
 		if "void *" in param['paramtype'] and not param['paramname'] == "self":
@@ -315,7 +319,11 @@ def require_string(type):
 			return "jsal_require_int("
 		case "uint8_t" | "uint16_t" | "uint32_t" | "unsigned int":
 			return  "jsal_require_uint("
-		case "int64_t" | "uint64_t" | "float" | "double":
+		case "int64_t":
+			return "require_str_to_int64_t("
+		case "uint64_t":
+			return "require_str_to_uint64_t("
+		case "float" | "double":
 			return  "jsal_require_number("
 		case "char *" | "const char *":
 			return "(char*)jsal_require_string("
@@ -332,8 +340,12 @@ def jsal_push_function(type):
 			return "jsal_push_int("
 		case "uint8_t" | "uint16_t" | "uint32_t" | "unsigned int":
 			return  "jsal_push_uint("
-		case "int64_t" | "uint64_t" | "float" | "double":
+		case "float" | "double":
 			return  "jsal_push_number("
+		case "int64_t":
+			return "push_int64_t_to_str("
+		case "uint64_t":
+			return "push_uint64_t_to_str("
 		case "char *" | "const char *":
 			return "jsal_push_string("
 		case _:
@@ -371,8 +383,10 @@ def js_type_convert(type):
 	match(type):
 		case "bool":
 			return "bool"
-		case "int8_t" | "int16_t" | "int32_t" | "const int32_t" | "int" | "char" | "uint8_t" | "uint16_t" | "uint32_t" | "unsigned int" | "int64_t" | "uint64_t" | "double":
+		case "int8_t" | "int16_t" | "int32_t" | "const int32_t" | "int" | "char" | "uint8_t" | "uint16_t" | "uint32_t" | "unsigned int" | "double":
 			return "int"
+		case "int64_t" | "uint64_t":
+			return "int_string"
 		case "float":
 			return "float"
 		case "const char":
@@ -675,6 +689,40 @@ for category in methods:
 # SOURCE FILE (steam.c)
 # ---------------------
 
+# require and push helpers1
+
+source += """uint64_t
+require_str_to_uint64_t(int index)
+{
+	const char * str = jsal_require_string(index);
+	const char ** str_end = NULL;
+	return strtoul(str, str_end, 10);
+}
+
+int64_t
+require_str_to_int64_t(int index)
+{
+	const char * str = jsal_require_string(index);
+	const char ** str_end = NULL;
+	return strtoll(str, str_end, 10);
+}
+
+char push_buffer[32];
+void
+push_uint64_t_to_str(uint64_t v)
+{
+	snprintf(push_buffer, sizeof(push_buffer), "%" PRIu64, v);
+	jsal_push_string(push_buffer);
+}
+
+void
+push_int64_t_to_str(int64_t v)
+{
+	snprintf(push_buffer, sizeof(push_buffer), "%" PRId64, v);
+	jsal_push_string(push_buffer);
+}
+"""
+
 # Write init function in source file.
 source += """void
 steamapi_init(void)
@@ -944,7 +992,7 @@ for category in methods:
 							if (method['steamAPICall'] != None):
 								callbackStruct = method['steamAPICall']
 								if (callbackStruct in structs):
-									doc_resulttype = "		Returns var of type `int`.\n"
+									doc_resulttype = "		Returns var of type `int_string`.\n"
 									doc_resulttype += "		Returns a callback ID that eventually returns a Javascript object with the following members:\n\n"
 									for field in structs[callbackStruct]['fields']:
 										doc_resulttype += "			result." + field['fieldname'] + " (" + js_type_convert(field['fieldtype']) + ")\n"
