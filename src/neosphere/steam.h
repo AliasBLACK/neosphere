@@ -278,7 +278,7 @@ typedef const char * (*FuncPtr_098) (void *, const char *);
 typedef const char * (*FuncPtr_109) (void *, uint32_t, uint32_t, uint32_t);
 typedef const char * (*FuncPtr_110) (void *, uint32_t, uint32_t);
 typedef bool (*FuncPtr_005) (int32_t, CallbackMsg_t *);
-typedef bool (*FuncPtr_006) (int32_t, uint64_t, void *, int32_t, int32_t, bool);
+typedef bool (*FuncPtr_006) (int32_t, uint64_t, void *, int32_t, int32_t, bool *);
 typedef bool (*FuncPtr_008) (void *);
 typedef bool (*FuncPtr_011) (void *, char *, int32_t);
 typedef bool (*FuncPtr_021) (void *, uint32_t);

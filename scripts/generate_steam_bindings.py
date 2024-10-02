@@ -188,7 +188,7 @@ voidfunc = create_function_ptr("void", [])
 intfunc = create_function_ptr("int32_t", [])
 callbackRunFunc = create_function_ptr("void", ["int32_t"])
 callbackGetFunc = create_function_ptr("bool", ["int32_t", "CallbackMsg_t *"])
-callbackAPIFunc = create_function_ptr("bool", ["int32_t", "uint64_t", "void *", "int32_t", "int32_t", "bool"])
+callbackAPIFunc = create_function_ptr("bool", ["int32_t", "uint64_t", "void *", "int32_t", "int32_t", "bool *"])
 
 # Parse methods.
 methods = {}
