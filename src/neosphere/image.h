@@ -67,6 +67,7 @@ image_t*        image_new_slice          (image_t* parent, int x, int y, int wid
 image_t*        image_dup                (const image_t* it);
 image_t*        image_load               (const char* filename);
 image_t*        image_ref                (image_t* it);
+void			image_resize             (image_t* it, int width, int height);
 void            image_unref              (image_t* it);
 ALLEGRO_BITMAP* image_bitmap             (image_t* it);
 int             image_height             (const image_t* it);
