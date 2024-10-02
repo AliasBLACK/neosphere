@@ -165,7 +165,10 @@ def parse_struct(struct):
 
 # Create/Find existing function pointers.
 function_pointers = {}
-def create_function_ptr(ptr_key, returntype, params):
+def create_function_ptr(returntype, params):
+	ptr_key_array = params.copy()
+	ptr_key_array.insert(0, returntype)
+	ptr_key = ' '.join(ptr_key_array)
 	if not ptr_key in function_pointers:
 		# ptr_name = "FuncPtr_" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=7))
 		ptr_name = "FuncPtr_" + "{:03d}".format(len(function_pointers))
@@ -179,13 +182,13 @@ def create_function_ptr(ptr_key, returntype, params):
 		return function_pointers[ptr_key]["name"]
 
 # Create basic function pointers for steam api init functions.
-initfunc = create_function_ptr("int32_t, const char *, char *", "int32_t", ["const char *", "char *"])
-pointerfunc = create_function_ptr("void *", "void *", [])
-voidfunc = create_function_ptr("void", "void", [])
-intfunc = create_function_ptr("int32_t", "int32_t", [])
-callbackRunFunc = create_function_ptr("void, int32_t", "void", ["int32_t"])
-callbackGetFunc = create_function_ptr("bool, int32_t, CallbackMsg_t *", "bool", ["int32_t", "CallbackMsg_t *"])
-callbackAPIFunc = create_function_ptr("bool, int32_t, uint64_t, void *, int32_t, int32_t, bool", "bool", ["int32_t", "uint64_t", "void *", "int32_t", "int32_t", "bool"])
+initfunc = create_function_ptr("int32_t", ["const char *", "char *"])
+pointerfunc = create_function_ptr("void *", [])
+voidfunc = create_function_ptr("void", [])
+intfunc = create_function_ptr("int32_t", [])
+callbackRunFunc = create_function_ptr("void", ["int32_t"])
+callbackGetFunc = create_function_ptr("bool", ["int32_t", "CallbackMsg_t *"])
+callbackAPIFunc = create_function_ptr("bool", ["int32_t", "uint64_t", "void *", "int32_t", "int32_t", "bool"])
 
 # Parse methods.
 methods = {}
@@ -275,8 +278,7 @@ def parse_method(method, category, type):
 		methods[category][method['returntype']] = []
 	
 	# Create function pointer.
-	ptr_key = method['returntype'] + ", ".join(params)
-	ptr_name = create_function_ptr(ptr_key, method['returntype'], params)
+	ptr_name = create_function_ptr(method['returntype'], params)
 	
 	# Append to methods.
 	js_name = method['methodname_flat'].replace("SteamAPI", "js")
