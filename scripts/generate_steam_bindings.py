@@ -198,6 +198,7 @@ js_name_max_length = 0
 def parse_method(method, category, type):
 
 	# Skip if in methods_to_ignore.
+
 	if method['methodname_flat'] in methods_to_ignore:
 		skipped_methods.append(method['methodname_flat'] + " (listed in methods_to_ignore)")
 		return
@@ -210,10 +211,13 @@ def parse_method(method, category, type):
 			structs_to_bind.append(method['callresult'])
 		structs[method['callresult']]['is_api_callback'] = True
 	
+	allow_return_params = (steamAPICall == None)
+
 	# Parse params.
 	params = []
 	# global out_arrays
-	for param in method['params']:
+	for i in range(len(method['params'])):
+		param = method['params'][i]
 
 		# Remove namespace.
 		param['paramtype'] = re.sub(r"^.*::", "", param['paramtype'])
@@ -237,25 +241,40 @@ def parse_method(method, category, type):
 		# Convert type.
 		param['paramtype'] = convert_type(param['paramtype'])
 
+		# Check if out param.
+		param['out'] = (allow_return_params and ('*' in param['paramtype'])
+			and (not 'const ' in param['paramtype']) and (not 'self' in param['paramname']))
+
 		# Homogenize 'out_array_call' (there is only one in entire api)
 		if "out_array_call" in param:
 			param['out_array_count'] = param['out_array_call'].split(",")[0]
 
 		# Check if method outputs an array.
 		if "out_array_count" in param:
-
 			# Fixed sized array.
 			if param['out_array_count'] in defines:
 				param['out_array_fixed'] = True
-				param['out_array_size'] = defines[param['out_array_count']]
+				param['array_size'] = defines[param['out_array_count']]
 			
 			# Dynamically sized array.
 			else:
 				param['out_array_fixed'] = False
-				param['out_array_size'] = param['out_array_count']
+				param['array_size'] = param['out_array_count']
+
+		elif "out_string_count" in param:
+			param['out_array_fixed'] = False
+			param['array_size'] = param['out_string_count']
 
 		if "array_count" in param:
-			param['out_array_size'] = param['array_count']
+			param['array_size'] = param['array_count']
+
+		# We can't trust the meta data about the array size, if we have an out parameter,
+		# check if the next parameter is an int type and use that as size.
+		if (i + 1 < len(method['params'])) and param['out'] and 'array_size' not in param:
+			next_param = method['params'][i + 1]
+			match convert_type(next_param['paramtype']):
+				case "int32_t" | "uint32_t":
+					param['array_size'] = next_param['paramname']
 
 		# Skip if require pointer to data blob.
 		# TODO: Figure out how to do this.
@@ -358,7 +377,7 @@ def jsal_push_array(param, initialized_i):
 		initialized_i = True
 		result += "	int i;\n"
 	result += "	jsal_push_new_array();\n"
-	result += "	for (i = 0; i < (int)" + param['out_array_size'] + "; ++i)\n"
+	result += "	for (i = 0; i < (int)" + param['array_size'] + "; ++i)\n"
 	result += "	{\n"
 	result += "		" + jsal_push_function(param['paramtype'].replace("*", "").strip()) + param['paramname'] + "[i]);\n"
 	result += "		jsal_put_prop_index(-2, i);\n"
@@ -901,23 +920,24 @@ for category in methods:
 			# Print params.
 			for param in method['params']:
 
+				if param['out']:
+					out_params.append(param['paramname'])
+
 				# If accessor.
 				if param['paramname'] == 'self':
 					param_arg_array.append(category)
 					continue
 
 				# If array.
-				elif "out_array_size" in param:
+				elif "array_size" in param:
 					param_arg_array.append(param['paramname'])
 					source += "	" + param['paramtype'] + " " + param['paramname'] + ";\n"
-					out_params.append(param['paramname'])
 					continue
 
 				# If pointer type.
 				elif "*" in param['paramtype'] and not "char *" in param['paramtype']:
 					source += "	" + param['paramtype'].replace("*", "").strip() + " " + param['paramname'] + ";\n"
 					param_arg_array.append("&" + param['paramname'])
-					out_params.append(param['paramname'])
 					continue
 
 				# Else, print param as normal.
@@ -961,9 +981,9 @@ for category in methods:
 			# Allocate memory to arrays.
 			array_alloc_trailing_newline = ""
 			for param in method['params']:
-				if "out_array_size" in param:
+				if "array_size" in param:
 					array_alloc_trailing_newline = "\n"
-					source += "	if (!(" + param['paramname'] + " = (" + param['paramtype'] + ")calloc(" + param['out_array_size'] + ", sizeof(" + param['paramtype'].replace("*", "").strip() + "))))\n"
+					source += "	if (!(" + param['paramname'] + " = (" + param['paramtype'] + ")calloc(" + param['array_size'] + ", sizeof(" + param['paramtype'].replace("*", "").strip() + "))))\n"
 					source += "		return false;\n"
 			source += array_alloc_trailing_newline
 
@@ -1005,8 +1025,8 @@ for category in methods:
 						if param['paramname'] in out_params:
 
 							# If array.
-							if "out_array_size" in param:
-								doc_resulttype = "		Returns an array of type `" + js_type_convert(param['paramtype'].replace("*","").strip()) + "` and size " + param['out_array_size'] + ".\n"
+							if "array_size" in param:
+								doc_resulttype = "		Returns an array of type `" + js_type_convert(param['paramtype'].replace("*","").strip()) + "` and size " + param['array_size'] + ".\n"
 								source += jsal_push_array(param, initialized_i)
 								source += "\n"
 								source += "	free (" + param['paramname'] + ");\n"
@@ -1036,9 +1056,9 @@ for category in methods:
 						if param['paramname'] in out_params:
 
 							# If array.
-							if "out_array_size" in param:
+							if "array_size" in param:
 								source += jsal_push_array(param, initialized_i)
-								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype'].replace("*","").strip()) + "[" + param['out_array_size'] + "])\n")
+								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype'].replace("*","").strip()) + "[" + param['array_size'] + "])\n")
 								free_array_pointers_string += "	free(" + param['paramname'] + ");\n"
 							
 							# Else, return normally based on type.

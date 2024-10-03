@@ -35,11 +35,15 @@ Recurring Callbacks
 		busy.
 		The Steam client will automatically be trying to recreate the connection as often as possible.
 
-	ISteamUser.GetUserDataFolder(int pchBuffer, int cubBuffer)
+	ISteamUser.GetUserDataFolder(int cubBuffer)
 
-		Returns var of type `bool`.
 		get the local storage folder for current Steam account to write application data, e.g. save games, configs etc.
 		this will usually be something like "C:\Progam Files\Steam\userdata\<SteamID>\<AppID>\local"
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pchBuffer (int[cubBuffer])
 
 	ISteamUser.BIsBehindNAT()
 
@@ -248,10 +252,10 @@ Recurring Callbacks
 
 	ISteamFriends.DownloadClanActivityCounts(int cClansToRequest)
 
-		Returns a javascript object with the following members:
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
 
-			value.result (int_string)
-			value.psteamIDClans (int_string[cClansToRequest])
+			result.m_bSuccess (bool)
 
 	ISteamFriends.GetFriendFromSourceByIndex(int_string steamIDSource, int iFriend)
 
@@ -712,7 +716,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pubDest (int)
+			value.pubDest (int[nDestBufferSize])
 
 	ISteamUtils.IsAPICallCompleted(int_string hSteamAPICall)
 
@@ -747,9 +751,12 @@ Recurring Callbacks
 			EGamepadTextInputLineMode.k_EGamepadTextInputLineModeSingleLine
 			EGamepadTextInputLineMode.k_EGamepadTextInputLineModeMultipleLines
 
-	ISteamUtils.GetEnteredGamepadTextInput(int pchText, int cchText)
+	ISteamUtils.GetEnteredGamepadTextInput(int cchText)
 
-		Returns var of type `bool`.
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pchText (int[cchText])
 
 	ISteamUtils.IsSteamRunningInVR()
 
@@ -845,9 +852,7 @@ Recurring Callbacks
 
 			result.m_eCheckFileSignature (int)
 
-	ISteamUtils.FilterText(int eContext, int_string sourceSteamID, string pchInputMessage, int pchOutFilteredText, int nByteSizeOutFilteredText)
-
-		Returns var of type `int`.
+	ISteamUtils.FilterText(int eContext, int_string sourceSteamID, string pchInputMessage, int nByteSizeOutFilteredText)
 
 		eContext is an enum with the following members:
 
@@ -855,6 +860,11 @@ Recurring Callbacks
 			ETextFilteringContext.k_ETextFilteringContextGameContent
 			ETextFilteringContext.k_ETextFilteringContextChat
 			ETextFilteringContext.k_ETextFilteringContextName
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pchOutFilteredText (int[nByteSizeOutFilteredText])
 
 
 `ISteamUserStats` Interface
@@ -1017,19 +1027,21 @@ Recurring Callbacks
 		Returns var of type `int`.
 		returns the total number of entries in a leaderboard, as of the last request
 
-	ISteamUserStats.GetMostAchievedAchievementInfo(int pchName, int unNameBufLen)
+	ISteamUserStats.GetMostAchievedAchievementInfo(int unNameBufLen)
 
 		Returns a javascript object with the following members:
 
 			value.result (int)
+			value.pchName (int[unNameBufLen])
 			value.pflPercent (float)
 			value.pbAchieved (bool)
 
-	ISteamUserStats.GetNextMostAchievedAchievementInfo(int iIteratorPrevious, int pchName, int unNameBufLen)
+	ISteamUserStats.GetNextMostAchievedAchievementInfo(int iIteratorPrevious, int unNameBufLen)
 
 		Returns a javascript object with the following members:
 
 			value.result (int)
+			value.pchName (int[unNameBufLen])
 			value.pflPercent (float)
 			value.pbAchieved (bool)
 
@@ -1131,23 +1143,30 @@ Recurring Callbacks
 
 	ISteamUserStats.DownloadLeaderboardEntriesForUsers(int_string hSteamLeaderboard, int cUsers)
 
-		Returns a javascript object with the following members:
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
 
-			value.result (int_string)
-			value.prgUsers (int_string[cUsers])
+			result.m_hSteamLeaderboard (int_string)
+			result.m_hSteamLeaderboardEntries (int_string)
+			result.m_cEntryCount (int)
 
 	ISteamUserStats.UploadLeaderboardScore(int_string hSteamLeaderboard, int eLeaderboardUploadScoreMethod, int nScore, int cScoreDetailsCount)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_bSuccess (int)
+			result.m_hSteamLeaderboard (int_string)
+			result.m_nScore (int)
+			result.m_bScoreChanged (int)
+			result.m_nGlobalRankNew (int)
+			result.m_nGlobalRankPrevious (int)
 
 		eLeaderboardUploadScoreMethod is an enum with the following members:
 
 			ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodNone
 			ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodKeepBest
 			ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodForceUpdate
-
-		Returns a javascript object with the following members:
-
-			value.result (int_string)
-			value.pScoreDetails (int)
 
 	ISteamUserStats.AttachLeaderboardUGC(int_string hSteamLeaderboard, int_string hUGC)
 
@@ -1218,17 +1237,21 @@ Recurring Callbacks
 		This function will return false for users who have a retail or other type of license
 		Before using, please ask your Valve technical contact how to package and secure your free weekened
 
-	ISteamApps.BGetDLCDataByIndex(int iDLC, int pchName, int cchNameBufferSize)
+	ISteamApps.BGetDLCDataByIndex(int iDLC, int cchNameBufferSize)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
 			value.pAppID (int)
 			value.pbAvailable (bool)
+			value.pchName (int[cchNameBufferSize])
 
-	ISteamApps.GetCurrentBetaName(int pchName, int cchNameBufferSize)
+	ISteamApps.GetCurrentBetaName(int cchNameBufferSize)
 
-		Returns var of type `bool`.
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pchName (int[cchNameBufferSize])
 
 	ISteamApps.MarkContentCorrupt(bool bMissingFilesOnly)
 
@@ -1288,12 +1311,16 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.pvecDepots (int)
+			value.pvecDepots (int[cMaxDepots])
 
-	ISteamApps.GetAppInstallDir(int appID, int pchFolder, int cchFolderBufferSize)
+	ISteamApps.GetAppInstallDir(int appID, int cchFolderBufferSize)
 
-		Returns var of type `int`.
 		returns current app install folder for AppID, returns folder name length
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pchFolder (int[cchFolderBufferSize])
 
 	ISteamApps.GetDLCCount()
 
@@ -1305,9 +1332,8 @@ Recurring Callbacks
 		Returns var of type `int`.
 		return the buildid of this app, may change at any time based on backend updates to the game
 
-	ISteamApps.GetLaunchCommandLine(int pszCommandLine, int cubCommandLine)
+	ISteamApps.GetLaunchCommandLine(int cubCommandLine)
 
-		Returns var of type `int`.
 		Get command line if game was launched via Steam URL, e.g. steam:
 		run
 		<appid>
@@ -1319,6 +1345,11 @@ Recurring Callbacks
 		path and not be placed on the OS command line, you must set a value in your app's
 		configuration on Steam.  Ask Valve for help with this.
 		If game was already running and launched again, the NewUrlLaunchParameters_t will be fired.
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pszCommandLine (int[cubCommandLine])
 
 	ISteamApps.InstallDLC(int nAppID)
 
