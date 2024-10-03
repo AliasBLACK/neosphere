@@ -1814,13 +1814,27 @@ js_ISteamUser_GetUserDataFolder(int num_args, bool is_ctor, intptr_t magic)
 	bool result;
 	FuncPtr_011 ISteamUser_GetUserDataFolder;
 
-	pchBuffer = (char*)jsal_require_string(0);
-	cubBuffer = jsal_require_int(1);
+	cubBuffer = jsal_require_int(0);
+
+	if (!(pchBuffer = (char *)calloc(cubBuffer, sizeof(char))))
+		return false;
 
 	ISteamUser_GetUserDataFolder = (FuncPtr_011)GETADDRESS(steam_api, "SteamAPI_ISteamUser_GetUserDataFolder");
 	result = ISteamUser_GetUserDataFolder(ISteamUser, pchBuffer, cubBuffer);
 
+	jsal_push_new_object();
 	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < (int)cubBuffer; ++i)
+	{
+		jsal_push_int(pchBuffer[i]);
+		jsal_put_prop_index(-2, i);
+	}
+	jsal_put_prop_string(-2, "pchBuffer");
+
+	free(pchBuffer);
 
 	return true;
 }
@@ -2353,19 +2367,7 @@ js_ISteamFriends_DownloadClanActivityCounts(int num_args, bool is_ctor, intptr_t
 	ISteamFriends_DownloadClanActivityCounts = (FuncPtr_036)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_DownloadClanActivityCounts");
 	result = ISteamFriends_DownloadClanActivityCounts(ISteamFriends, psteamIDClans, cClansToRequest);
 
-	jsal_push_new_object();
 	push_uint64_t_to_str(result);
-	jsal_put_prop_string(-2, "result");
-	int i;
-	jsal_push_new_array();
-	for (i = 0; i < (int)cClansToRequest; ++i)
-	{
-		push_uint64_t_to_str(psteamIDClans[i]);
-		jsal_put_prop_index(-2, i);
-	}
-	jsal_put_prop_string(-2, "psteamIDClans");
-
-	free(psteamIDClans);
 
 	return true;
 }
@@ -3636,7 +3638,7 @@ static bool
 js_ISteamUtils_GetImageRGBA(int num_args, bool is_ctor, intptr_t magic)
 {
 	int32_t iImage;
-	uint8_t pubDest;
+	uint8_t * pubDest;
 	int32_t nDestBufferSize;
 	bool result;
 	FuncPtr_057 ISteamUtils_GetImageRGBA;
@@ -3644,14 +3646,25 @@ js_ISteamUtils_GetImageRGBA(int num_args, bool is_ctor, intptr_t magic)
 	iImage = jsal_require_int(0);
 	nDestBufferSize = jsal_require_int(1);
 
+	if (!(pubDest = (uint8_t *)calloc(nDestBufferSize, sizeof(uint8_t))))
+		return false;
+
 	ISteamUtils_GetImageRGBA = (FuncPtr_057)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_GetImageRGBA");
-	result = ISteamUtils_GetImageRGBA(ISteamUtils, iImage, &pubDest, nDestBufferSize);
+	result = ISteamUtils_GetImageRGBA(ISteamUtils, iImage, pubDest, nDestBufferSize);
 
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	jsal_push_uint(pubDest);
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < (int)nDestBufferSize; ++i)
+	{
+		jsal_push_uint(pubDest[i]);
+		jsal_put_prop_index(-2, i);
+	}
 	jsal_put_prop_string(-2, "pubDest");
+
+	free(pubDest);
 
 	return true;
 }
@@ -3739,13 +3752,27 @@ js_ISteamUtils_GetEnteredGamepadTextInput(int num_args, bool is_ctor, intptr_t m
 	bool result;
 	FuncPtr_061 ISteamUtils_GetEnteredGamepadTextInput;
 
-	pchText = (char*)jsal_require_string(0);
-	cchText = jsal_require_uint(1);
+	cchText = jsal_require_uint(0);
+
+	if (!(pchText = (char *)calloc(cchText, sizeof(char))))
+		return false;
 
 	ISteamUtils_GetEnteredGamepadTextInput = (FuncPtr_061)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_GetEnteredGamepadTextInput");
 	result = ISteamUtils_GetEnteredGamepadTextInput(ISteamUtils, pchText, cchText);
 
+	jsal_push_new_object();
 	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < (int)cchText; ++i)
+	{
+		jsal_push_int(pchText[i]);
+		jsal_put_prop_index(-2, i);
+	}
+	jsal_put_prop_string(-2, "pchText");
+
+	free(pchText);
 
 	return true;
 }
@@ -3990,13 +4017,27 @@ js_ISteamUtils_FilterText(int num_args, bool is_ctor, intptr_t magic)
 	eContext = jsal_require_uint(0);
 	sourceSteamID = require_str_to_uint64_t(1);
 	pchInputMessage = (char*)jsal_require_string(2);
-	pchOutFilteredText = (char*)jsal_require_string(3);
-	nByteSizeOutFilteredText = jsal_require_uint(4);
+	nByteSizeOutFilteredText = jsal_require_uint(3);
+
+	if (!(pchOutFilteredText = (char *)calloc(nByteSizeOutFilteredText, sizeof(char))))
+		return false;
 
 	ISteamUtils_FilterText = (FuncPtr_064)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_FilterText");
 	result = ISteamUtils_FilterText(ISteamUtils, eContext, sourceSteamID, pchInputMessage, pchOutFilteredText, nByteSizeOutFilteredText);
 
+	jsal_push_new_object();
 	jsal_push_int(result);
+	jsal_put_prop_string(-2, "result");
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < (int)nByteSizeOutFilteredText; ++i)
+	{
+		jsal_push_int(pchOutFilteredText[i]);
+		jsal_put_prop_index(-2, i);
+	}
+	jsal_put_prop_string(-2, "pchOutFilteredText");
+
+	free(pchOutFilteredText);
 
 	return true;
 }
@@ -4510,8 +4551,10 @@ js_ISteamUserStats_GetMostAchievedAchievementInfo(int num_args, bool is_ctor, in
 	int32_t result;
 	FuncPtr_087 ISteamUserStats_GetMostAchievedAchievementInfo;
 
-	pchName = (char*)jsal_require_string(0);
-	unNameBufLen = jsal_require_uint(1);
+	unNameBufLen = jsal_require_uint(0);
+
+	if (!(pchName = (char *)calloc(unNameBufLen, sizeof(char))))
+		return false;
 
 	ISteamUserStats_GetMostAchievedAchievementInfo = (FuncPtr_087)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetMostAchievedAchievementInfo");
 	result = ISteamUserStats_GetMostAchievedAchievementInfo(ISteamUserStats, pchName, unNameBufLen, &pflPercent, &pbAchieved);
@@ -4519,10 +4562,20 @@ js_ISteamUserStats_GetMostAchievedAchievementInfo(int num_args, bool is_ctor, in
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < (int)unNameBufLen; ++i)
+	{
+		jsal_push_int(pchName[i]);
+		jsal_put_prop_index(-2, i);
+	}
+	jsal_put_prop_string(-2, "pchName");
 	jsal_push_number(pflPercent);
 	jsal_put_prop_string(-2, "pflPercent");
 	jsal_push_boolean(pbAchieved);
 	jsal_put_prop_string(-2, "pbAchieved");
+
+	free(pchName);
 
 	return true;
 }
@@ -4539,8 +4592,10 @@ js_ISteamUserStats_GetNextMostAchievedAchievementInfo(int num_args, bool is_ctor
 	FuncPtr_088 ISteamUserStats_GetNextMostAchievedAchievementInfo;
 
 	iIteratorPrevious = jsal_require_int(0);
-	pchName = (char*)jsal_require_string(1);
-	unNameBufLen = jsal_require_uint(2);
+	unNameBufLen = jsal_require_uint(1);
+
+	if (!(pchName = (char *)calloc(unNameBufLen, sizeof(char))))
+		return false;
 
 	ISteamUserStats_GetNextMostAchievedAchievementInfo = (FuncPtr_088)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetNextMostAchievedAchievementInfo");
 	result = ISteamUserStats_GetNextMostAchievedAchievementInfo(ISteamUserStats, iIteratorPrevious, pchName, unNameBufLen, &pflPercent, &pbAchieved);
@@ -4548,10 +4603,20 @@ js_ISteamUserStats_GetNextMostAchievedAchievementInfo(int num_args, bool is_ctor
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < (int)unNameBufLen; ++i)
+	{
+		jsal_push_int(pchName[i]);
+		jsal_put_prop_index(-2, i);
+	}
+	jsal_put_prop_string(-2, "pchName");
 	jsal_push_number(pflPercent);
 	jsal_put_prop_string(-2, "pflPercent");
 	jsal_push_boolean(pbAchieved);
 	jsal_put_prop_string(-2, "pbAchieved");
+
+	free(pchName);
 
 	return true;
 }
@@ -4823,19 +4888,7 @@ js_ISteamUserStats_DownloadLeaderboardEntriesForUsers(int num_args, bool is_ctor
 	ISteamUserStats_DownloadLeaderboardEntriesForUsers = (FuncPtr_084)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_DownloadLeaderboardEntriesForUsers");
 	result = ISteamUserStats_DownloadLeaderboardEntriesForUsers(ISteamUserStats, hSteamLeaderboard, prgUsers, cUsers);
 
-	jsal_push_new_object();
 	push_uint64_t_to_str(result);
-	jsal_put_prop_string(-2, "result");
-	int i;
-	jsal_push_new_array();
-	for (i = 0; i < (int)cUsers; ++i)
-	{
-		push_uint64_t_to_str(prgUsers[i]);
-		jsal_put_prop_index(-2, i);
-	}
-	jsal_put_prop_string(-2, "prgUsers");
-
-	free(prgUsers);
 
 	return true;
 }
@@ -4859,11 +4912,7 @@ js_ISteamUserStats_UploadLeaderboardScore(int num_args, bool is_ctor, intptr_t m
 	ISteamUserStats_UploadLeaderboardScore = (FuncPtr_085)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_UploadLeaderboardScore");
 	result = ISteamUserStats_UploadLeaderboardScore(ISteamUserStats, hSteamLeaderboard, eLeaderboardUploadScoreMethod, nScore, &pScoreDetails, cScoreDetailsCount);
 
-	jsal_push_new_object();
 	push_uint64_t_to_str(result);
-	jsal_put_prop_string(-2, "result");
-	jsal_push_int(pScoreDetails);
-	jsal_put_prop_string(-2, "pScoreDetails");
 
 	return true;
 }
@@ -5048,8 +5097,10 @@ js_ISteamApps_BGetDLCDataByIndex(int num_args, bool is_ctor, intptr_t magic)
 	FuncPtr_095 ISteamApps_BGetDLCDataByIndex;
 
 	iDLC = jsal_require_int(0);
-	pchName = (char*)jsal_require_string(1);
-	cchNameBufferSize = jsal_require_int(2);
+	cchNameBufferSize = jsal_require_int(1);
+
+	if (!(pchName = (char *)calloc(cchNameBufferSize, sizeof(char))))
+		return false;
 
 	ISteamApps_BGetDLCDataByIndex = (FuncPtr_095)GETADDRESS(steam_api, "SteamAPI_ISteamApps_BGetDLCDataByIndex");
 	result = ISteamApps_BGetDLCDataByIndex(ISteamApps, iDLC, &pAppID, &pbAvailable, pchName, cchNameBufferSize);
@@ -5061,6 +5112,16 @@ js_ISteamApps_BGetDLCDataByIndex(int num_args, bool is_ctor, intptr_t magic)
 	jsal_put_prop_string(-2, "pAppID");
 	jsal_push_boolean(pbAvailable);
 	jsal_put_prop_string(-2, "pbAvailable");
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < (int)cchNameBufferSize; ++i)
+	{
+		jsal_push_int(pchName[i]);
+		jsal_put_prop_index(-2, i);
+	}
+	jsal_put_prop_string(-2, "pchName");
+
+	free(pchName);
 
 	return true;
 }
@@ -5073,13 +5134,27 @@ js_ISteamApps_GetCurrentBetaName(int num_args, bool is_ctor, intptr_t magic)
 	bool result;
 	FuncPtr_011 ISteamApps_GetCurrentBetaName;
 
-	pchName = (char*)jsal_require_string(0);
-	cchNameBufferSize = jsal_require_int(1);
+	cchNameBufferSize = jsal_require_int(0);
+
+	if (!(pchName = (char *)calloc(cchNameBufferSize, sizeof(char))))
+		return false;
 
 	ISteamApps_GetCurrentBetaName = (FuncPtr_011)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetCurrentBetaName");
 	result = ISteamApps_GetCurrentBetaName(ISteamApps, pchName, cchNameBufferSize);
 
+	jsal_push_new_object();
 	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < (int)cchNameBufferSize; ++i)
+	{
+		jsal_push_int(pchName[i]);
+		jsal_put_prop_index(-2, i);
+	}
+	jsal_put_prop_string(-2, "pchName");
+
+	free(pchName);
 
 	return true;
 }
@@ -5262,7 +5337,7 @@ static bool
 js_ISteamApps_GetInstalledDepots(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint32_t appID;
-	uint32_t pvecDepots;
+	uint32_t * pvecDepots;
 	uint32_t cMaxDepots;
 	uint32_t result;
 	FuncPtr_096 ISteamApps_GetInstalledDepots;
@@ -5270,14 +5345,25 @@ js_ISteamApps_GetInstalledDepots(int num_args, bool is_ctor, intptr_t magic)
 	appID = jsal_require_uint(0);
 	cMaxDepots = jsal_require_uint(1);
 
+	if (!(pvecDepots = (uint32_t *)calloc(cMaxDepots, sizeof(uint32_t))))
+		return false;
+
 	ISteamApps_GetInstalledDepots = (FuncPtr_096)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetInstalledDepots");
-	result = ISteamApps_GetInstalledDepots(ISteamApps, appID, &pvecDepots, cMaxDepots);
+	result = ISteamApps_GetInstalledDepots(ISteamApps, appID, pvecDepots, cMaxDepots);
 
 	jsal_push_new_object();
 	jsal_push_uint(result);
 	jsal_put_prop_string(-2, "result");
-	jsal_push_uint(pvecDepots);
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < (int)cMaxDepots; ++i)
+	{
+		jsal_push_uint(pvecDepots[i]);
+		jsal_put_prop_index(-2, i);
+	}
 	jsal_put_prop_string(-2, "pvecDepots");
+
+	free(pvecDepots);
 
 	return true;
 }
@@ -5292,13 +5378,27 @@ js_ISteamApps_GetAppInstallDir(int num_args, bool is_ctor, intptr_t magic)
 	FuncPtr_097 ISteamApps_GetAppInstallDir;
 
 	appID = jsal_require_uint(0);
-	pchFolder = (char*)jsal_require_string(1);
-	cchFolderBufferSize = jsal_require_uint(2);
+	cchFolderBufferSize = jsal_require_uint(1);
+
+	if (!(pchFolder = (char *)calloc(cchFolderBufferSize, sizeof(char))))
+		return false;
 
 	ISteamApps_GetAppInstallDir = (FuncPtr_097)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetAppInstallDir");
 	result = ISteamApps_GetAppInstallDir(ISteamApps, appID, pchFolder, cchFolderBufferSize);
 
+	jsal_push_new_object();
 	jsal_push_uint(result);
+	jsal_put_prop_string(-2, "result");
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < (int)cchFolderBufferSize; ++i)
+	{
+		jsal_push_int(pchFolder[i]);
+		jsal_put_prop_index(-2, i);
+	}
+	jsal_put_prop_string(-2, "pchFolder");
+
+	free(pchFolder);
 
 	return true;
 }
@@ -5339,13 +5439,27 @@ js_ISteamApps_GetLaunchCommandLine(int num_args, bool is_ctor, intptr_t magic)
 	int32_t result;
 	FuncPtr_100 ISteamApps_GetLaunchCommandLine;
 
-	pszCommandLine = (char*)jsal_require_string(0);
-	cubCommandLine = jsal_require_int(1);
+	cubCommandLine = jsal_require_int(0);
+
+	if (!(pszCommandLine = (char *)calloc(cubCommandLine, sizeof(char))))
+		return false;
 
 	ISteamApps_GetLaunchCommandLine = (FuncPtr_100)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetLaunchCommandLine");
 	result = ISteamApps_GetLaunchCommandLine(ISteamApps, pszCommandLine, cubCommandLine);
 
+	jsal_push_new_object();
 	jsal_push_int(result);
+	jsal_put_prop_string(-2, "result");
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < (int)cubCommandLine; ++i)
+	{
+		jsal_push_int(pszCommandLine[i]);
+		jsal_put_prop_index(-2, i);
+	}
+	jsal_put_prop_string(-2, "pszCommandLine");
+
+	free(pszCommandLine);
 
 	return true;
 }
