@@ -585,7 +585,7 @@ for struct in structs_to_bind:
 			api_callback_switch_string += '							' + struct + '* callbackStruct = (' + struct + ' *)pTmpCallResult;\n'
 			api_callback_switch_string += '							jsal_push_new_object();\n'
 			api_callback_switch_string += '							uint64_t callID = pCallCompleted->m_hAsyncCall;\n'
-			api_callback_switch_string += '							jsal_push_number(callID);\n'
+			api_callback_switch_string += '							push_uint64_t_to_str(callID);\n'
 			api_callback_switch_string += '							jsal_put_prop_string(-2, "callID");\n'
 			
 			for prop in structs[struct]['fields']:

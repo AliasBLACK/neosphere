@@ -1308,7 +1308,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							EncryptedAppTicketResponse_t* callbackStruct = (EncryptedAppTicketResponse_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_uint(callbackStruct->m_eResult);
 							jsal_put_prop_string(-2, "m_eResult");
@@ -1321,7 +1321,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							StoreAuthURLResponse_t* callbackStruct = (StoreAuthURLResponse_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							int k;
 							size_t n = sizeof(callbackStruct->m_szURL)/sizeof(char);
@@ -1341,7 +1341,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							MarketEligibilityResponse_t* callbackStruct = (MarketEligibilityResponse_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_boolean(callbackStruct->m_bAllowed);
 							jsal_put_prop_string(-2, "m_bAllowed");
@@ -1362,7 +1362,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							DurationControl_t* callbackStruct = (DurationControl_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_uint(callbackStruct->m_eResult);
 							jsal_put_prop_string(-2, "m_eResult");
@@ -1389,7 +1389,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							SetPersonaNameResponse_t* callbackStruct = (SetPersonaNameResponse_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_boolean(callbackStruct->m_bSuccess);
 							jsal_put_prop_string(-2, "m_bSuccess");
@@ -1406,7 +1406,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							DownloadClanActivityCountsResult_t* callbackStruct = (DownloadClanActivityCountsResult_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_boolean(callbackStruct->m_bSuccess);
 							jsal_put_prop_string(-2, "m_bSuccess");
@@ -1419,7 +1419,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							ClanOfficerListResponse_t* callbackStruct = (ClanOfficerListResponse_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							push_uint64_t_to_str(callbackStruct->m_steamIDClan);
 							jsal_put_prop_string(-2, "m_steamIDClan");
@@ -1436,7 +1436,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							JoinClanChatRoomCompletionResult_t* callbackStruct = (JoinClanChatRoomCompletionResult_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							push_uint64_t_to_str(callbackStruct->m_steamIDClanChat);
 							jsal_put_prop_string(-2, "m_steamIDClanChat");
@@ -1451,7 +1451,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							FriendsGetFollowerCount_t* callbackStruct = (FriendsGetFollowerCount_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_uint(callbackStruct->m_eResult);
 							jsal_put_prop_string(-2, "m_eResult");
@@ -1468,7 +1468,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							FriendsIsFollowing_t* callbackStruct = (FriendsIsFollowing_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_uint(callbackStruct->m_eResult);
 							jsal_put_prop_string(-2, "m_eResult");
@@ -1485,7 +1485,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							FriendsEnumerateFollowingList_t* callbackStruct = (FriendsEnumerateFollowingList_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_uint(callbackStruct->m_eResult);
 							jsal_put_prop_string(-2, "m_eResult");
@@ -1511,7 +1511,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							EquippedProfileItems_t* callbackStruct = (EquippedProfileItems_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_uint(callbackStruct->m_eResult);
 							jsal_put_prop_string(-2, "m_eResult");
@@ -1536,7 +1536,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							CheckFileSignature_t* callbackStruct = (CheckFileSignature_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_uint(callbackStruct->m_eCheckFileSignature);
 							jsal_put_prop_string(-2, "m_eCheckFileSignature");
@@ -1549,7 +1549,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							UserStatsReceived_t* callbackStruct = (UserStatsReceived_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							push_uint64_t_to_str(callbackStruct->m_nGameID);
 							jsal_put_prop_string(-2, "m_nGameID");
@@ -1566,7 +1566,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							LeaderboardFindResult_t* callbackStruct = (LeaderboardFindResult_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							push_uint64_t_to_str(callbackStruct->m_hSteamLeaderboard);
 							jsal_put_prop_string(-2, "m_hSteamLeaderboard");
@@ -1581,7 +1581,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							LeaderboardScoresDownloaded_t* callbackStruct = (LeaderboardScoresDownloaded_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							push_uint64_t_to_str(callbackStruct->m_hSteamLeaderboard);
 							jsal_put_prop_string(-2, "m_hSteamLeaderboard");
@@ -1598,7 +1598,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							LeaderboardScoreUploaded_t* callbackStruct = (LeaderboardScoreUploaded_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_uint(callbackStruct->m_bSuccess);
 							jsal_put_prop_string(-2, "m_bSuccess");
@@ -1621,7 +1621,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							LeaderboardUGCSet_t* callbackStruct = (LeaderboardUGCSet_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_uint(callbackStruct->m_eResult);
 							jsal_put_prop_string(-2, "m_eResult");
@@ -1636,7 +1636,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							NumberOfCurrentPlayers_t* callbackStruct = (NumberOfCurrentPlayers_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_uint(callbackStruct->m_bSuccess);
 							jsal_put_prop_string(-2, "m_bSuccess");
@@ -1651,7 +1651,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							GlobalAchievementPercentagesReady_t* callbackStruct = (GlobalAchievementPercentagesReady_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							push_uint64_t_to_str(callbackStruct->m_nGameID);
 							jsal_put_prop_string(-2, "m_nGameID");
@@ -1666,7 +1666,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							GlobalStatsReceived_t* callbackStruct = (GlobalStatsReceived_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							push_uint64_t_to_str(callbackStruct->m_nGameID);
 							jsal_put_prop_string(-2, "m_nGameID");
@@ -1681,7 +1681,7 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							FileDetailsResult_t* callbackStruct = (FileDetailsResult_t *)pTmpCallResult;
 							jsal_push_new_object();
 							uint64_t callID = pCallCompleted->m_hAsyncCall;
-							jsal_push_number(callID);
+							push_uint64_t_to_str(callID);
 							jsal_put_prop_string(-2, "callID");
 							jsal_push_uint(callbackStruct->m_eResult);
 							jsal_put_prop_string(-2, "m_eResult");
