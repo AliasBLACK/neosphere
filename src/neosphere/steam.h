@@ -77,6 +77,14 @@ typedef struct {
 } SetPersonaNameResponse_t;
 
 typedef struct {
+	uint64_t m_gameID;
+	uint32_t m_unGameIP;
+	uint16_t m_usGamePort;
+	uint16_t m_usQueryPort;
+	uint64_t m_steamIDLobby;
+} FriendGameInfo_t;
+
+typedef struct {
 	bool m_bSuccess;
 } DownloadClanActivityCountsResult_t;
 
@@ -140,6 +148,14 @@ typedef struct {
 	uint64_t m_hSteamLeaderboardEntries;
 	int32_t m_cEntryCount;
 } LeaderboardScoresDownloaded_t;
+
+typedef struct {
+	uint64_t m_steamIDUser;
+	int32_t m_nGlobalRank;
+	int32_t m_nScore;
+	int32_t m_cDetails;
+	uint64_t m_hUGC;
+} LeaderboardEntry_t;
 
 typedef struct {
 	uint8_t m_bSuccess;
@@ -210,118 +226,120 @@ typedef void (*FuncPtr_012) (void *);
 typedef void (*FuncPtr_015) (void *, uint64_t);
 typedef void (*FuncPtr_016) (void *, uint32_t);
 typedef void (*FuncPtr_018) (void *, uint64_t, uint32_t, uint16_t);
-typedef void (*FuncPtr_032) (void *, int16_t, uint64_t *, int32_t);
-typedef void (*FuncPtr_039) (void *, uint64_t, bool);
-typedef void (*FuncPtr_040) (void *, const char *);
-typedef void (*FuncPtr_041) (void *, const char *, uint64_t);
-typedef void (*FuncPtr_042) (void *, const char *, uint32_t);
-typedef void (*FuncPtr_043) (void *, uint32_t, uint32_t);
-typedef void (*FuncPtr_062) (void *, int32_t, int32_t);
-typedef void (*FuncPtr_063) (void *, bool);
-typedef void (*FuncPtr_104) (void *, uint64_t, uint64_t);
-typedef void (*FuncPtr_112) (void *, uint64_t, uint16_t, uint16_t);
-typedef void (*FuncPtr_113) (void *, uint64_t, uint16_t, uint16_t, uint16_t, uint16_t);
-typedef void (*FuncPtr_114) (void *, uint64_t, uint32_t, uint8_t, char, uint8_t, char);
-typedef void (*FuncPtr_115) (void *, uint64_t, uint8_t, uint8_t, uint8_t, uint32_t);
-typedef void (*FuncPtr_116) (void *, uint64_t, uint32_t, uint16_t, uint16_t, uint16_t, uint32_t);
-typedef uint8_t (*FuncPtr_058) (void *);
+typedef void (*FuncPtr_033) (void *, int16_t, uint64_t *, int32_t);
+typedef void (*FuncPtr_040) (void *, uint64_t, bool);
+typedef void (*FuncPtr_041) (void *, const char *);
+typedef void (*FuncPtr_042) (void *, const char *, uint64_t);
+typedef void (*FuncPtr_043) (void *, const char *, uint32_t);
+typedef void (*FuncPtr_044) (void *, uint32_t, uint32_t);
+typedef void (*FuncPtr_063) (void *, int32_t, int32_t);
+typedef void (*FuncPtr_064) (void *, bool);
+typedef void (*FuncPtr_106) (void *, uint64_t, uint64_t);
+typedef void (*FuncPtr_114) (void *, uint64_t, uint16_t, uint16_t);
+typedef void (*FuncPtr_115) (void *, uint64_t, uint16_t, uint16_t, uint16_t, uint16_t);
+typedef void (*FuncPtr_116) (void *, uint64_t, uint32_t, uint8_t, char, uint8_t, char);
+typedef void (*FuncPtr_117) (void *, uint64_t, uint8_t, uint8_t, uint8_t, uint32_t);
+typedef void (*FuncPtr_118) (void *, uint64_t, uint32_t, uint16_t, uint16_t, uint16_t, uint32_t);
+typedef uint8_t (*FuncPtr_059) (void *);
 typedef uint64_t (*FuncPtr_009) (void *);
 typedef uint64_t (*FuncPtr_020) (void *, const char *);
 typedef uint64_t (*FuncPtr_024) (void *, int32_t, int32_t);
-typedef uint64_t (*FuncPtr_034) (void *, int32_t);
-typedef uint64_t (*FuncPtr_036) (void *, uint64_t *, int32_t);
-typedef uint64_t (*FuncPtr_037) (void *, uint64_t, int32_t);
-typedef uint64_t (*FuncPtr_045) (void *, uint64_t);
-typedef uint64_t (*FuncPtr_051) (void *, uint32_t);
-typedef uint64_t (*FuncPtr_082) (void *, const char *, uint32_t, uint32_t);
-typedef uint64_t (*FuncPtr_083) (void *, uint64_t, uint32_t, int32_t, int32_t);
-typedef uint64_t (*FuncPtr_084) (void *, uint64_t, uint64_t *, int32_t);
-typedef uint64_t (*FuncPtr_085) (void *, uint64_t, uint32_t, int32_t, const int32_t *, int32_t);
-typedef uint64_t (*FuncPtr_086) (void *, uint64_t, uint64_t);
+typedef uint64_t (*FuncPtr_035) (void *, int32_t);
+typedef uint64_t (*FuncPtr_037) (void *, uint64_t *, int32_t);
+typedef uint64_t (*FuncPtr_038) (void *, uint64_t, int32_t);
+typedef uint64_t (*FuncPtr_046) (void *, uint64_t);
+typedef uint64_t (*FuncPtr_052) (void *, uint32_t);
+typedef uint64_t (*FuncPtr_083) (void *, const char *, uint32_t, uint32_t);
+typedef uint64_t (*FuncPtr_084) (void *, uint64_t, uint32_t, int32_t, int32_t);
+typedef uint64_t (*FuncPtr_085) (void *, uint64_t, uint64_t *, int32_t);
+typedef uint64_t (*FuncPtr_087) (void *, uint64_t, uint32_t, int32_t, const int32_t *, int32_t);
+typedef uint64_t (*FuncPtr_088) (void *, uint64_t, uint64_t);
 typedef uint32_t (*FuncPtr_013) (void *);
 typedef uint32_t (*FuncPtr_014) (void *, const char *);
 typedef uint32_t (*FuncPtr_017) (void *, uint64_t, uint32_t);
 typedef uint32_t (*FuncPtr_025) (void *, uint64_t);
-typedef uint32_t (*FuncPtr_055) (void *, uint64_t, uint32_t, uint32_t);
-typedef uint32_t (*FuncPtr_065) (void *, uint32_t);
-typedef uint32_t (*FuncPtr_096) (void *, uint32_t, uint32_t *, uint32_t);
-typedef uint32_t (*FuncPtr_097) (void *, uint32_t, char *, uint32_t);
-typedef uint32_t (*FuncPtr_117) (void *, uint32_t, uint32_t);
-typedef uint16_t (*FuncPtr_119) (void *);
+typedef uint32_t (*FuncPtr_056) (void *, uint64_t, uint32_t, uint32_t);
+typedef uint32_t (*FuncPtr_066) (void *, uint32_t);
+typedef uint32_t (*FuncPtr_098) (void *, uint32_t, uint32_t *, uint32_t);
+typedef uint32_t (*FuncPtr_099) (void *, uint32_t, char *, uint32_t);
+typedef uint32_t (*FuncPtr_119) (void *, uint32_t, uint32_t);
+typedef uint16_t (*FuncPtr_121) (void *);
 typedef int32_t (*FuncPtr_000) (const char *, char *);
 typedef int32_t (*FuncPtr_003) ();
 typedef int32_t (*FuncPtr_007) (void *);
 typedef int32_t (*FuncPtr_019) (void *, int32_t, bool);
 typedef int32_t (*FuncPtr_023) (void *, int32_t);
-typedef int32_t (*FuncPtr_028) (void *, uint64_t);
-typedef int32_t (*FuncPtr_031) (void *, int16_t);
-typedef int32_t (*FuncPtr_064) (void *, uint32_t, uint64_t, const char *, char *, uint32_t);
-typedef int32_t (*FuncPtr_074) (void *, const char *);
-typedef int32_t (*FuncPtr_087) (void *, char *, uint32_t, float *, bool *);
-typedef int32_t (*FuncPtr_088) (void *, int32_t, char *, uint32_t, float *, bool *);
-typedef int32_t (*FuncPtr_091) (void *, const char *, int64_t *, uint32_t);
-typedef int32_t (*FuncPtr_092) (void *, const char *, double *, uint32_t);
-typedef int32_t (*FuncPtr_100) (void *, char *, int32_t);
-typedef int32_t (*FuncPtr_103) (void *, uint64_t *);
-typedef int32_t (*FuncPtr_105) (void *, uint64_t, uint64_t *);
-typedef int32_t (*FuncPtr_107) (void *, uint64_t, uint64_t, uint64_t, uint32_t *);
-typedef int16_t (*FuncPtr_029) (void *, int32_t);
+typedef int32_t (*FuncPtr_029) (void *, uint64_t);
+typedef int32_t (*FuncPtr_032) (void *, int16_t);
+typedef int32_t (*FuncPtr_065) (void *, uint32_t, uint64_t, const char *, char *, uint32_t);
+typedef int32_t (*FuncPtr_075) (void *, const char *);
+typedef int32_t (*FuncPtr_089) (void *, char *, uint32_t, float *, bool *);
+typedef int32_t (*FuncPtr_090) (void *, int32_t, char *, uint32_t, float *, bool *);
+typedef int32_t (*FuncPtr_093) (void *, const char *, int64_t *, uint32_t);
+typedef int32_t (*FuncPtr_094) (void *, const char *, double *, uint32_t);
+typedef int32_t (*FuncPtr_102) (void *, char *, int32_t);
+typedef int32_t (*FuncPtr_105) (void *, uint64_t *);
+typedef int32_t (*FuncPtr_107) (void *, uint64_t, uint64_t *);
+typedef int32_t (*FuncPtr_109) (void *, uint64_t, uint64_t, uint64_t, uint32_t *);
+typedef int16_t (*FuncPtr_030) (void *, int32_t);
 typedef const char * (*FuncPtr_022) (void *);
 typedef const char * (*FuncPtr_026) (void *, uint64_t);
-typedef const char * (*FuncPtr_027) (void *, uint64_t, int32_t);
-typedef const char * (*FuncPtr_030) (void *, int16_t);
-typedef const char * (*FuncPtr_047) (void *, uint64_t, const char *);
-typedef const char * (*FuncPtr_054) (void *, uint64_t, uint32_t, uint32_t);
-typedef const char * (*FuncPtr_075) (void *, const char *, const char *);
-typedef const char * (*FuncPtr_077) (void *, uint32_t);
-typedef const char * (*FuncPtr_098) (void *, const char *);
-typedef const char * (*FuncPtr_109) (void *, uint32_t, uint32_t, uint32_t);
-typedef const char * (*FuncPtr_110) (void *, uint32_t, uint32_t);
+typedef const char * (*FuncPtr_028) (void *, uint64_t, int32_t);
+typedef const char * (*FuncPtr_031) (void *, int16_t);
+typedef const char * (*FuncPtr_048) (void *, uint64_t, const char *);
+typedef const char * (*FuncPtr_055) (void *, uint64_t, uint32_t, uint32_t);
+typedef const char * (*FuncPtr_076) (void *, const char *, const char *);
+typedef const char * (*FuncPtr_078) (void *, uint32_t);
+typedef const char * (*FuncPtr_100) (void *, const char *);
+typedef const char * (*FuncPtr_111) (void *, uint32_t, uint32_t, uint32_t);
+typedef const char * (*FuncPtr_112) (void *, uint32_t, uint32_t);
 typedef bool (*FuncPtr_005) (int32_t, CallbackMsg_t *);
 typedef bool (*FuncPtr_006) (int32_t, uint64_t, void *, int32_t, int32_t, bool *);
 typedef bool (*FuncPtr_008) (void *);
 typedef bool (*FuncPtr_011) (void *, char *, int32_t);
 typedef bool (*FuncPtr_021) (void *, uint32_t);
-typedef bool (*FuncPtr_033) (void *, uint64_t, int32_t);
-typedef bool (*FuncPtr_035) (void *, uint64_t, int32_t *, int32_t *, int32_t *);
-typedef bool (*FuncPtr_038) (void *, uint64_t, uint64_t);
-typedef bool (*FuncPtr_044) (void *, uint64_t, bool);
-typedef bool (*FuncPtr_046) (void *, const char *, const char *);
-typedef bool (*FuncPtr_048) (void *, uint64_t, const char *);
-typedef bool (*FuncPtr_049) (void *, uint64_t);
-typedef bool (*FuncPtr_050) (void *, bool);
-typedef bool (*FuncPtr_052) (void *, const char *);
-typedef bool (*FuncPtr_053) (void *, uint64_t, uint32_t);
-typedef bool (*FuncPtr_056) (void *, int32_t, uint32_t *, uint32_t *);
-typedef bool (*FuncPtr_057) (void *, int32_t, uint8_t *, int32_t);
-typedef bool (*FuncPtr_059) (void *, uint64_t, bool *);
-typedef bool (*FuncPtr_060) (void *, uint32_t, uint32_t, const char *, uint32_t, const char *);
-typedef bool (*FuncPtr_061) (void *, char *, uint32_t);
-typedef bool (*FuncPtr_066) (void *, uint32_t, int32_t, int32_t, int32_t, int32_t);
-typedef bool (*FuncPtr_067) (void *, const char *, int32_t *);
-typedef bool (*FuncPtr_068) (void *, const char *, float *);
-typedef bool (*FuncPtr_069) (void *, const char *, int32_t);
-typedef bool (*FuncPtr_070) (void *, const char *, float);
-typedef bool (*FuncPtr_071) (void *, const char *, float, double);
-typedef bool (*FuncPtr_072) (void *, const char *, bool *);
-typedef bool (*FuncPtr_073) (void *, const char *, bool *, uint32_t *);
-typedef bool (*FuncPtr_076) (void *, const char *, uint32_t, uint32_t);
-typedef bool (*FuncPtr_078) (void *, uint64_t, const char *, int32_t *);
-typedef bool (*FuncPtr_079) (void *, uint64_t, const char *, float *);
-typedef bool (*FuncPtr_080) (void *, uint64_t, const char *, bool *);
-typedef bool (*FuncPtr_081) (void *, uint64_t, const char *, bool *, uint32_t *);
-typedef bool (*FuncPtr_089) (void *, const char *, int64_t *);
-typedef bool (*FuncPtr_090) (void *, const char *, double *);
-typedef bool (*FuncPtr_093) (void *, const char *, int32_t *, int32_t *);
-typedef bool (*FuncPtr_094) (void *, const char *, float *, float *);
-typedef bool (*FuncPtr_095) (void *, int32_t, uint32_t *, bool *, char *, int32_t);
-typedef bool (*FuncPtr_099) (void *, uint32_t, uint64_t *, uint64_t *);
-typedef bool (*FuncPtr_101) (void *, uint32_t *, uint32_t *);
-typedef bool (*FuncPtr_102) (void *, bool, uint32_t);
-typedef bool (*FuncPtr_118) (void *, uint64_t, int32_t *, int32_t *);
-typedef InputMotionData_t (*FuncPtr_111) (void *, uint64_t);
-typedef InputDigitalActionData_t (*FuncPtr_106) (void *, uint64_t, uint64_t);
-typedef InputAnalogActionData_t (*FuncPtr_108) (void *, uint64_t, uint64_t);
+typedef bool (*FuncPtr_027) (void *, uint64_t, FriendGameInfo_t *);
+typedef bool (*FuncPtr_034) (void *, uint64_t, int32_t);
+typedef bool (*FuncPtr_036) (void *, uint64_t, int32_t *, int32_t *, int32_t *);
+typedef bool (*FuncPtr_039) (void *, uint64_t, uint64_t);
+typedef bool (*FuncPtr_045) (void *, uint64_t, bool);
+typedef bool (*FuncPtr_047) (void *, const char *, const char *);
+typedef bool (*FuncPtr_049) (void *, uint64_t, const char *);
+typedef bool (*FuncPtr_050) (void *, uint64_t);
+typedef bool (*FuncPtr_051) (void *, bool);
+typedef bool (*FuncPtr_053) (void *, const char *);
+typedef bool (*FuncPtr_054) (void *, uint64_t, uint32_t);
+typedef bool (*FuncPtr_057) (void *, int32_t, uint32_t *, uint32_t *);
+typedef bool (*FuncPtr_058) (void *, int32_t, uint8_t *, int32_t);
+typedef bool (*FuncPtr_060) (void *, uint64_t, bool *);
+typedef bool (*FuncPtr_061) (void *, uint32_t, uint32_t, const char *, uint32_t, const char *);
+typedef bool (*FuncPtr_062) (void *, char *, uint32_t);
+typedef bool (*FuncPtr_067) (void *, uint32_t, int32_t, int32_t, int32_t, int32_t);
+typedef bool (*FuncPtr_068) (void *, const char *, int32_t *);
+typedef bool (*FuncPtr_069) (void *, const char *, float *);
+typedef bool (*FuncPtr_070) (void *, const char *, int32_t);
+typedef bool (*FuncPtr_071) (void *, const char *, float);
+typedef bool (*FuncPtr_072) (void *, const char *, float, double);
+typedef bool (*FuncPtr_073) (void *, const char *, bool *);
+typedef bool (*FuncPtr_074) (void *, const char *, bool *, uint32_t *);
+typedef bool (*FuncPtr_077) (void *, const char *, uint32_t, uint32_t);
+typedef bool (*FuncPtr_079) (void *, uint64_t, const char *, int32_t *);
+typedef bool (*FuncPtr_080) (void *, uint64_t, const char *, float *);
+typedef bool (*FuncPtr_081) (void *, uint64_t, const char *, bool *);
+typedef bool (*FuncPtr_082) (void *, uint64_t, const char *, bool *, uint32_t *);
+typedef bool (*FuncPtr_086) (void *, uint64_t, int32_t, LeaderboardEntry_t *, int32_t *, int32_t);
+typedef bool (*FuncPtr_091) (void *, const char *, int64_t *);
+typedef bool (*FuncPtr_092) (void *, const char *, double *);
+typedef bool (*FuncPtr_095) (void *, const char *, int32_t *, int32_t *);
+typedef bool (*FuncPtr_096) (void *, const char *, float *, float *);
+typedef bool (*FuncPtr_097) (void *, int32_t, uint32_t *, bool *, char *, int32_t);
+typedef bool (*FuncPtr_101) (void *, uint32_t, uint64_t *, uint64_t *);
+typedef bool (*FuncPtr_103) (void *, uint32_t *, uint32_t *);
+typedef bool (*FuncPtr_104) (void *, bool, uint32_t);
+typedef bool (*FuncPtr_120) (void *, uint64_t, int32_t *, int32_t *);
+typedef InputMotionData_t (*FuncPtr_113) (void *, uint64_t);
+typedef InputDigitalActionData_t (*FuncPtr_108) (void *, uint64_t, uint64_t);
+typedef InputAnalogActionData_t (*FuncPtr_110) (void *, uint64_t, uint64_t);
 
 // The following functions have not been exported:
 //	- SteamAPI_ISteamUser_InitiateGameConnection_DEPRECATED (pointer to raw data argument required)
@@ -333,12 +351,10 @@ typedef InputAnalogActionData_t (*FuncPtr_108) (void *, uint64_t, uint64_t);
 //	- SteamAPI_ISteamUser_BeginAuthSession (pointer to raw data argument required)
 //	- SteamAPI_ISteamUser_RequestEncryptedAppTicket (pointer to raw data argument required)
 //	- SteamAPI_ISteamUser_GetEncryptedAppTicket (pointer to raw data argument required)
-//	- SteamAPI_ISteamFriends_GetFriendGamePlayed (struct argument required)
 //	- SteamAPI_ISteamFriends_GetClanChatMessage (pointer to raw data argument required)
 //	- SteamAPI_ISteamFriends_GetFriendMessage (pointer to raw data argument required)
 //	- SteamAPI_ISteamUtils_GetAPICallResult (pointer to raw data argument required)
 //	- SteamAPI_ISteamUtils_SetWarningMessageHook (callback pointer argument required)
-//	- SteamAPI_ISteamUserStats_GetDownloadedLeaderboardEntry (struct argument required)
 //	- SteamAPI_ISteamInput_EnableActionEventCallbacks (callback pointer argument required)
 //	- SteamAPI_ISteamInput_SetDualSenseTriggerEffect (callback pointer argument required)
 
@@ -420,19 +436,7 @@ static bool js_ISteamFriends_GetCoplayFriendCount                              (
 static bool js_ISteamFriends_GetFriendCoplayTime                               (int num_args, bool is_ctor, intptr_t magic);
 static bool js_ISteamFriends_GetClanChatMemberCount                            (int num_args, bool is_ctor, intptr_t magic);
 static bool js_ISteamFriends_GetNumChatsWithUnreadPriorityMessages             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendsGroupIDByIndex                          (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendsGroupMembersList                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_SetInGameVoiceSpeaking                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlay                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlayToUser                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlayToWebPage                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlayToStore                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_SetPlayedWith                                     (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlayInviteDialog                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ClearRichPresence                                 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_RequestFriendRichPresence                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlayRemotePlayTogetherInviteDialog (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlayInviteDialogConnectString      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendGamePlayed                               (int num_args, bool is_ctor, intptr_t magic);
 static bool js_ISteamFriends_HasFriend                                         (int num_args, bool is_ctor, intptr_t magic);
 static bool js_ISteamFriends_GetClanActivityCounts                             (int num_args, bool is_ctor, intptr_t magic);
 static bool js_ISteamFriends_IsUserInSource                                    (int num_args, bool is_ctor, intptr_t magic);
@@ -451,6 +455,19 @@ static bool js_ISteamFriends_IsClanPublic                                      (
 static bool js_ISteamFriends_IsClanOfficialGameGroup                           (int num_args, bool is_ctor, intptr_t magic);
 static bool js_ISteamFriends_RegisterProtocolInOverlayBrowser                  (int num_args, bool is_ctor, intptr_t magic);
 static bool js_ISteamFriends_BHasEquippedProfileItem                           (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendsGroupIDByIndex                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendsGroupMembersList                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_SetInGameVoiceSpeaking                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlay                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlayToUser                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlayToWebPage                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlayToStore                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_SetPlayedWith                                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlayInviteDialog                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ClearRichPresence                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_RequestFriendRichPresence                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlayRemotePlayTogetherInviteDialog (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlayInviteDialogConnectString      (int num_args, bool is_ctor, intptr_t magic);
 
 // ISteamUtils
 static bool js_ISteamUtils_GetSecondsSinceAppActive                            (int num_args, bool is_ctor, intptr_t magic);
@@ -506,6 +523,7 @@ static bool js_ISteamUserStats_GetUserStatFloat                                (
 static bool js_ISteamUserStats_GetUserAchievement                              (int num_args, bool is_ctor, intptr_t magic);
 static bool js_ISteamUserStats_GetUserAchievementAndUnlockTime                 (int num_args, bool is_ctor, intptr_t magic);
 static bool js_ISteamUserStats_ResetAllStats                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetDownloadedLeaderboardEntry                   (int num_args, bool is_ctor, intptr_t magic);
 static bool js_ISteamUserStats_GetAchievementAchievedPercent                   (int num_args, bool is_ctor, intptr_t magic);
 static bool js_ISteamUserStats_GetGlobalStatInt64                              (int num_args, bool is_ctor, intptr_t magic);
 static bool js_ISteamUserStats_GetGlobalStatDouble                             (int num_args, bool is_ctor, intptr_t magic);
