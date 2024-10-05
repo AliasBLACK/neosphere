@@ -465,82 +465,18 @@ Recurring Callbacks
 		You can register for UnreadChatMessagesChanged_t callbacks to know when this
 		has potentially changed.
 
-	ISteamFriends.GetFriendsGroupIDByIndex(int iFG)
+	ISteamFriends.GetFriendGamePlayed(int_string steamIDFriend)
 
-		Returns var of type `int`.
+		returns true if the friend is actually in a game, and fills in pFriendGameInfo with an extra details
 
-	ISteamFriends.GetFriendsGroupMembersList(int friendsGroupID, int nMembersCount)
+		Returns a javascript object with the following members:
 
-		Returns an array of type `int_string` and size nMembersCount.
-		gets up to nMembersCount members of the given friends group, if fewer exist than requested those positions' SteamIDs will be invalid
-
-	ISteamFriends.SetInGameVoiceSpeaking(int_string steamIDUser, bool bSpeaking)
-
-	ISteamFriends.ActivateGameOverlay(string pchDialog)
-
-		activates the game overlay, with an optional dialog to open
-		valid options include "Friends", "Community", "Players", "Settings", "OfficialGameGroup", "Stats", "Achievements",
-		"chatroomgroup
-		nnnn"
-
-	ISteamFriends.ActivateGameOverlayToUser(string pchDialog, int_string steamID)
-
-		activates game overlay to a specific place
-		valid options are
-		"steamid" - opens the overlay web browser to the specified user or groups profile
-		"chat" - opens a chat window to the specified user, or joins the group chat
-		"jointrade" - opens a window to a Steam Trading session that was started with the ISteamEconomy
-		StartTrade Web API
-		"stats" - opens the overlay web browser to the specified user's stats
-		"achievements" - opens the overlay web browser to the specified user's achievements
-		"friendadd" - opens the overlay in minimal mode prompting the user to add the target user as a friend
-		"friendremove" - opens the overlay in minimal mode prompting the user to remove the target friend
-		"friendrequestaccept" - opens the overlay in minimal mode prompting the user to accept an incoming friend invite
-		"friendrequestignore" - opens the overlay in minimal mode prompting the user to ignore an incoming friend invite
-
-	ISteamFriends.ActivateGameOverlayToWebPage(string pchURL, int eMode)
-
-		activates game overlay web browser directly to the specified URL
-		full address with protocol type is required, e.g. http:
-		www.steamgames.com
-
-		eMode is an enum with the following members:
-
-			EActivateGameOverlayToWebPageMode.k_EActivateGameOverlayToWebPageMode_Default
-			EActivateGameOverlayToWebPageMode.k_EActivateGameOverlayToWebPageMode_Modal
-
-	ISteamFriends.ActivateGameOverlayToStore(int nAppID, int eFlag)
-
-		activates game overlay to store page for app
-
-		eFlag is an enum with the following members:
-
-			EOverlayToStoreFlag.k_EOverlayToStoreFlag_None
-			EOverlayToStoreFlag.k_EOverlayToStoreFlag_AddToCart
-			EOverlayToStoreFlag.k_EOverlayToStoreFlag_AddToCartAndShow
-
-	ISteamFriends.SetPlayedWith(int_string steamIDUserPlayedWith)
-
-		Mark a target user as 'played with'. This is a client-side only feature that requires that the calling user is
-		in game
-
-	ISteamFriends.ActivateGameOverlayInviteDialog(int_string steamIDLobby)
-
-		activates game overlay to open the invite dialog. Invitations will be sent for the provided lobby.
-
-	ISteamFriends.ClearRichPresence()
-
-	ISteamFriends.RequestFriendRichPresence(int_string steamIDFriend)
-
-		Requests rich presence for a specific user.
-
-	ISteamFriends.ActivateGameOverlayRemotePlayTogetherInviteDialog(int_string steamIDLobby)
-
-		activates game overlay to open the remote play together invite dialog. Invitations will be sent for remote play together
-
-	ISteamFriends.ActivateGameOverlayInviteDialogConnectString(string pchConnectString)
-
-		Activates the game overlay to open an invite dialog that will send the provided Rich Presence connect string to selected friends
+			value.result (bool)
+			value.pFriendGameInfo.m_gameID (int_string)
+			value.pFriendGameInfo.m_unGameIP (int)
+			value.pFriendGameInfo.m_usGamePort (int)
+			value.pFriendGameInfo.m_usQueryPort (int)
+			value.pFriendGameInfo.m_steamIDLobby (int_string)
 
 	ISteamFriends.HasFriend(int_string steamIDFriend, int iFriendFlags)
 
@@ -636,6 +572,83 @@ Recurring Callbacks
 			ECommunityProfileItemType.k_ECommunityProfileItemType_ProfileModifier
 			ECommunityProfileItemType.k_ECommunityProfileItemType_ProfileBackground
 			ECommunityProfileItemType.k_ECommunityProfileItemType_MiniProfileBackground
+
+	ISteamFriends.GetFriendsGroupIDByIndex(int iFG)
+
+		Returns var of type `int`.
+
+	ISteamFriends.GetFriendsGroupMembersList(int friendsGroupID, int nMembersCount)
+
+		Returns an array of type `int_string` and size nMembersCount.
+		gets up to nMembersCount members of the given friends group, if fewer exist than requested those positions' SteamIDs will be invalid
+
+	ISteamFriends.SetInGameVoiceSpeaking(int_string steamIDUser, bool bSpeaking)
+
+	ISteamFriends.ActivateGameOverlay(string pchDialog)
+
+		activates the game overlay, with an optional dialog to open
+		valid options include "Friends", "Community", "Players", "Settings", "OfficialGameGroup", "Stats", "Achievements",
+		"chatroomgroup
+		nnnn"
+
+	ISteamFriends.ActivateGameOverlayToUser(string pchDialog, int_string steamID)
+
+		activates game overlay to a specific place
+		valid options are
+		"steamid" - opens the overlay web browser to the specified user or groups profile
+		"chat" - opens a chat window to the specified user, or joins the group chat
+		"jointrade" - opens a window to a Steam Trading session that was started with the ISteamEconomy
+		StartTrade Web API
+		"stats" - opens the overlay web browser to the specified user's stats
+		"achievements" - opens the overlay web browser to the specified user's achievements
+		"friendadd" - opens the overlay in minimal mode prompting the user to add the target user as a friend
+		"friendremove" - opens the overlay in minimal mode prompting the user to remove the target friend
+		"friendrequestaccept" - opens the overlay in minimal mode prompting the user to accept an incoming friend invite
+		"friendrequestignore" - opens the overlay in minimal mode prompting the user to ignore an incoming friend invite
+
+	ISteamFriends.ActivateGameOverlayToWebPage(string pchURL, int eMode)
+
+		activates game overlay web browser directly to the specified URL
+		full address with protocol type is required, e.g. http:
+		www.steamgames.com
+
+		eMode is an enum with the following members:
+
+			EActivateGameOverlayToWebPageMode.k_EActivateGameOverlayToWebPageMode_Default
+			EActivateGameOverlayToWebPageMode.k_EActivateGameOverlayToWebPageMode_Modal
+
+	ISteamFriends.ActivateGameOverlayToStore(int nAppID, int eFlag)
+
+		activates game overlay to store page for app
+
+		eFlag is an enum with the following members:
+
+			EOverlayToStoreFlag.k_EOverlayToStoreFlag_None
+			EOverlayToStoreFlag.k_EOverlayToStoreFlag_AddToCart
+			EOverlayToStoreFlag.k_EOverlayToStoreFlag_AddToCartAndShow
+
+	ISteamFriends.SetPlayedWith(int_string steamIDUserPlayedWith)
+
+		Mark a target user as 'played with'. This is a client-side only feature that requires that the calling user is
+		in game
+
+	ISteamFriends.ActivateGameOverlayInviteDialog(int_string steamIDLobby)
+
+		activates game overlay to open the invite dialog. Invitations will be sent for the provided lobby.
+
+	ISteamFriends.ClearRichPresence()
+
+	ISteamFriends.RequestFriendRichPresence(int_string steamIDFriend)
+
+		Requests rich presence for a specific user.
+
+	ISteamFriends.ActivateGameOverlayRemotePlayTogetherInviteDialog(int_string steamIDLobby)
+
+		activates game overlay to open the remote play together invite dialog. Invitations will be sent for remote play together
+
+	ISteamFriends.ActivateGameOverlayInviteDialogConnectString(string pchConnectString)
+
+		Activates the game overlay to open an invite dialog that will send the provided Rich Presence connect string to selected friends
 
 
 `ISteamUtils` Interface
@@ -977,6 +990,18 @@ Recurring Callbacks
 
 		Returns var of type `bool`.
 		Reset stats
+
+	ISteamUserStats.GetDownloadedLeaderboardEntry(int_string hSteamLeaderboardEntries, int index, int cDetailsMax)
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pLeaderboardEntry.m_steamIDUser (int_string)
+			value.pLeaderboardEntry.m_nGlobalRank (int)
+			value.pLeaderboardEntry.m_nScore (int)
+			value.pLeaderboardEntry.m_cDetails (int)
+			value.pLeaderboardEntry.m_hUGC (int_string)
+			value.pDetails (int[cDetailsMax])
 
 	ISteamUserStats.GetAchievementAchievedPercent(string pchName)
 

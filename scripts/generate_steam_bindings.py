@@ -44,6 +44,7 @@ enums_to_bind = []
 structs_to_bind = [
 	"GameOverlayActivated_t",
 	"SteamAPICallCompleted_t"
+
 ]
 def convert_type(type):
 
@@ -222,6 +223,10 @@ def parse_method(method, category, type):
 		# Remove namespace.
 		param['paramtype'] = re.sub(r"^.*::", "", param['paramtype'])
 
+		# Check if out param.
+		param['out'] = (allow_return_params and ('*' in param['paramtype'])
+			and (not 'const ' in param['paramtype']) and (not 'self' in param['paramname']))
+
 		# Check if array.
 		array_size = re.search(r"\[([0-9]*?)\]", param['paramtype'])
 		if not array_size is None:
@@ -230,8 +235,9 @@ def parse_method(method, category, type):
 
 		# Skip if struct is required in param.
 		# TODO: Add this later.
-		if param['paramtype'].replace("*", "").replace("const", "").strip() in structs:
+		if (not param['out'] == True) and param['paramtype'].replace("*", "").replace("const", "").strip() in structs:
 			skipped_methods.append(method['methodname_flat'] + " (struct argument required)")
+			print("Skipping " + method['methodname_flat'] + " (struct argument required)")
 			return
 		
 		# Mark param if enum for documentation.
@@ -241,9 +247,7 @@ def parse_method(method, category, type):
 		# Convert type.
 		param['paramtype'] = convert_type(param['paramtype'])
 
-		# Check if out param.
-		param['out'] = (allow_return_params and ('*' in param['paramtype'])
-			and (not 'const ' in param['paramtype']) and (not 'self' in param['paramname']))
+		param['typenopointer'] = param['paramtype'].replace("*", "").strip()
 
 		# Homogenize 'out_array_call' (there is only one in entire api)
 		if "out_array_call" in param:
@@ -379,7 +383,7 @@ def jsal_push_array(param, initialized_i):
 	result += "	jsal_push_new_array();\n"
 	result += "	for (i = 0; i < (int)" + param['array_size'] + "; ++i)\n"
 	result += "	{\n"
-	result += "		" + jsal_push_function(param['paramtype'].replace("*", "").strip()) + param['paramname'] + "[i]);\n"
+	result += "		" + jsal_push_function(param['typenopointer']) + param['paramname'] + "[i]);\n"
 	result += "		jsal_put_prop_index(-2, i);\n"
 	result += "	}\n"
 	return result
@@ -936,7 +940,7 @@ for category in methods:
 
 				# If pointer type.
 				elif "*" in param['paramtype'] and not "char *" in param['paramtype']:
-					source += "	" + param['paramtype'].replace("*", "").strip() + " " + param['paramname'] + ";\n"
+					source += "	" + param['typenopointer'] + " " + param['paramname'] + ";\n"
 					param_arg_array.append("&" + param['paramname'])
 					continue
 
@@ -960,7 +964,7 @@ for category in methods:
 					param_arg_array.append(param['paramname'])
 					jsal_requires.append(jsal_require_function(param['paramtype'], arg_index, param['paramname']))
 					source += "	" + param['paramtype'] + " " + param['paramname'] + ";\n"
-					doc_params.append(js_type_convert(param['paramtype'].replace("*", "").strip()) + " " + param['paramname'])
+					doc_params.append(js_type_convert(param['typenopointer']) + " " + param['paramname'])
 					arg_index += 1
 
 			# Print declaration for return type.
@@ -983,7 +987,7 @@ for category in methods:
 			for param in method['params']:
 				if "array_size" in param:
 					array_alloc_trailing_newline = "\n"
-					source += "	if (!(" + param['paramname'] + " = (" + param['paramtype'] + ")calloc(" + param['array_size'] + ", sizeof(" + param['paramtype'].replace("*", "").strip() + "))))\n"
+					source += "	if (!(" + param['paramname'] + " = (" + param['paramtype'] + ")calloc(" + param['array_size'] + ", sizeof(" + param['typenopointer'] + "))))\n"
 					source += "		return false;\n"
 			source += array_alloc_trailing_newline
 
@@ -1034,7 +1038,7 @@ for category in methods:
 							# Else, return normally based on type.
 							else:
 								doc_resulttype = "		Returns var of type `" + js_type_convert(param['paramtype'].replace("*","").strip()) + ".\n"
-								source += "	" + jsal_push_function(param['paramtype'].replace("*", "").strip()) + param['paramname'] + ");\n"
+								source += "	" + jsal_push_function(param['typenopointer']) + param['paramname'] + ");\n"
 					
 					source += "\n"
 					source += "	return true;\n"
@@ -1061,9 +1065,14 @@ for category in methods:
 								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype'].replace("*","").strip()) + "[" + param['array_size'] + "])\n")
 								free_array_pointers_string += "	free(" + param['paramname'] + ");\n"
 							
+							elif param['typenopointer'] in structs:
+								source += jsal_push_object(param['typenopointer'], param['paramname'], 1)
+								for field in structs[param['typenopointer']]['fields']:
+									doc_returntypes += f"			value.{param['paramname']}.{field['fieldname']} ({js_type_convert(field['fieldtype'])})\n"
+
 							# Else, return normally based on type.
 							else:
-								source += "	" + jsal_push_function(param['paramtype'].replace("*", "").strip()) + param['paramname'] + ");\n"
+								source += "	" + jsal_push_function(param['typenopointer']) + param['paramname'] + ");\n"
 								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype'].replace("*","").strip()) + ")\n")
 							
 							# Next param please.

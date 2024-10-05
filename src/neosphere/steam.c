@@ -1029,19 +1029,7 @@ steamapi_init(void)
 	api_define_func("ISteamFriends", "GetFriendCoplayTime", js_ISteamFriends_GetFriendCoplayTime, 0);
 	api_define_func("ISteamFriends", "GetClanChatMemberCount", js_ISteamFriends_GetClanChatMemberCount, 0);
 	api_define_func("ISteamFriends", "GetNumChatsWithUnreadPriorityMessages", js_ISteamFriends_GetNumChatsWithUnreadPriorityMessages, 0);
-	api_define_func("ISteamFriends", "GetFriendsGroupIDByIndex", js_ISteamFriends_GetFriendsGroupIDByIndex, 0);
-	api_define_func("ISteamFriends", "GetFriendsGroupMembersList", js_ISteamFriends_GetFriendsGroupMembersList, 0);
-	api_define_func("ISteamFriends", "SetInGameVoiceSpeaking", js_ISteamFriends_SetInGameVoiceSpeaking, 0);
-	api_define_func("ISteamFriends", "ActivateGameOverlay", js_ISteamFriends_ActivateGameOverlay, 0);
-	api_define_func("ISteamFriends", "ActivateGameOverlayToUser", js_ISteamFriends_ActivateGameOverlayToUser, 0);
-	api_define_func("ISteamFriends", "ActivateGameOverlayToWebPage", js_ISteamFriends_ActivateGameOverlayToWebPage, 0);
-	api_define_func("ISteamFriends", "ActivateGameOverlayToStore", js_ISteamFriends_ActivateGameOverlayToStore, 0);
-	api_define_func("ISteamFriends", "SetPlayedWith", js_ISteamFriends_SetPlayedWith, 0);
-	api_define_func("ISteamFriends", "ActivateGameOverlayInviteDialog", js_ISteamFriends_ActivateGameOverlayInviteDialog, 0);
-	api_define_func("ISteamFriends", "ClearRichPresence", js_ISteamFriends_ClearRichPresence, 0);
-	api_define_func("ISteamFriends", "RequestFriendRichPresence", js_ISteamFriends_RequestFriendRichPresence, 0);
-	api_define_func("ISteamFriends", "ActivateGameOverlayRemotePlayTogetherInviteDialog", js_ISteamFriends_ActivateGameOverlayRemotePlayTogetherInviteDialog, 0);
-	api_define_func("ISteamFriends", "ActivateGameOverlayInviteDialogConnectString", js_ISteamFriends_ActivateGameOverlayInviteDialogConnectString, 0);
+	api_define_func("ISteamFriends", "GetFriendGamePlayed", js_ISteamFriends_GetFriendGamePlayed, 0);
 	api_define_func("ISteamFriends", "HasFriend", js_ISteamFriends_HasFriend, 0);
 	api_define_func("ISteamFriends", "GetClanActivityCounts", js_ISteamFriends_GetClanActivityCounts, 0);
 	api_define_func("ISteamFriends", "IsUserInSource", js_ISteamFriends_IsUserInSource, 0);
@@ -1060,6 +1048,19 @@ steamapi_init(void)
 	api_define_func("ISteamFriends", "IsClanOfficialGameGroup", js_ISteamFriends_IsClanOfficialGameGroup, 0);
 	api_define_func("ISteamFriends", "RegisterProtocolInOverlayBrowser", js_ISteamFriends_RegisterProtocolInOverlayBrowser, 0);
 	api_define_func("ISteamFriends", "BHasEquippedProfileItem", js_ISteamFriends_BHasEquippedProfileItem, 0);
+	api_define_func("ISteamFriends", "GetFriendsGroupIDByIndex", js_ISteamFriends_GetFriendsGroupIDByIndex, 0);
+	api_define_func("ISteamFriends", "GetFriendsGroupMembersList", js_ISteamFriends_GetFriendsGroupMembersList, 0);
+	api_define_func("ISteamFriends", "SetInGameVoiceSpeaking", js_ISteamFriends_SetInGameVoiceSpeaking, 0);
+	api_define_func("ISteamFriends", "ActivateGameOverlay", js_ISteamFriends_ActivateGameOverlay, 0);
+	api_define_func("ISteamFriends", "ActivateGameOverlayToUser", js_ISteamFriends_ActivateGameOverlayToUser, 0);
+	api_define_func("ISteamFriends", "ActivateGameOverlayToWebPage", js_ISteamFriends_ActivateGameOverlayToWebPage, 0);
+	api_define_func("ISteamFriends", "ActivateGameOverlayToStore", js_ISteamFriends_ActivateGameOverlayToStore, 0);
+	api_define_func("ISteamFriends", "SetPlayedWith", js_ISteamFriends_SetPlayedWith, 0);
+	api_define_func("ISteamFriends", "ActivateGameOverlayInviteDialog", js_ISteamFriends_ActivateGameOverlayInviteDialog, 0);
+	api_define_func("ISteamFriends", "ClearRichPresence", js_ISteamFriends_ClearRichPresence, 0);
+	api_define_func("ISteamFriends", "RequestFriendRichPresence", js_ISteamFriends_RequestFriendRichPresence, 0);
+	api_define_func("ISteamFriends", "ActivateGameOverlayRemotePlayTogetherInviteDialog", js_ISteamFriends_ActivateGameOverlayRemotePlayTogetherInviteDialog, 0);
+	api_define_func("ISteamFriends", "ActivateGameOverlayInviteDialogConnectString", js_ISteamFriends_ActivateGameOverlayInviteDialogConnectString, 0);
 
 	// ISteamUtils
 	api_define_func("ISteamUtils", "GetSecondsSinceAppActive", js_ISteamUtils_GetSecondsSinceAppActive, 0);
@@ -1115,6 +1116,7 @@ steamapi_init(void)
 	api_define_func("ISteamUserStats", "GetUserAchievement", js_ISteamUserStats_GetUserAchievement, 0);
 	api_define_func("ISteamUserStats", "GetUserAchievementAndUnlockTime", js_ISteamUserStats_GetUserAchievementAndUnlockTime, 0);
 	api_define_func("ISteamUserStats", "ResetAllStats", js_ISteamUserStats_ResetAllStats, 0);
+	api_define_func("ISteamUserStats", "GetDownloadedLeaderboardEntry", js_ISteamUserStats_GetDownloadedLeaderboardEntry, 0);
 	api_define_func("ISteamUserStats", "GetAchievementAchievedPercent", js_ISteamUserStats_GetAchievementAchievedPercent, 0);
 	api_define_func("ISteamUserStats", "GetGlobalStatInt64", js_ISteamUserStats_GetGlobalStatInt64, 0);
 	api_define_func("ISteamUserStats", "GetGlobalStatDouble", js_ISteamUserStats_GetGlobalStatDouble, 0);
@@ -2158,12 +2160,12 @@ js_ISteamFriends_GetFriendPersonaNameHistory(int num_args, bool is_ctor, intptr_
 	uint64_t steamIDFriend;
 	int32_t iPersonaName;
 	const char * result;
-	FuncPtr_027 ISteamFriends_GetFriendPersonaNameHistory;
+	FuncPtr_028 ISteamFriends_GetFriendPersonaNameHistory;
 
 	steamIDFriend = require_str_to_uint64_t(0);
 	iPersonaName = jsal_require_int(1);
 
-	ISteamFriends_GetFriendPersonaNameHistory = (FuncPtr_027)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendPersonaNameHistory");
+	ISteamFriends_GetFriendPersonaNameHistory = (FuncPtr_028)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendPersonaNameHistory");
 	result = ISteamFriends_GetFriendPersonaNameHistory(ISteamFriends, steamIDFriend, iPersonaName);
 
 	jsal_push_string(result);
@@ -2193,11 +2195,11 @@ js_ISteamFriends_GetFriendsGroupName(int num_args, bool is_ctor, intptr_t magic)
 {
 	int16_t friendsGroupID;
 	const char * result;
-	FuncPtr_030 ISteamFriends_GetFriendsGroupName;
+	FuncPtr_031 ISteamFriends_GetFriendsGroupName;
 
 	friendsGroupID = jsal_require_int(0);
 
-	ISteamFriends_GetFriendsGroupName = (FuncPtr_030)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendsGroupName");
+	ISteamFriends_GetFriendsGroupName = (FuncPtr_031)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendsGroupName");
 	result = ISteamFriends_GetFriendsGroupName(ISteamFriends, friendsGroupID);
 
 	jsal_push_string(result);
@@ -2245,12 +2247,12 @@ js_ISteamFriends_GetFriendRichPresence(int num_args, bool is_ctor, intptr_t magi
 	uint64_t steamIDFriend;
 	const char * pchKey;
 	const char * result;
-	FuncPtr_047 ISteamFriends_GetFriendRichPresence;
+	FuncPtr_048 ISteamFriends_GetFriendRichPresence;
 
 	steamIDFriend = require_str_to_uint64_t(0);
 	pchKey = (char*)jsal_require_string(1);
 
-	ISteamFriends_GetFriendRichPresence = (FuncPtr_047)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendRichPresence");
+	ISteamFriends_GetFriendRichPresence = (FuncPtr_048)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendRichPresence");
 	result = ISteamFriends_GetFriendRichPresence(ISteamFriends, steamIDFriend, pchKey);
 
 	jsal_push_string(result);
@@ -2264,12 +2266,12 @@ js_ISteamFriends_GetFriendRichPresenceKeyByIndex(int num_args, bool is_ctor, int
 	uint64_t steamIDFriend;
 	int32_t iKey;
 	const char * result;
-	FuncPtr_027 ISteamFriends_GetFriendRichPresenceKeyByIndex;
+	FuncPtr_028 ISteamFriends_GetFriendRichPresenceKeyByIndex;
 
 	steamIDFriend = require_str_to_uint64_t(0);
 	iKey = jsal_require_int(1);
 
-	ISteamFriends_GetFriendRichPresenceKeyByIndex = (FuncPtr_027)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendRichPresenceKeyByIndex");
+	ISteamFriends_GetFriendRichPresenceKeyByIndex = (FuncPtr_028)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendRichPresenceKeyByIndex");
 	result = ISteamFriends_GetFriendRichPresenceKeyByIndex(ISteamFriends, steamIDFriend, iKey);
 
 	jsal_push_string(result);
@@ -2284,13 +2286,13 @@ js_ISteamFriends_GetProfileItemPropertyString(int num_args, bool is_ctor, intptr
 	uint32_t itemType;
 	uint32_t prop;
 	const char * result;
-	FuncPtr_054 ISteamFriends_GetProfileItemPropertyString;
+	FuncPtr_055 ISteamFriends_GetProfileItemPropertyString;
 
 	steamID = require_str_to_uint64_t(0);
 	itemType = jsal_require_uint(1);
 	prop = jsal_require_uint(2);
 
-	ISteamFriends_GetProfileItemPropertyString = (FuncPtr_054)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetProfileItemPropertyString");
+	ISteamFriends_GetProfileItemPropertyString = (FuncPtr_055)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetProfileItemPropertyString");
 	result = ISteamFriends_GetProfileItemPropertyString(ISteamFriends, steamID, itemType, prop);
 
 	jsal_push_string(result);
@@ -2339,11 +2341,11 @@ js_ISteamFriends_GetClanByIndex(int num_args, bool is_ctor, intptr_t magic)
 {
 	int32_t iClan;
 	uint64_t result;
-	FuncPtr_034 ISteamFriends_GetClanByIndex;
+	FuncPtr_035 ISteamFriends_GetClanByIndex;
 
 	iClan = jsal_require_int(0);
 
-	ISteamFriends_GetClanByIndex = (FuncPtr_034)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetClanByIndex");
+	ISteamFriends_GetClanByIndex = (FuncPtr_035)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetClanByIndex");
 	result = ISteamFriends_GetClanByIndex(ISteamFriends, iClan);
 
 	push_uint64_t_to_str(result);
@@ -2357,14 +2359,14 @@ js_ISteamFriends_DownloadClanActivityCounts(int num_args, bool is_ctor, intptr_t
 	uint64_t * psteamIDClans;
 	int32_t cClansToRequest;
 	uint64_t result;
-	FuncPtr_036 ISteamFriends_DownloadClanActivityCounts;
+	FuncPtr_037 ISteamFriends_DownloadClanActivityCounts;
 
 	cClansToRequest = jsal_require_int(0);
 
 	if (!(psteamIDClans = (uint64_t *)calloc(cClansToRequest, sizeof(uint64_t))))
 		return false;
 
-	ISteamFriends_DownloadClanActivityCounts = (FuncPtr_036)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_DownloadClanActivityCounts");
+	ISteamFriends_DownloadClanActivityCounts = (FuncPtr_037)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_DownloadClanActivityCounts");
 	result = ISteamFriends_DownloadClanActivityCounts(ISteamFriends, psteamIDClans, cClansToRequest);
 
 	push_uint64_t_to_str(result);
@@ -2378,12 +2380,12 @@ js_ISteamFriends_GetFriendFromSourceByIndex(int num_args, bool is_ctor, intptr_t
 	uint64_t steamIDSource;
 	int32_t iFriend;
 	uint64_t result;
-	FuncPtr_037 ISteamFriends_GetFriendFromSourceByIndex;
+	FuncPtr_038 ISteamFriends_GetFriendFromSourceByIndex;
 
 	steamIDSource = require_str_to_uint64_t(0);
 	iFriend = jsal_require_int(1);
 
-	ISteamFriends_GetFriendFromSourceByIndex = (FuncPtr_037)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendFromSourceByIndex");
+	ISteamFriends_GetFriendFromSourceByIndex = (FuncPtr_038)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendFromSourceByIndex");
 	result = ISteamFriends_GetFriendFromSourceByIndex(ISteamFriends, steamIDSource, iFriend);
 
 	push_uint64_t_to_str(result);
@@ -2396,11 +2398,11 @@ js_ISteamFriends_RequestClanOfficerList(int num_args, bool is_ctor, intptr_t mag
 {
 	uint64_t steamIDClan;
 	uint64_t result;
-	FuncPtr_045 ISteamFriends_RequestClanOfficerList;
+	FuncPtr_046 ISteamFriends_RequestClanOfficerList;
 
 	steamIDClan = require_str_to_uint64_t(0);
 
-	ISteamFriends_RequestClanOfficerList = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_RequestClanOfficerList");
+	ISteamFriends_RequestClanOfficerList = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_RequestClanOfficerList");
 	result = ISteamFriends_RequestClanOfficerList(ISteamFriends, steamIDClan);
 
 	push_uint64_t_to_str(result);
@@ -2413,11 +2415,11 @@ js_ISteamFriends_GetClanOwner(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint64_t steamIDClan;
 	uint64_t result;
-	FuncPtr_045 ISteamFriends_GetClanOwner;
+	FuncPtr_046 ISteamFriends_GetClanOwner;
 
 	steamIDClan = require_str_to_uint64_t(0);
 
-	ISteamFriends_GetClanOwner = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetClanOwner");
+	ISteamFriends_GetClanOwner = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetClanOwner");
 	result = ISteamFriends_GetClanOwner(ISteamFriends, steamIDClan);
 
 	push_uint64_t_to_str(result);
@@ -2431,12 +2433,12 @@ js_ISteamFriends_GetClanOfficerByIndex(int num_args, bool is_ctor, intptr_t magi
 	uint64_t steamIDClan;
 	int32_t iOfficer;
 	uint64_t result;
-	FuncPtr_037 ISteamFriends_GetClanOfficerByIndex;
+	FuncPtr_038 ISteamFriends_GetClanOfficerByIndex;
 
 	steamIDClan = require_str_to_uint64_t(0);
 	iOfficer = jsal_require_int(1);
 
-	ISteamFriends_GetClanOfficerByIndex = (FuncPtr_037)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetClanOfficerByIndex");
+	ISteamFriends_GetClanOfficerByIndex = (FuncPtr_038)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetClanOfficerByIndex");
 	result = ISteamFriends_GetClanOfficerByIndex(ISteamFriends, steamIDClan, iOfficer);
 
 	push_uint64_t_to_str(result);
@@ -2449,11 +2451,11 @@ js_ISteamFriends_GetCoplayFriend(int num_args, bool is_ctor, intptr_t magic)
 {
 	int32_t iCoplayFriend;
 	uint64_t result;
-	FuncPtr_034 ISteamFriends_GetCoplayFriend;
+	FuncPtr_035 ISteamFriends_GetCoplayFriend;
 
 	iCoplayFriend = jsal_require_int(0);
 
-	ISteamFriends_GetCoplayFriend = (FuncPtr_034)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetCoplayFriend");
+	ISteamFriends_GetCoplayFriend = (FuncPtr_035)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetCoplayFriend");
 	result = ISteamFriends_GetCoplayFriend(ISteamFriends, iCoplayFriend);
 
 	push_uint64_t_to_str(result);
@@ -2466,11 +2468,11 @@ js_ISteamFriends_JoinClanChatRoom(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint64_t steamIDClan;
 	uint64_t result;
-	FuncPtr_045 ISteamFriends_JoinClanChatRoom;
+	FuncPtr_046 ISteamFriends_JoinClanChatRoom;
 
 	steamIDClan = require_str_to_uint64_t(0);
 
-	ISteamFriends_JoinClanChatRoom = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_JoinClanChatRoom");
+	ISteamFriends_JoinClanChatRoom = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_JoinClanChatRoom");
 	result = ISteamFriends_JoinClanChatRoom(ISteamFriends, steamIDClan);
 
 	push_uint64_t_to_str(result);
@@ -2484,12 +2486,12 @@ js_ISteamFriends_GetChatMemberByIndex(int num_args, bool is_ctor, intptr_t magic
 	uint64_t steamIDClan;
 	int32_t iUser;
 	uint64_t result;
-	FuncPtr_037 ISteamFriends_GetChatMemberByIndex;
+	FuncPtr_038 ISteamFriends_GetChatMemberByIndex;
 
 	steamIDClan = require_str_to_uint64_t(0);
 	iUser = jsal_require_int(1);
 
-	ISteamFriends_GetChatMemberByIndex = (FuncPtr_037)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetChatMemberByIndex");
+	ISteamFriends_GetChatMemberByIndex = (FuncPtr_038)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetChatMemberByIndex");
 	result = ISteamFriends_GetChatMemberByIndex(ISteamFriends, steamIDClan, iUser);
 
 	push_uint64_t_to_str(result);
@@ -2502,11 +2504,11 @@ js_ISteamFriends_GetFollowerCount(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint64_t steamID;
 	uint64_t result;
-	FuncPtr_045 ISteamFriends_GetFollowerCount;
+	FuncPtr_046 ISteamFriends_GetFollowerCount;
 
 	steamID = require_str_to_uint64_t(0);
 
-	ISteamFriends_GetFollowerCount = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFollowerCount");
+	ISteamFriends_GetFollowerCount = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFollowerCount");
 	result = ISteamFriends_GetFollowerCount(ISteamFriends, steamID);
 
 	push_uint64_t_to_str(result);
@@ -2519,11 +2521,11 @@ js_ISteamFriends_IsFollowing(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint64_t steamID;
 	uint64_t result;
-	FuncPtr_045 ISteamFriends_IsFollowing;
+	FuncPtr_046 ISteamFriends_IsFollowing;
 
 	steamID = require_str_to_uint64_t(0);
 
-	ISteamFriends_IsFollowing = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_IsFollowing");
+	ISteamFriends_IsFollowing = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_IsFollowing");
 	result = ISteamFriends_IsFollowing(ISteamFriends, steamID);
 
 	push_uint64_t_to_str(result);
@@ -2536,11 +2538,11 @@ js_ISteamFriends_EnumerateFollowingList(int num_args, bool is_ctor, intptr_t mag
 {
 	uint32_t unStartIndex;
 	uint64_t result;
-	FuncPtr_051 ISteamFriends_EnumerateFollowingList;
+	FuncPtr_052 ISteamFriends_EnumerateFollowingList;
 
 	unStartIndex = jsal_require_uint(0);
 
-	ISteamFriends_EnumerateFollowingList = (FuncPtr_051)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_EnumerateFollowingList");
+	ISteamFriends_EnumerateFollowingList = (FuncPtr_052)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_EnumerateFollowingList");
 	result = ISteamFriends_EnumerateFollowingList(ISteamFriends, unStartIndex);
 
 	push_uint64_t_to_str(result);
@@ -2553,11 +2555,11 @@ js_ISteamFriends_RequestEquippedProfileItems(int num_args, bool is_ctor, intptr_
 {
 	uint64_t steamID;
 	uint64_t result;
-	FuncPtr_045 ISteamFriends_RequestEquippedProfileItems;
+	FuncPtr_046 ISteamFriends_RequestEquippedProfileItems;
 
 	steamID = require_str_to_uint64_t(0);
 
-	ISteamFriends_RequestEquippedProfileItems = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_RequestEquippedProfileItems");
+	ISteamFriends_RequestEquippedProfileItems = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_RequestEquippedProfileItems");
 	result = ISteamFriends_RequestEquippedProfileItems(ISteamFriends, steamID);
 
 	push_uint64_t_to_str(result);
@@ -2651,13 +2653,13 @@ js_ISteamFriends_GetProfileItemPropertyUint(int num_args, bool is_ctor, intptr_t
 	uint32_t itemType;
 	uint32_t prop;
 	uint32_t result;
-	FuncPtr_055 ISteamFriends_GetProfileItemPropertyUint;
+	FuncPtr_056 ISteamFriends_GetProfileItemPropertyUint;
 
 	steamID = require_str_to_uint64_t(0);
 	itemType = jsal_require_uint(1);
 	prop = jsal_require_uint(2);
 
-	ISteamFriends_GetProfileItemPropertyUint = (FuncPtr_055)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetProfileItemPropertyUint");
+	ISteamFriends_GetProfileItemPropertyUint = (FuncPtr_056)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetProfileItemPropertyUint");
 	result = ISteamFriends_GetProfileItemPropertyUint(ISteamFriends, steamID, itemType, prop);
 
 	jsal_push_uint(result);
@@ -2687,11 +2689,11 @@ js_ISteamFriends_GetFriendSteamLevel(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint64_t steamIDFriend;
 	int32_t result;
-	FuncPtr_028 ISteamFriends_GetFriendSteamLevel;
+	FuncPtr_029 ISteamFriends_GetFriendSteamLevel;
 
 	steamIDFriend = require_str_to_uint64_t(0);
 
-	ISteamFriends_GetFriendSteamLevel = (FuncPtr_028)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendSteamLevel");
+	ISteamFriends_GetFriendSteamLevel = (FuncPtr_029)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendSteamLevel");
 	result = ISteamFriends_GetFriendSteamLevel(ISteamFriends, steamIDFriend);
 
 	jsal_push_int(result);
@@ -2718,11 +2720,11 @@ js_ISteamFriends_GetFriendsGroupMembersCount(int num_args, bool is_ctor, intptr_
 {
 	int16_t friendsGroupID;
 	int32_t result;
-	FuncPtr_031 ISteamFriends_GetFriendsGroupMembersCount;
+	FuncPtr_032 ISteamFriends_GetFriendsGroupMembersCount;
 
 	friendsGroupID = jsal_require_int(0);
 
-	ISteamFriends_GetFriendsGroupMembersCount = (FuncPtr_031)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendsGroupMembersCount");
+	ISteamFriends_GetFriendsGroupMembersCount = (FuncPtr_032)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendsGroupMembersCount");
 	result = ISteamFriends_GetFriendsGroupMembersCount(ISteamFriends, friendsGroupID);
 
 	jsal_push_int(result);
@@ -2749,11 +2751,11 @@ js_ISteamFriends_GetFriendCountFromSource(int num_args, bool is_ctor, intptr_t m
 {
 	uint64_t steamIDSource;
 	int32_t result;
-	FuncPtr_028 ISteamFriends_GetFriendCountFromSource;
+	FuncPtr_029 ISteamFriends_GetFriendCountFromSource;
 
 	steamIDSource = require_str_to_uint64_t(0);
 
-	ISteamFriends_GetFriendCountFromSource = (FuncPtr_028)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendCountFromSource");
+	ISteamFriends_GetFriendCountFromSource = (FuncPtr_029)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendCountFromSource");
 	result = ISteamFriends_GetFriendCountFromSource(ISteamFriends, steamIDSource);
 
 	jsal_push_int(result);
@@ -2766,11 +2768,11 @@ js_ISteamFriends_GetSmallFriendAvatar(int num_args, bool is_ctor, intptr_t magic
 {
 	uint64_t steamIDFriend;
 	int32_t result;
-	FuncPtr_028 ISteamFriends_GetSmallFriendAvatar;
+	FuncPtr_029 ISteamFriends_GetSmallFriendAvatar;
 
 	steamIDFriend = require_str_to_uint64_t(0);
 
-	ISteamFriends_GetSmallFriendAvatar = (FuncPtr_028)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetSmallFriendAvatar");
+	ISteamFriends_GetSmallFriendAvatar = (FuncPtr_029)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetSmallFriendAvatar");
 	result = ISteamFriends_GetSmallFriendAvatar(ISteamFriends, steamIDFriend);
 
 	jsal_push_int(result);
@@ -2783,11 +2785,11 @@ js_ISteamFriends_GetMediumFriendAvatar(int num_args, bool is_ctor, intptr_t magi
 {
 	uint64_t steamIDFriend;
 	int32_t result;
-	FuncPtr_028 ISteamFriends_GetMediumFriendAvatar;
+	FuncPtr_029 ISteamFriends_GetMediumFriendAvatar;
 
 	steamIDFriend = require_str_to_uint64_t(0);
 
-	ISteamFriends_GetMediumFriendAvatar = (FuncPtr_028)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetMediumFriendAvatar");
+	ISteamFriends_GetMediumFriendAvatar = (FuncPtr_029)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetMediumFriendAvatar");
 	result = ISteamFriends_GetMediumFriendAvatar(ISteamFriends, steamIDFriend);
 
 	jsal_push_int(result);
@@ -2800,11 +2802,11 @@ js_ISteamFriends_GetLargeFriendAvatar(int num_args, bool is_ctor, intptr_t magic
 {
 	uint64_t steamIDFriend;
 	int32_t result;
-	FuncPtr_028 ISteamFriends_GetLargeFriendAvatar;
+	FuncPtr_029 ISteamFriends_GetLargeFriendAvatar;
 
 	steamIDFriend = require_str_to_uint64_t(0);
 
-	ISteamFriends_GetLargeFriendAvatar = (FuncPtr_028)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetLargeFriendAvatar");
+	ISteamFriends_GetLargeFriendAvatar = (FuncPtr_029)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetLargeFriendAvatar");
 	result = ISteamFriends_GetLargeFriendAvatar(ISteamFriends, steamIDFriend);
 
 	jsal_push_int(result);
@@ -2817,11 +2819,11 @@ js_ISteamFriends_GetClanOfficerCount(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint64_t steamIDClan;
 	int32_t result;
-	FuncPtr_028 ISteamFriends_GetClanOfficerCount;
+	FuncPtr_029 ISteamFriends_GetClanOfficerCount;
 
 	steamIDClan = require_str_to_uint64_t(0);
 
-	ISteamFriends_GetClanOfficerCount = (FuncPtr_028)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetClanOfficerCount");
+	ISteamFriends_GetClanOfficerCount = (FuncPtr_029)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetClanOfficerCount");
 	result = ISteamFriends_GetClanOfficerCount(ISteamFriends, steamIDClan);
 
 	jsal_push_int(result);
@@ -2834,11 +2836,11 @@ js_ISteamFriends_GetFriendRichPresenceKeyCount(int num_args, bool is_ctor, intpt
 {
 	uint64_t steamIDFriend;
 	int32_t result;
-	FuncPtr_028 ISteamFriends_GetFriendRichPresenceKeyCount;
+	FuncPtr_029 ISteamFriends_GetFriendRichPresenceKeyCount;
 
 	steamIDFriend = require_str_to_uint64_t(0);
 
-	ISteamFriends_GetFriendRichPresenceKeyCount = (FuncPtr_028)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendRichPresenceKeyCount");
+	ISteamFriends_GetFriendRichPresenceKeyCount = (FuncPtr_029)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendRichPresenceKeyCount");
 	result = ISteamFriends_GetFriendRichPresenceKeyCount(ISteamFriends, steamIDFriend);
 
 	jsal_push_int(result);
@@ -2865,11 +2867,11 @@ js_ISteamFriends_GetFriendCoplayTime(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint64_t steamIDFriend;
 	int32_t result;
-	FuncPtr_028 ISteamFriends_GetFriendCoplayTime;
+	FuncPtr_029 ISteamFriends_GetFriendCoplayTime;
 
 	steamIDFriend = require_str_to_uint64_t(0);
 
-	ISteamFriends_GetFriendCoplayTime = (FuncPtr_028)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendCoplayTime");
+	ISteamFriends_GetFriendCoplayTime = (FuncPtr_029)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendCoplayTime");
 	result = ISteamFriends_GetFriendCoplayTime(ISteamFriends, steamIDFriend);
 
 	jsal_push_int(result);
@@ -2882,11 +2884,11 @@ js_ISteamFriends_GetClanChatMemberCount(int num_args, bool is_ctor, intptr_t mag
 {
 	uint64_t steamIDClan;
 	int32_t result;
-	FuncPtr_028 ISteamFriends_GetClanChatMemberCount;
+	FuncPtr_029 ISteamFriends_GetClanChatMemberCount;
 
 	steamIDClan = require_str_to_uint64_t(0);
 
-	ISteamFriends_GetClanChatMemberCount = (FuncPtr_028)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetClanChatMemberCount");
+	ISteamFriends_GetClanChatMemberCount = (FuncPtr_029)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetClanChatMemberCount");
 	result = ISteamFriends_GetClanChatMemberCount(ISteamFriends, steamIDClan);
 
 	jsal_push_int(result);
@@ -2909,15 +2911,382 @@ js_ISteamFriends_GetNumChatsWithUnreadPriorityMessages(int num_args, bool is_cto
 }
 
 static bool
+js_ISteamFriends_GetFriendGamePlayed(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDFriend;
+	FriendGameInfo_t pFriendGameInfo;
+	bool result;
+	FuncPtr_027 ISteamFriends_GetFriendGamePlayed;
+
+	steamIDFriend = require_str_to_uint64_t(0);
+
+	ISteamFriends_GetFriendGamePlayed = (FuncPtr_027)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendGamePlayed");
+	result = ISteamFriends_GetFriendGamePlayed(ISteamFriends, steamIDFriend, &pFriendGameInfo);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	jsal_push_new_object();
+	push_uint64_t_to_str(pFriendGameInfo.m_gameID);
+	jsal_put_prop_string(-2, "m_gameID");
+	jsal_push_uint(pFriendGameInfo.m_unGameIP);
+	jsal_put_prop_string(-2, "m_unGameIP");
+	jsal_push_uint(pFriendGameInfo.m_usGamePort);
+	jsal_put_prop_string(-2, "m_usGamePort");
+	jsal_push_uint(pFriendGameInfo.m_usQueryPort);
+	jsal_put_prop_string(-2, "m_usQueryPort");
+	push_uint64_t_to_str(pFriendGameInfo.m_steamIDLobby);
+	jsal_put_prop_string(-2, "m_steamIDLobby");
+	jsal_put_prop_string(-2, "pFriendGameInfo");
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_HasFriend(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDFriend;
+	int32_t iFriendFlags;
+	bool result;
+	FuncPtr_034 ISteamFriends_HasFriend;
+
+	steamIDFriend = require_str_to_uint64_t(0);
+	iFriendFlags = jsal_require_int(1);
+
+	ISteamFriends_HasFriend = (FuncPtr_034)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_HasFriend");
+	result = ISteamFriends_HasFriend(ISteamFriends, steamIDFriend, iFriendFlags);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_GetClanActivityCounts(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDClan;
+	int32_t pnOnline;
+	int32_t pnInGame;
+	int32_t pnChatting;
+	bool result;
+	FuncPtr_036 ISteamFriends_GetClanActivityCounts;
+
+	steamIDClan = require_str_to_uint64_t(0);
+
+	ISteamFriends_GetClanActivityCounts = (FuncPtr_036)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetClanActivityCounts");
+	result = ISteamFriends_GetClanActivityCounts(ISteamFriends, steamIDClan, &pnOnline, &pnInGame, &pnChatting);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	jsal_push_int(pnOnline);
+	jsal_put_prop_string(-2, "pnOnline");
+	jsal_push_int(pnInGame);
+	jsal_put_prop_string(-2, "pnInGame");
+	jsal_push_int(pnChatting);
+	jsal_put_prop_string(-2, "pnChatting");
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_IsUserInSource(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDUser;
+	uint64_t steamIDSource;
+	bool result;
+	FuncPtr_039 ISteamFriends_IsUserInSource;
+
+	steamIDUser = require_str_to_uint64_t(0);
+	steamIDSource = require_str_to_uint64_t(1);
+
+	ISteamFriends_IsUserInSource = (FuncPtr_039)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_IsUserInSource");
+	result = ISteamFriends_IsUserInSource(ISteamFriends, steamIDUser, steamIDSource);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_RequestUserInformation(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDUser;
+	bool bRequireNameOnly;
+	bool result;
+	FuncPtr_045 ISteamFriends_RequestUserInformation;
+
+	steamIDUser = require_str_to_uint64_t(0);
+	bRequireNameOnly = jsal_require_boolean(1);
+
+	ISteamFriends_RequestUserInformation = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_RequestUserInformation");
+	result = ISteamFriends_RequestUserInformation(ISteamFriends, steamIDUser, bRequireNameOnly);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_SetRichPresence(int num_args, bool is_ctor, intptr_t magic)
+{
+	const char * pchKey;
+	const char * pchValue;
+	bool result;
+	FuncPtr_047 ISteamFriends_SetRichPresence;
+
+	pchKey = (char*)jsal_require_string(0);
+	pchValue = (char*)jsal_require_string(1);
+
+	ISteamFriends_SetRichPresence = (FuncPtr_047)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_SetRichPresence");
+	result = ISteamFriends_SetRichPresence(ISteamFriends, pchKey, pchValue);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_InviteUserToGame(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDFriend;
+	const char * pchConnectString;
+	bool result;
+	FuncPtr_049 ISteamFriends_InviteUserToGame;
+
+	steamIDFriend = require_str_to_uint64_t(0);
+	pchConnectString = (char*)jsal_require_string(1);
+
+	ISteamFriends_InviteUserToGame = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_InviteUserToGame");
+	result = ISteamFriends_InviteUserToGame(ISteamFriends, steamIDFriend, pchConnectString);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_LeaveClanChatRoom(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDClan;
+	bool result;
+	FuncPtr_050 ISteamFriends_LeaveClanChatRoom;
+
+	steamIDClan = require_str_to_uint64_t(0);
+
+	ISteamFriends_LeaveClanChatRoom = (FuncPtr_050)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_LeaveClanChatRoom");
+	result = ISteamFriends_LeaveClanChatRoom(ISteamFriends, steamIDClan);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_SendClanChatMessage(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDClanChat;
+	const char * pchText;
+	bool result;
+	FuncPtr_049 ISteamFriends_SendClanChatMessage;
+
+	steamIDClanChat = require_str_to_uint64_t(0);
+	pchText = (char*)jsal_require_string(1);
+
+	ISteamFriends_SendClanChatMessage = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_SendClanChatMessage");
+	result = ISteamFriends_SendClanChatMessage(ISteamFriends, steamIDClanChat, pchText);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_IsClanChatAdmin(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDClanChat;
+	uint64_t steamIDUser;
+	bool result;
+	FuncPtr_039 ISteamFriends_IsClanChatAdmin;
+
+	steamIDClanChat = require_str_to_uint64_t(0);
+	steamIDUser = require_str_to_uint64_t(1);
+
+	ISteamFriends_IsClanChatAdmin = (FuncPtr_039)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_IsClanChatAdmin");
+	result = ISteamFriends_IsClanChatAdmin(ISteamFriends, steamIDClanChat, steamIDUser);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_IsClanChatWindowOpenInSteam(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDClanChat;
+	bool result;
+	FuncPtr_050 ISteamFriends_IsClanChatWindowOpenInSteam;
+
+	steamIDClanChat = require_str_to_uint64_t(0);
+
+	ISteamFriends_IsClanChatWindowOpenInSteam = (FuncPtr_050)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_IsClanChatWindowOpenInSteam");
+	result = ISteamFriends_IsClanChatWindowOpenInSteam(ISteamFriends, steamIDClanChat);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_OpenClanChatWindowInSteam(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDClanChat;
+	bool result;
+	FuncPtr_050 ISteamFriends_OpenClanChatWindowInSteam;
+
+	steamIDClanChat = require_str_to_uint64_t(0);
+
+	ISteamFriends_OpenClanChatWindowInSteam = (FuncPtr_050)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_OpenClanChatWindowInSteam");
+	result = ISteamFriends_OpenClanChatWindowInSteam(ISteamFriends, steamIDClanChat);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_CloseClanChatWindowInSteam(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDClanChat;
+	bool result;
+	FuncPtr_050 ISteamFriends_CloseClanChatWindowInSteam;
+
+	steamIDClanChat = require_str_to_uint64_t(0);
+
+	ISteamFriends_CloseClanChatWindowInSteam = (FuncPtr_050)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_CloseClanChatWindowInSteam");
+	result = ISteamFriends_CloseClanChatWindowInSteam(ISteamFriends, steamIDClanChat);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_SetListenForFriendsMessages(int num_args, bool is_ctor, intptr_t magic)
+{
+	bool bInterceptEnabled;
+	bool result;
+	FuncPtr_051 ISteamFriends_SetListenForFriendsMessages;
+
+	bInterceptEnabled = jsal_require_boolean(0);
+
+	ISteamFriends_SetListenForFriendsMessages = (FuncPtr_051)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_SetListenForFriendsMessages");
+	result = ISteamFriends_SetListenForFriendsMessages(ISteamFriends, bInterceptEnabled);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_ReplyToFriendMessage(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDFriend;
+	const char * pchMsgToSend;
+	bool result;
+	FuncPtr_049 ISteamFriends_ReplyToFriendMessage;
+
+	steamIDFriend = require_str_to_uint64_t(0);
+	pchMsgToSend = (char*)jsal_require_string(1);
+
+	ISteamFriends_ReplyToFriendMessage = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_ReplyToFriendMessage");
+	result = ISteamFriends_ReplyToFriendMessage(ISteamFriends, steamIDFriend, pchMsgToSend);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_IsClanPublic(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDClan;
+	bool result;
+	FuncPtr_050 ISteamFriends_IsClanPublic;
+
+	steamIDClan = require_str_to_uint64_t(0);
+
+	ISteamFriends_IsClanPublic = (FuncPtr_050)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_IsClanPublic");
+	result = ISteamFriends_IsClanPublic(ISteamFriends, steamIDClan);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_IsClanOfficialGameGroup(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamIDClan;
+	bool result;
+	FuncPtr_050 ISteamFriends_IsClanOfficialGameGroup;
+
+	steamIDClan = require_str_to_uint64_t(0);
+
+	ISteamFriends_IsClanOfficialGameGroup = (FuncPtr_050)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_IsClanOfficialGameGroup");
+	result = ISteamFriends_IsClanOfficialGameGroup(ISteamFriends, steamIDClan);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_RegisterProtocolInOverlayBrowser(int num_args, bool is_ctor, intptr_t magic)
+{
+	const char * pchProtocol;
+	bool result;
+	FuncPtr_053 ISteamFriends_RegisterProtocolInOverlayBrowser;
+
+	pchProtocol = (char*)jsal_require_string(0);
+
+	ISteamFriends_RegisterProtocolInOverlayBrowser = (FuncPtr_053)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_RegisterProtocolInOverlayBrowser");
+	result = ISteamFriends_RegisterProtocolInOverlayBrowser(ISteamFriends, pchProtocol);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamFriends_BHasEquippedProfileItem(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamID;
+	uint32_t itemType;
+	bool result;
+	FuncPtr_054 ISteamFriends_BHasEquippedProfileItem;
+
+	steamID = require_str_to_uint64_t(0);
+	itemType = jsal_require_uint(1);
+
+	ISteamFriends_BHasEquippedProfileItem = (FuncPtr_054)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_BHasEquippedProfileItem");
+	result = ISteamFriends_BHasEquippedProfileItem(ISteamFriends, steamID, itemType);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
 js_ISteamFriends_GetFriendsGroupIDByIndex(int num_args, bool is_ctor, intptr_t magic)
 {
 	int32_t iFG;
 	int16_t result;
-	FuncPtr_029 ISteamFriends_GetFriendsGroupIDByIndex;
+	FuncPtr_030 ISteamFriends_GetFriendsGroupIDByIndex;
 
 	iFG = jsal_require_int(0);
 
-	ISteamFriends_GetFriendsGroupIDByIndex = (FuncPtr_029)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendsGroupIDByIndex");
+	ISteamFriends_GetFriendsGroupIDByIndex = (FuncPtr_030)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendsGroupIDByIndex");
 	result = ISteamFriends_GetFriendsGroupIDByIndex(ISteamFriends, iFG);
 
 	jsal_push_int(result);
@@ -2931,7 +3300,7 @@ js_ISteamFriends_GetFriendsGroupMembersList(int num_args, bool is_ctor, intptr_t
 	int16_t friendsGroupID;
 	uint64_t * pOutSteamIDMembers;
 	int32_t nMembersCount;
-	FuncPtr_032 ISteamFriends_GetFriendsGroupMembersList;
+	FuncPtr_033 ISteamFriends_GetFriendsGroupMembersList;
 
 	friendsGroupID = jsal_require_int(0);
 	nMembersCount = jsal_require_int(1);
@@ -2939,7 +3308,7 @@ js_ISteamFriends_GetFriendsGroupMembersList(int num_args, bool is_ctor, intptr_t
 	if (!(pOutSteamIDMembers = (uint64_t *)calloc(nMembersCount, sizeof(uint64_t))))
 		return false;
 
-	ISteamFriends_GetFriendsGroupMembersList = (FuncPtr_032)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendsGroupMembersList");
+	ISteamFriends_GetFriendsGroupMembersList = (FuncPtr_033)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendsGroupMembersList");
 	ISteamFriends_GetFriendsGroupMembersList(ISteamFriends, friendsGroupID, pOutSteamIDMembers, nMembersCount);
 
 	int i;
@@ -2960,12 +3329,12 @@ js_ISteamFriends_SetInGameVoiceSpeaking(int num_args, bool is_ctor, intptr_t mag
 {
 	uint64_t steamIDUser;
 	bool bSpeaking;
-	FuncPtr_039 ISteamFriends_SetInGameVoiceSpeaking;
+	FuncPtr_040 ISteamFriends_SetInGameVoiceSpeaking;
 
 	steamIDUser = require_str_to_uint64_t(0);
 	bSpeaking = jsal_require_boolean(1);
 
-	ISteamFriends_SetInGameVoiceSpeaking = (FuncPtr_039)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_SetInGameVoiceSpeaking");
+	ISteamFriends_SetInGameVoiceSpeaking = (FuncPtr_040)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_SetInGameVoiceSpeaking");
 	ISteamFriends_SetInGameVoiceSpeaking(ISteamFriends, steamIDUser, bSpeaking);
 
 	return false;
@@ -2975,11 +3344,11 @@ static bool
 js_ISteamFriends_ActivateGameOverlay(int num_args, bool is_ctor, intptr_t magic)
 {
 	const char * pchDialog;
-	FuncPtr_040 ISteamFriends_ActivateGameOverlay;
+	FuncPtr_041 ISteamFriends_ActivateGameOverlay;
 
 	pchDialog = (char*)jsal_require_string(0);
 
-	ISteamFriends_ActivateGameOverlay = (FuncPtr_040)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_ActivateGameOverlay");
+	ISteamFriends_ActivateGameOverlay = (FuncPtr_041)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_ActivateGameOverlay");
 	ISteamFriends_ActivateGameOverlay(ISteamFriends, pchDialog);
 
 	return false;
@@ -2990,12 +3359,12 @@ js_ISteamFriends_ActivateGameOverlayToUser(int num_args, bool is_ctor, intptr_t 
 {
 	const char * pchDialog;
 	uint64_t steamID;
-	FuncPtr_041 ISteamFriends_ActivateGameOverlayToUser;
+	FuncPtr_042 ISteamFriends_ActivateGameOverlayToUser;
 
 	pchDialog = (char*)jsal_require_string(0);
 	steamID = require_str_to_uint64_t(1);
 
-	ISteamFriends_ActivateGameOverlayToUser = (FuncPtr_041)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_ActivateGameOverlayToUser");
+	ISteamFriends_ActivateGameOverlayToUser = (FuncPtr_042)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_ActivateGameOverlayToUser");
 	ISteamFriends_ActivateGameOverlayToUser(ISteamFriends, pchDialog, steamID);
 
 	return false;
@@ -3006,12 +3375,12 @@ js_ISteamFriends_ActivateGameOverlayToWebPage(int num_args, bool is_ctor, intptr
 {
 	const char * pchURL;
 	uint32_t eMode;
-	FuncPtr_042 ISteamFriends_ActivateGameOverlayToWebPage;
+	FuncPtr_043 ISteamFriends_ActivateGameOverlayToWebPage;
 
 	pchURL = (char*)jsal_require_string(0);
 	eMode = jsal_require_uint(1);
 
-	ISteamFriends_ActivateGameOverlayToWebPage = (FuncPtr_042)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_ActivateGameOverlayToWebPage");
+	ISteamFriends_ActivateGameOverlayToWebPage = (FuncPtr_043)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_ActivateGameOverlayToWebPage");
 	ISteamFriends_ActivateGameOverlayToWebPage(ISteamFriends, pchURL, eMode);
 
 	return false;
@@ -3022,12 +3391,12 @@ js_ISteamFriends_ActivateGameOverlayToStore(int num_args, bool is_ctor, intptr_t
 {
 	uint32_t nAppID;
 	uint32_t eFlag;
-	FuncPtr_043 ISteamFriends_ActivateGameOverlayToStore;
+	FuncPtr_044 ISteamFriends_ActivateGameOverlayToStore;
 
 	nAppID = jsal_require_uint(0);
 	eFlag = jsal_require_uint(1);
 
-	ISteamFriends_ActivateGameOverlayToStore = (FuncPtr_043)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_ActivateGameOverlayToStore");
+	ISteamFriends_ActivateGameOverlayToStore = (FuncPtr_044)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_ActivateGameOverlayToStore");
 	ISteamFriends_ActivateGameOverlayToStore(ISteamFriends, nAppID, eFlag);
 
 	return false;
@@ -3104,349 +3473,14 @@ static bool
 js_ISteamFriends_ActivateGameOverlayInviteDialogConnectString(int num_args, bool is_ctor, intptr_t magic)
 {
 	const char * pchConnectString;
-	FuncPtr_040 ISteamFriends_ActivateGameOverlayInviteDialogConnectString;
+	FuncPtr_041 ISteamFriends_ActivateGameOverlayInviteDialogConnectString;
 
 	pchConnectString = (char*)jsal_require_string(0);
 
-	ISteamFriends_ActivateGameOverlayInviteDialogConnectString = (FuncPtr_040)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_ActivateGameOverlayInviteDialogConnectString");
+	ISteamFriends_ActivateGameOverlayInviteDialogConnectString = (FuncPtr_041)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_ActivateGameOverlayInviteDialogConnectString");
 	ISteamFriends_ActivateGameOverlayInviteDialogConnectString(ISteamFriends, pchConnectString);
 
 	return false;
-}
-
-static bool
-js_ISteamFriends_HasFriend(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDFriend;
-	int32_t iFriendFlags;
-	bool result;
-	FuncPtr_033 ISteamFriends_HasFriend;
-
-	steamIDFriend = require_str_to_uint64_t(0);
-	iFriendFlags = jsal_require_int(1);
-
-	ISteamFriends_HasFriend = (FuncPtr_033)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_HasFriend");
-	result = ISteamFriends_HasFriend(ISteamFriends, steamIDFriend, iFriendFlags);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_GetClanActivityCounts(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDClan;
-	int32_t pnOnline;
-	int32_t pnInGame;
-	int32_t pnChatting;
-	bool result;
-	FuncPtr_035 ISteamFriends_GetClanActivityCounts;
-
-	steamIDClan = require_str_to_uint64_t(0);
-
-	ISteamFriends_GetClanActivityCounts = (FuncPtr_035)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetClanActivityCounts");
-	result = ISteamFriends_GetClanActivityCounts(ISteamFriends, steamIDClan, &pnOnline, &pnInGame, &pnChatting);
-
-	jsal_push_new_object();
-	jsal_push_boolean(result);
-	jsal_put_prop_string(-2, "result");
-	jsal_push_int(pnOnline);
-	jsal_put_prop_string(-2, "pnOnline");
-	jsal_push_int(pnInGame);
-	jsal_put_prop_string(-2, "pnInGame");
-	jsal_push_int(pnChatting);
-	jsal_put_prop_string(-2, "pnChatting");
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_IsUserInSource(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDUser;
-	uint64_t steamIDSource;
-	bool result;
-	FuncPtr_038 ISteamFriends_IsUserInSource;
-
-	steamIDUser = require_str_to_uint64_t(0);
-	steamIDSource = require_str_to_uint64_t(1);
-
-	ISteamFriends_IsUserInSource = (FuncPtr_038)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_IsUserInSource");
-	result = ISteamFriends_IsUserInSource(ISteamFriends, steamIDUser, steamIDSource);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_RequestUserInformation(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDUser;
-	bool bRequireNameOnly;
-	bool result;
-	FuncPtr_044 ISteamFriends_RequestUserInformation;
-
-	steamIDUser = require_str_to_uint64_t(0);
-	bRequireNameOnly = jsal_require_boolean(1);
-
-	ISteamFriends_RequestUserInformation = (FuncPtr_044)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_RequestUserInformation");
-	result = ISteamFriends_RequestUserInformation(ISteamFriends, steamIDUser, bRequireNameOnly);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_SetRichPresence(int num_args, bool is_ctor, intptr_t magic)
-{
-	const char * pchKey;
-	const char * pchValue;
-	bool result;
-	FuncPtr_046 ISteamFriends_SetRichPresence;
-
-	pchKey = (char*)jsal_require_string(0);
-	pchValue = (char*)jsal_require_string(1);
-
-	ISteamFriends_SetRichPresence = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_SetRichPresence");
-	result = ISteamFriends_SetRichPresence(ISteamFriends, pchKey, pchValue);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_InviteUserToGame(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDFriend;
-	const char * pchConnectString;
-	bool result;
-	FuncPtr_048 ISteamFriends_InviteUserToGame;
-
-	steamIDFriend = require_str_to_uint64_t(0);
-	pchConnectString = (char*)jsal_require_string(1);
-
-	ISteamFriends_InviteUserToGame = (FuncPtr_048)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_InviteUserToGame");
-	result = ISteamFriends_InviteUserToGame(ISteamFriends, steamIDFriend, pchConnectString);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_LeaveClanChatRoom(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDClan;
-	bool result;
-	FuncPtr_049 ISteamFriends_LeaveClanChatRoom;
-
-	steamIDClan = require_str_to_uint64_t(0);
-
-	ISteamFriends_LeaveClanChatRoom = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_LeaveClanChatRoom");
-	result = ISteamFriends_LeaveClanChatRoom(ISteamFriends, steamIDClan);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_SendClanChatMessage(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDClanChat;
-	const char * pchText;
-	bool result;
-	FuncPtr_048 ISteamFriends_SendClanChatMessage;
-
-	steamIDClanChat = require_str_to_uint64_t(0);
-	pchText = (char*)jsal_require_string(1);
-
-	ISteamFriends_SendClanChatMessage = (FuncPtr_048)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_SendClanChatMessage");
-	result = ISteamFriends_SendClanChatMessage(ISteamFriends, steamIDClanChat, pchText);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_IsClanChatAdmin(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDClanChat;
-	uint64_t steamIDUser;
-	bool result;
-	FuncPtr_038 ISteamFriends_IsClanChatAdmin;
-
-	steamIDClanChat = require_str_to_uint64_t(0);
-	steamIDUser = require_str_to_uint64_t(1);
-
-	ISteamFriends_IsClanChatAdmin = (FuncPtr_038)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_IsClanChatAdmin");
-	result = ISteamFriends_IsClanChatAdmin(ISteamFriends, steamIDClanChat, steamIDUser);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_IsClanChatWindowOpenInSteam(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDClanChat;
-	bool result;
-	FuncPtr_049 ISteamFriends_IsClanChatWindowOpenInSteam;
-
-	steamIDClanChat = require_str_to_uint64_t(0);
-
-	ISteamFriends_IsClanChatWindowOpenInSteam = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_IsClanChatWindowOpenInSteam");
-	result = ISteamFriends_IsClanChatWindowOpenInSteam(ISteamFriends, steamIDClanChat);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_OpenClanChatWindowInSteam(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDClanChat;
-	bool result;
-	FuncPtr_049 ISteamFriends_OpenClanChatWindowInSteam;
-
-	steamIDClanChat = require_str_to_uint64_t(0);
-
-	ISteamFriends_OpenClanChatWindowInSteam = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_OpenClanChatWindowInSteam");
-	result = ISteamFriends_OpenClanChatWindowInSteam(ISteamFriends, steamIDClanChat);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_CloseClanChatWindowInSteam(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDClanChat;
-	bool result;
-	FuncPtr_049 ISteamFriends_CloseClanChatWindowInSteam;
-
-	steamIDClanChat = require_str_to_uint64_t(0);
-
-	ISteamFriends_CloseClanChatWindowInSteam = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_CloseClanChatWindowInSteam");
-	result = ISteamFriends_CloseClanChatWindowInSteam(ISteamFriends, steamIDClanChat);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_SetListenForFriendsMessages(int num_args, bool is_ctor, intptr_t magic)
-{
-	bool bInterceptEnabled;
-	bool result;
-	FuncPtr_050 ISteamFriends_SetListenForFriendsMessages;
-
-	bInterceptEnabled = jsal_require_boolean(0);
-
-	ISteamFriends_SetListenForFriendsMessages = (FuncPtr_050)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_SetListenForFriendsMessages");
-	result = ISteamFriends_SetListenForFriendsMessages(ISteamFriends, bInterceptEnabled);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_ReplyToFriendMessage(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDFriend;
-	const char * pchMsgToSend;
-	bool result;
-	FuncPtr_048 ISteamFriends_ReplyToFriendMessage;
-
-	steamIDFriend = require_str_to_uint64_t(0);
-	pchMsgToSend = (char*)jsal_require_string(1);
-
-	ISteamFriends_ReplyToFriendMessage = (FuncPtr_048)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_ReplyToFriendMessage");
-	result = ISteamFriends_ReplyToFriendMessage(ISteamFriends, steamIDFriend, pchMsgToSend);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_IsClanPublic(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDClan;
-	bool result;
-	FuncPtr_049 ISteamFriends_IsClanPublic;
-
-	steamIDClan = require_str_to_uint64_t(0);
-
-	ISteamFriends_IsClanPublic = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_IsClanPublic");
-	result = ISteamFriends_IsClanPublic(ISteamFriends, steamIDClan);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_IsClanOfficialGameGroup(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamIDClan;
-	bool result;
-	FuncPtr_049 ISteamFriends_IsClanOfficialGameGroup;
-
-	steamIDClan = require_str_to_uint64_t(0);
-
-	ISteamFriends_IsClanOfficialGameGroup = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_IsClanOfficialGameGroup");
-	result = ISteamFriends_IsClanOfficialGameGroup(ISteamFriends, steamIDClan);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_RegisterProtocolInOverlayBrowser(int num_args, bool is_ctor, intptr_t magic)
-{
-	const char * pchProtocol;
-	bool result;
-	FuncPtr_052 ISteamFriends_RegisterProtocolInOverlayBrowser;
-
-	pchProtocol = (char*)jsal_require_string(0);
-
-	ISteamFriends_RegisterProtocolInOverlayBrowser = (FuncPtr_052)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_RegisterProtocolInOverlayBrowser");
-	result = ISteamFriends_RegisterProtocolInOverlayBrowser(ISteamFriends, pchProtocol);
-
-	jsal_push_boolean(result);
-
-	return true;
-}
-
-static bool
-js_ISteamFriends_BHasEquippedProfileItem(int num_args, bool is_ctor, intptr_t magic)
-{
-	uint64_t steamID;
-	uint32_t itemType;
-	bool result;
-	FuncPtr_053 ISteamFriends_BHasEquippedProfileItem;
-
-	steamID = require_str_to_uint64_t(0);
-	itemType = jsal_require_uint(1);
-
-	ISteamFriends_BHasEquippedProfileItem = (FuncPtr_053)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_BHasEquippedProfileItem");
-	result = ISteamFriends_BHasEquippedProfileItem(ISteamFriends, steamID, itemType);
-
-	jsal_push_boolean(result);
-
-	return true;
 }
 
 static bool
@@ -3569,11 +3603,11 @@ js_ISteamUtils_GetIPv6ConnectivityState(int num_args, bool is_ctor, intptr_t mag
 {
 	uint32_t eProtocol;
 	uint32_t result;
-	FuncPtr_065 ISteamUtils_GetIPv6ConnectivityState;
+	FuncPtr_066 ISteamUtils_GetIPv6ConnectivityState;
 
 	eProtocol = jsal_require_uint(0);
 
-	ISteamUtils_GetIPv6ConnectivityState = (FuncPtr_065)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_GetIPv6ConnectivityState");
+	ISteamUtils_GetIPv6ConnectivityState = (FuncPtr_066)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_GetIPv6ConnectivityState");
 	result = ISteamUtils_GetIPv6ConnectivityState(ISteamUtils, eProtocol);
 
 	jsal_push_uint(result);
@@ -3616,11 +3650,11 @@ js_ISteamUtils_GetImageSize(int num_args, bool is_ctor, intptr_t magic)
 	uint32_t pnWidth;
 	uint32_t pnHeight;
 	bool result;
-	FuncPtr_056 ISteamUtils_GetImageSize;
+	FuncPtr_057 ISteamUtils_GetImageSize;
 
 	iImage = jsal_require_int(0);
 
-	ISteamUtils_GetImageSize = (FuncPtr_056)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_GetImageSize");
+	ISteamUtils_GetImageSize = (FuncPtr_057)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_GetImageSize");
 	result = ISteamUtils_GetImageSize(ISteamUtils, iImage, &pnWidth, &pnHeight);
 
 	jsal_push_new_object();
@@ -3641,7 +3675,7 @@ js_ISteamUtils_GetImageRGBA(int num_args, bool is_ctor, intptr_t magic)
 	uint8_t * pubDest;
 	int32_t nDestBufferSize;
 	bool result;
-	FuncPtr_057 ISteamUtils_GetImageRGBA;
+	FuncPtr_058 ISteamUtils_GetImageRGBA;
 
 	iImage = jsal_require_int(0);
 	nDestBufferSize = jsal_require_int(1);
@@ -3649,7 +3683,7 @@ js_ISteamUtils_GetImageRGBA(int num_args, bool is_ctor, intptr_t magic)
 	if (!(pubDest = (uint8_t *)calloc(nDestBufferSize, sizeof(uint8_t))))
 		return false;
 
-	ISteamUtils_GetImageRGBA = (FuncPtr_057)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_GetImageRGBA");
+	ISteamUtils_GetImageRGBA = (FuncPtr_058)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_GetImageRGBA");
 	result = ISteamUtils_GetImageRGBA(ISteamUtils, iImage, pubDest, nDestBufferSize);
 
 	jsal_push_new_object();
@@ -3675,11 +3709,11 @@ js_ISteamUtils_IsAPICallCompleted(int num_args, bool is_ctor, intptr_t magic)
 	uint64_t hSteamAPICall;
 	bool pbFailed;
 	bool result;
-	FuncPtr_059 ISteamUtils_IsAPICallCompleted;
+	FuncPtr_060 ISteamUtils_IsAPICallCompleted;
 
 	hSteamAPICall = require_str_to_uint64_t(0);
 
-	ISteamUtils_IsAPICallCompleted = (FuncPtr_059)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_IsAPICallCompleted");
+	ISteamUtils_IsAPICallCompleted = (FuncPtr_060)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_IsAPICallCompleted");
 	result = ISteamUtils_IsAPICallCompleted(ISteamUtils, hSteamAPICall, &pbFailed);
 
 	jsal_push_new_object();
@@ -3728,7 +3762,7 @@ js_ISteamUtils_ShowGamepadTextInput(int num_args, bool is_ctor, intptr_t magic)
 	uint32_t unCharMax;
 	const char * pchExistingText;
 	bool result;
-	FuncPtr_060 ISteamUtils_ShowGamepadTextInput;
+	FuncPtr_061 ISteamUtils_ShowGamepadTextInput;
 
 	eInputMode = jsal_require_uint(0);
 	eLineInputMode = jsal_require_uint(1);
@@ -3736,7 +3770,7 @@ js_ISteamUtils_ShowGamepadTextInput(int num_args, bool is_ctor, intptr_t magic)
 	unCharMax = jsal_require_uint(3);
 	pchExistingText = (char*)jsal_require_string(4);
 
-	ISteamUtils_ShowGamepadTextInput = (FuncPtr_060)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_ShowGamepadTextInput");
+	ISteamUtils_ShowGamepadTextInput = (FuncPtr_061)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_ShowGamepadTextInput");
 	result = ISteamUtils_ShowGamepadTextInput(ISteamUtils, eInputMode, eLineInputMode, pchDescription, unCharMax, pchExistingText);
 
 	jsal_push_boolean(result);
@@ -3750,14 +3784,14 @@ js_ISteamUtils_GetEnteredGamepadTextInput(int num_args, bool is_ctor, intptr_t m
 	char * pchText;
 	uint32_t cchText;
 	bool result;
-	FuncPtr_061 ISteamUtils_GetEnteredGamepadTextInput;
+	FuncPtr_062 ISteamUtils_GetEnteredGamepadTextInput;
 
 	cchText = jsal_require_uint(0);
 
 	if (!(pchText = (char *)calloc(cchText, sizeof(char))))
 		return false;
 
-	ISteamUtils_GetEnteredGamepadTextInput = (FuncPtr_061)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_GetEnteredGamepadTextInput");
+	ISteamUtils_GetEnteredGamepadTextInput = (FuncPtr_062)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_GetEnteredGamepadTextInput");
 	result = ISteamUtils_GetEnteredGamepadTextInput(ISteamUtils, pchText, cchText);
 
 	jsal_push_new_object();
@@ -3873,7 +3907,7 @@ js_ISteamUtils_ShowFloatingGamepadTextInput(int num_args, bool is_ctor, intptr_t
 	int32_t nTextFieldWidth;
 	int32_t nTextFieldHeight;
 	bool result;
-	FuncPtr_066 ISteamUtils_ShowFloatingGamepadTextInput;
+	FuncPtr_067 ISteamUtils_ShowFloatingGamepadTextInput;
 
 	eKeyboardMode = jsal_require_uint(0);
 	nTextFieldXPosition = jsal_require_int(1);
@@ -3881,7 +3915,7 @@ js_ISteamUtils_ShowFloatingGamepadTextInput(int num_args, bool is_ctor, intptr_t
 	nTextFieldWidth = jsal_require_int(3);
 	nTextFieldHeight = jsal_require_int(4);
 
-	ISteamUtils_ShowFloatingGamepadTextInput = (FuncPtr_066)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_ShowFloatingGamepadTextInput");
+	ISteamUtils_ShowFloatingGamepadTextInput = (FuncPtr_067)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_ShowFloatingGamepadTextInput");
 	result = ISteamUtils_ShowFloatingGamepadTextInput(ISteamUtils, eKeyboardMode, nTextFieldXPosition, nTextFieldYPosition, nTextFieldWidth, nTextFieldHeight);
 
 	jsal_push_boolean(result);
@@ -3907,9 +3941,9 @@ static bool
 js_ISteamUtils_GetCurrentBatteryPower(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint8_t result;
-	FuncPtr_058 ISteamUtils_GetCurrentBatteryPower;
+	FuncPtr_059 ISteamUtils_GetCurrentBatteryPower;
 
-	ISteamUtils_GetCurrentBatteryPower = (FuncPtr_058)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_GetCurrentBatteryPower");
+	ISteamUtils_GetCurrentBatteryPower = (FuncPtr_059)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_GetCurrentBatteryPower");
 	result = ISteamUtils_GetCurrentBatteryPower(ISteamUtils);
 
 	jsal_push_uint(result);
@@ -3936,12 +3970,12 @@ js_ISteamUtils_SetOverlayNotificationInset(int num_args, bool is_ctor, intptr_t 
 {
 	int32_t nHorizontalInset;
 	int32_t nVerticalInset;
-	FuncPtr_062 ISteamUtils_SetOverlayNotificationInset;
+	FuncPtr_063 ISteamUtils_SetOverlayNotificationInset;
 
 	nHorizontalInset = jsal_require_int(0);
 	nVerticalInset = jsal_require_int(1);
 
-	ISteamUtils_SetOverlayNotificationInset = (FuncPtr_062)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_SetOverlayNotificationInset");
+	ISteamUtils_SetOverlayNotificationInset = (FuncPtr_063)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_SetOverlayNotificationInset");
 	ISteamUtils_SetOverlayNotificationInset(ISteamUtils, nHorizontalInset, nVerticalInset);
 
 	return false;
@@ -3962,11 +3996,11 @@ static bool
 js_ISteamUtils_SetVRHeadsetStreamingEnabled(int num_args, bool is_ctor, intptr_t magic)
 {
 	bool bEnabled;
-	FuncPtr_063 ISteamUtils_SetVRHeadsetStreamingEnabled;
+	FuncPtr_064 ISteamUtils_SetVRHeadsetStreamingEnabled;
 
 	bEnabled = jsal_require_boolean(0);
 
-	ISteamUtils_SetVRHeadsetStreamingEnabled = (FuncPtr_063)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_SetVRHeadsetStreamingEnabled");
+	ISteamUtils_SetVRHeadsetStreamingEnabled = (FuncPtr_064)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_SetVRHeadsetStreamingEnabled");
 	ISteamUtils_SetVRHeadsetStreamingEnabled(ISteamUtils, bEnabled);
 
 	return false;
@@ -3976,11 +4010,11 @@ static bool
 js_ISteamUtils_SetGameLauncherMode(int num_args, bool is_ctor, intptr_t magic)
 {
 	bool bLauncherMode;
-	FuncPtr_063 ISteamUtils_SetGameLauncherMode;
+	FuncPtr_064 ISteamUtils_SetGameLauncherMode;
 
 	bLauncherMode = jsal_require_boolean(0);
 
-	ISteamUtils_SetGameLauncherMode = (FuncPtr_063)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_SetGameLauncherMode");
+	ISteamUtils_SetGameLauncherMode = (FuncPtr_064)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_SetGameLauncherMode");
 	ISteamUtils_SetGameLauncherMode(ISteamUtils, bLauncherMode);
 
 	return false;
@@ -4012,7 +4046,7 @@ js_ISteamUtils_FilterText(int num_args, bool is_ctor, intptr_t magic)
 	char * pchOutFilteredText;
 	uint32_t nByteSizeOutFilteredText;
 	int32_t result;
-	FuncPtr_064 ISteamUtils_FilterText;
+	FuncPtr_065 ISteamUtils_FilterText;
 
 	eContext = jsal_require_uint(0);
 	sourceSteamID = require_str_to_uint64_t(1);
@@ -4022,7 +4056,7 @@ js_ISteamUtils_FilterText(int num_args, bool is_ctor, intptr_t magic)
 	if (!(pchOutFilteredText = (char *)calloc(nByteSizeOutFilteredText, sizeof(char))))
 		return false;
 
-	ISteamUtils_FilterText = (FuncPtr_064)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_FilterText");
+	ISteamUtils_FilterText = (FuncPtr_065)GETADDRESS(steam_api, "SteamAPI_ISteamUtils_FilterText");
 	result = ISteamUtils_FilterText(ISteamUtils, eContext, sourceSteamID, pchInputMessage, pchOutFilteredText, nByteSizeOutFilteredText);
 
 	jsal_push_new_object();
@@ -4062,11 +4096,11 @@ js_ISteamUserStats_GetStatInt32(int num_args, bool is_ctor, intptr_t magic)
 	const char * pchName;
 	int32_t pData;
 	bool result;
-	FuncPtr_067 ISteamUserStats_GetStatInt32;
+	FuncPtr_068 ISteamUserStats_GetStatInt32;
 
 	pchName = (char*)jsal_require_string(0);
 
-	ISteamUserStats_GetStatInt32 = (FuncPtr_067)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetStatInt32");
+	ISteamUserStats_GetStatInt32 = (FuncPtr_068)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetStatInt32");
 	result = ISteamUserStats_GetStatInt32(ISteamUserStats, pchName, &pData);
 
 	jsal_push_new_object();
@@ -4084,11 +4118,11 @@ js_ISteamUserStats_GetStatFloat(int num_args, bool is_ctor, intptr_t magic)
 	const char * pchName;
 	float pData;
 	bool result;
-	FuncPtr_068 ISteamUserStats_GetStatFloat;
+	FuncPtr_069 ISteamUserStats_GetStatFloat;
 
 	pchName = (char*)jsal_require_string(0);
 
-	ISteamUserStats_GetStatFloat = (FuncPtr_068)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetStatFloat");
+	ISteamUserStats_GetStatFloat = (FuncPtr_069)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetStatFloat");
 	result = ISteamUserStats_GetStatFloat(ISteamUserStats, pchName, &pData);
 
 	jsal_push_new_object();
@@ -4106,12 +4140,12 @@ js_ISteamUserStats_SetStatInt32(int num_args, bool is_ctor, intptr_t magic)
 	const char * pchName;
 	int32_t nData;
 	bool result;
-	FuncPtr_069 ISteamUserStats_SetStatInt32;
+	FuncPtr_070 ISteamUserStats_SetStatInt32;
 
 	pchName = (char*)jsal_require_string(0);
 	nData = jsal_require_int(1);
 
-	ISteamUserStats_SetStatInt32 = (FuncPtr_069)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_SetStatInt32");
+	ISteamUserStats_SetStatInt32 = (FuncPtr_070)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_SetStatInt32");
 	result = ISteamUserStats_SetStatInt32(ISteamUserStats, pchName, nData);
 
 	jsal_push_boolean(result);
@@ -4125,12 +4159,12 @@ js_ISteamUserStats_SetStatFloat(int num_args, bool is_ctor, intptr_t magic)
 	const char * pchName;
 	float fData;
 	bool result;
-	FuncPtr_070 ISteamUserStats_SetStatFloat;
+	FuncPtr_071 ISteamUserStats_SetStatFloat;
 
 	pchName = (char*)jsal_require_string(0);
 	fData = jsal_require_number(1);
 
-	ISteamUserStats_SetStatFloat = (FuncPtr_070)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_SetStatFloat");
+	ISteamUserStats_SetStatFloat = (FuncPtr_071)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_SetStatFloat");
 	result = ISteamUserStats_SetStatFloat(ISteamUserStats, pchName, fData);
 
 	jsal_push_boolean(result);
@@ -4145,13 +4179,13 @@ js_ISteamUserStats_UpdateAvgRateStat(int num_args, bool is_ctor, intptr_t magic)
 	float flCountThisSession;
 	double dSessionLength;
 	bool result;
-	FuncPtr_071 ISteamUserStats_UpdateAvgRateStat;
+	FuncPtr_072 ISteamUserStats_UpdateAvgRateStat;
 
 	pchName = (char*)jsal_require_string(0);
 	flCountThisSession = jsal_require_number(1);
 	dSessionLength = jsal_require_number(2);
 
-	ISteamUserStats_UpdateAvgRateStat = (FuncPtr_071)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_UpdateAvgRateStat");
+	ISteamUserStats_UpdateAvgRateStat = (FuncPtr_072)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_UpdateAvgRateStat");
 	result = ISteamUserStats_UpdateAvgRateStat(ISteamUserStats, pchName, flCountThisSession, dSessionLength);
 
 	jsal_push_boolean(result);
@@ -4165,11 +4199,11 @@ js_ISteamUserStats_GetAchievement(int num_args, bool is_ctor, intptr_t magic)
 	const char * pchName;
 	bool pbAchieved;
 	bool result;
-	FuncPtr_072 ISteamUserStats_GetAchievement;
+	FuncPtr_073 ISteamUserStats_GetAchievement;
 
 	pchName = (char*)jsal_require_string(0);
 
-	ISteamUserStats_GetAchievement = (FuncPtr_072)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievement");
+	ISteamUserStats_GetAchievement = (FuncPtr_073)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievement");
 	result = ISteamUserStats_GetAchievement(ISteamUserStats, pchName, &pbAchieved);
 
 	jsal_push_new_object();
@@ -4186,11 +4220,11 @@ js_ISteamUserStats_SetAchievement(int num_args, bool is_ctor, intptr_t magic)
 {
 	const char * pchName;
 	bool result;
-	FuncPtr_052 ISteamUserStats_SetAchievement;
+	FuncPtr_053 ISteamUserStats_SetAchievement;
 
 	pchName = (char*)jsal_require_string(0);
 
-	ISteamUserStats_SetAchievement = (FuncPtr_052)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_SetAchievement");
+	ISteamUserStats_SetAchievement = (FuncPtr_053)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_SetAchievement");
 	result = ISteamUserStats_SetAchievement(ISteamUserStats, pchName);
 
 	jsal_push_boolean(result);
@@ -4203,11 +4237,11 @@ js_ISteamUserStats_ClearAchievement(int num_args, bool is_ctor, intptr_t magic)
 {
 	const char * pchName;
 	bool result;
-	FuncPtr_052 ISteamUserStats_ClearAchievement;
+	FuncPtr_053 ISteamUserStats_ClearAchievement;
 
 	pchName = (char*)jsal_require_string(0);
 
-	ISteamUserStats_ClearAchievement = (FuncPtr_052)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_ClearAchievement");
+	ISteamUserStats_ClearAchievement = (FuncPtr_053)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_ClearAchievement");
 	result = ISteamUserStats_ClearAchievement(ISteamUserStats, pchName);
 
 	jsal_push_boolean(result);
@@ -4222,11 +4256,11 @@ js_ISteamUserStats_GetAchievementAndUnlockTime(int num_args, bool is_ctor, intpt
 	bool pbAchieved;
 	uint32_t punUnlockTime;
 	bool result;
-	FuncPtr_073 ISteamUserStats_GetAchievementAndUnlockTime;
+	FuncPtr_074 ISteamUserStats_GetAchievementAndUnlockTime;
 
 	pchName = (char*)jsal_require_string(0);
 
-	ISteamUserStats_GetAchievementAndUnlockTime = (FuncPtr_073)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementAndUnlockTime");
+	ISteamUserStats_GetAchievementAndUnlockTime = (FuncPtr_074)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementAndUnlockTime");
 	result = ISteamUserStats_GetAchievementAndUnlockTime(ISteamUserStats, pchName, &pbAchieved, &punUnlockTime);
 
 	jsal_push_new_object();
@@ -4261,13 +4295,13 @@ js_ISteamUserStats_IndicateAchievementProgress(int num_args, bool is_ctor, intpt
 	uint32_t nCurProgress;
 	uint32_t nMaxProgress;
 	bool result;
-	FuncPtr_076 ISteamUserStats_IndicateAchievementProgress;
+	FuncPtr_077 ISteamUserStats_IndicateAchievementProgress;
 
 	pchName = (char*)jsal_require_string(0);
 	nCurProgress = jsal_require_uint(1);
 	nMaxProgress = jsal_require_uint(2);
 
-	ISteamUserStats_IndicateAchievementProgress = (FuncPtr_076)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_IndicateAchievementProgress");
+	ISteamUserStats_IndicateAchievementProgress = (FuncPtr_077)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_IndicateAchievementProgress");
 	result = ISteamUserStats_IndicateAchievementProgress(ISteamUserStats, pchName, nCurProgress, nMaxProgress);
 
 	jsal_push_boolean(result);
@@ -4282,12 +4316,12 @@ js_ISteamUserStats_GetUserStatInt32(int num_args, bool is_ctor, intptr_t magic)
 	const char * pchName;
 	int32_t pData;
 	bool result;
-	FuncPtr_078 ISteamUserStats_GetUserStatInt32;
+	FuncPtr_079 ISteamUserStats_GetUserStatInt32;
 
 	steamIDUser = require_str_to_uint64_t(0);
 	pchName = (char*)jsal_require_string(1);
 
-	ISteamUserStats_GetUserStatInt32 = (FuncPtr_078)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetUserStatInt32");
+	ISteamUserStats_GetUserStatInt32 = (FuncPtr_079)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetUserStatInt32");
 	result = ISteamUserStats_GetUserStatInt32(ISteamUserStats, steamIDUser, pchName, &pData);
 
 	jsal_push_new_object();
@@ -4306,12 +4340,12 @@ js_ISteamUserStats_GetUserStatFloat(int num_args, bool is_ctor, intptr_t magic)
 	const char * pchName;
 	float pData;
 	bool result;
-	FuncPtr_079 ISteamUserStats_GetUserStatFloat;
+	FuncPtr_080 ISteamUserStats_GetUserStatFloat;
 
 	steamIDUser = require_str_to_uint64_t(0);
 	pchName = (char*)jsal_require_string(1);
 
-	ISteamUserStats_GetUserStatFloat = (FuncPtr_079)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetUserStatFloat");
+	ISteamUserStats_GetUserStatFloat = (FuncPtr_080)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetUserStatFloat");
 	result = ISteamUserStats_GetUserStatFloat(ISteamUserStats, steamIDUser, pchName, &pData);
 
 	jsal_push_new_object();
@@ -4330,12 +4364,12 @@ js_ISteamUserStats_GetUserAchievement(int num_args, bool is_ctor, intptr_t magic
 	const char * pchName;
 	bool pbAchieved;
 	bool result;
-	FuncPtr_080 ISteamUserStats_GetUserAchievement;
+	FuncPtr_081 ISteamUserStats_GetUserAchievement;
 
 	steamIDUser = require_str_to_uint64_t(0);
 	pchName = (char*)jsal_require_string(1);
 
-	ISteamUserStats_GetUserAchievement = (FuncPtr_080)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetUserAchievement");
+	ISteamUserStats_GetUserAchievement = (FuncPtr_081)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetUserAchievement");
 	result = ISteamUserStats_GetUserAchievement(ISteamUserStats, steamIDUser, pchName, &pbAchieved);
 
 	jsal_push_new_object();
@@ -4355,12 +4389,12 @@ js_ISteamUserStats_GetUserAchievementAndUnlockTime(int num_args, bool is_ctor, i
 	bool pbAchieved;
 	uint32_t punUnlockTime;
 	bool result;
-	FuncPtr_081 ISteamUserStats_GetUserAchievementAndUnlockTime;
+	FuncPtr_082 ISteamUserStats_GetUserAchievementAndUnlockTime;
 
 	steamIDUser = require_str_to_uint64_t(0);
 	pchName = (char*)jsal_require_string(1);
 
-	ISteamUserStats_GetUserAchievementAndUnlockTime = (FuncPtr_081)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetUserAchievementAndUnlockTime");
+	ISteamUserStats_GetUserAchievementAndUnlockTime = (FuncPtr_082)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetUserAchievementAndUnlockTime");
 	result = ISteamUserStats_GetUserAchievementAndUnlockTime(ISteamUserStats, steamIDUser, pchName, &pbAchieved, &punUnlockTime);
 
 	jsal_push_new_object();
@@ -4379,14 +4413,64 @@ js_ISteamUserStats_ResetAllStats(int num_args, bool is_ctor, intptr_t magic)
 {
 	bool bAchievementsToo;
 	bool result;
-	FuncPtr_050 ISteamUserStats_ResetAllStats;
+	FuncPtr_051 ISteamUserStats_ResetAllStats;
 
 	bAchievementsToo = jsal_require_boolean(0);
 
-	ISteamUserStats_ResetAllStats = (FuncPtr_050)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_ResetAllStats");
+	ISteamUserStats_ResetAllStats = (FuncPtr_051)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_ResetAllStats");
 	result = ISteamUserStats_ResetAllStats(ISteamUserStats, bAchievementsToo);
 
 	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUserStats_GetDownloadedLeaderboardEntry(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t hSteamLeaderboardEntries;
+	int32_t index;
+	LeaderboardEntry_t pLeaderboardEntry;
+	int32_t * pDetails;
+	int32_t cDetailsMax;
+	bool result;
+	FuncPtr_086 ISteamUserStats_GetDownloadedLeaderboardEntry;
+
+	hSteamLeaderboardEntries = require_str_to_uint64_t(0);
+	index = jsal_require_int(1);
+	cDetailsMax = jsal_require_int(2);
+
+	if (!(pDetails = (int32_t *)calloc(cDetailsMax, sizeof(int32_t))))
+		return false;
+
+	ISteamUserStats_GetDownloadedLeaderboardEntry = (FuncPtr_086)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetDownloadedLeaderboardEntry");
+	result = ISteamUserStats_GetDownloadedLeaderboardEntry(ISteamUserStats, hSteamLeaderboardEntries, index, &pLeaderboardEntry, pDetails, cDetailsMax);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	jsal_push_new_object();
+	push_uint64_t_to_str(pLeaderboardEntry.m_steamIDUser);
+	jsal_put_prop_string(-2, "m_steamIDUser");
+	jsal_push_int(pLeaderboardEntry.m_nGlobalRank);
+	jsal_put_prop_string(-2, "m_nGlobalRank");
+	jsal_push_int(pLeaderboardEntry.m_nScore);
+	jsal_put_prop_string(-2, "m_nScore");
+	jsal_push_int(pLeaderboardEntry.m_cDetails);
+	jsal_put_prop_string(-2, "m_cDetails");
+	push_uint64_t_to_str(pLeaderboardEntry.m_hUGC);
+	jsal_put_prop_string(-2, "m_hUGC");
+	jsal_put_prop_string(-2, "pLeaderboardEntry");
+	int i;
+	jsal_push_new_array();
+	for (i = 0; i < (int)cDetailsMax; ++i)
+	{
+		jsal_push_int(pDetails[i]);
+		jsal_put_prop_index(-2, i);
+	}
+	jsal_put_prop_string(-2, "pDetails");
+
+	free(pDetails);
 
 	return true;
 }
@@ -4397,11 +4481,11 @@ js_ISteamUserStats_GetAchievementAchievedPercent(int num_args, bool is_ctor, int
 	const char * pchName;
 	float pflPercent;
 	bool result;
-	FuncPtr_068 ISteamUserStats_GetAchievementAchievedPercent;
+	FuncPtr_069 ISteamUserStats_GetAchievementAchievedPercent;
 
 	pchName = (char*)jsal_require_string(0);
 
-	ISteamUserStats_GetAchievementAchievedPercent = (FuncPtr_068)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementAchievedPercent");
+	ISteamUserStats_GetAchievementAchievedPercent = (FuncPtr_069)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementAchievedPercent");
 	result = ISteamUserStats_GetAchievementAchievedPercent(ISteamUserStats, pchName, &pflPercent);
 
 	jsal_push_new_object();
@@ -4419,11 +4503,11 @@ js_ISteamUserStats_GetGlobalStatInt64(int num_args, bool is_ctor, intptr_t magic
 	const char * pchStatName;
 	int64_t pData;
 	bool result;
-	FuncPtr_089 ISteamUserStats_GetGlobalStatInt64;
+	FuncPtr_091 ISteamUserStats_GetGlobalStatInt64;
 
 	pchStatName = (char*)jsal_require_string(0);
 
-	ISteamUserStats_GetGlobalStatInt64 = (FuncPtr_089)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetGlobalStatInt64");
+	ISteamUserStats_GetGlobalStatInt64 = (FuncPtr_091)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetGlobalStatInt64");
 	result = ISteamUserStats_GetGlobalStatInt64(ISteamUserStats, pchStatName, &pData);
 
 	jsal_push_new_object();
@@ -4441,11 +4525,11 @@ js_ISteamUserStats_GetGlobalStatDouble(int num_args, bool is_ctor, intptr_t magi
 	const char * pchStatName;
 	double pData;
 	bool result;
-	FuncPtr_090 ISteamUserStats_GetGlobalStatDouble;
+	FuncPtr_092 ISteamUserStats_GetGlobalStatDouble;
 
 	pchStatName = (char*)jsal_require_string(0);
 
-	ISteamUserStats_GetGlobalStatDouble = (FuncPtr_090)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetGlobalStatDouble");
+	ISteamUserStats_GetGlobalStatDouble = (FuncPtr_092)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetGlobalStatDouble");
 	result = ISteamUserStats_GetGlobalStatDouble(ISteamUserStats, pchStatName, &pData);
 
 	jsal_push_new_object();
@@ -4464,11 +4548,11 @@ js_ISteamUserStats_GetAchievementProgressLimitsInt32(int num_args, bool is_ctor,
 	int32_t pnMinProgress;
 	int32_t pnMaxProgress;
 	bool result;
-	FuncPtr_093 ISteamUserStats_GetAchievementProgressLimitsInt32;
+	FuncPtr_095 ISteamUserStats_GetAchievementProgressLimitsInt32;
 
 	pchName = (char*)jsal_require_string(0);
 
-	ISteamUserStats_GetAchievementProgressLimitsInt32 = (FuncPtr_093)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementProgressLimitsInt32");
+	ISteamUserStats_GetAchievementProgressLimitsInt32 = (FuncPtr_095)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementProgressLimitsInt32");
 	result = ISteamUserStats_GetAchievementProgressLimitsInt32(ISteamUserStats, pchName, &pnMinProgress, &pnMaxProgress);
 
 	jsal_push_new_object();
@@ -4489,11 +4573,11 @@ js_ISteamUserStats_GetAchievementProgressLimitsFloat(int num_args, bool is_ctor,
 	float pfMinProgress;
 	float pfMaxProgress;
 	bool result;
-	FuncPtr_094 ISteamUserStats_GetAchievementProgressLimitsFloat;
+	FuncPtr_096 ISteamUserStats_GetAchievementProgressLimitsFloat;
 
 	pchName = (char*)jsal_require_string(0);
 
-	ISteamUserStats_GetAchievementProgressLimitsFloat = (FuncPtr_094)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementProgressLimitsFloat");
+	ISteamUserStats_GetAchievementProgressLimitsFloat = (FuncPtr_096)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementProgressLimitsFloat");
 	result = ISteamUserStats_GetAchievementProgressLimitsFloat(ISteamUserStats, pchName, &pfMinProgress, &pfMaxProgress);
 
 	jsal_push_new_object();
@@ -4512,11 +4596,11 @@ js_ISteamUserStats_GetAchievementIcon(int num_args, bool is_ctor, intptr_t magic
 {
 	const char * pchName;
 	int32_t result;
-	FuncPtr_074 ISteamUserStats_GetAchievementIcon;
+	FuncPtr_075 ISteamUserStats_GetAchievementIcon;
 
 	pchName = (char*)jsal_require_string(0);
 
-	ISteamUserStats_GetAchievementIcon = (FuncPtr_074)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementIcon");
+	ISteamUserStats_GetAchievementIcon = (FuncPtr_075)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementIcon");
 	result = ISteamUserStats_GetAchievementIcon(ISteamUserStats, pchName);
 
 	jsal_push_int(result);
@@ -4529,11 +4613,11 @@ js_ISteamUserStats_GetLeaderboardEntryCount(int num_args, bool is_ctor, intptr_t
 {
 	uint64_t hSteamLeaderboard;
 	int32_t result;
-	FuncPtr_028 ISteamUserStats_GetLeaderboardEntryCount;
+	FuncPtr_029 ISteamUserStats_GetLeaderboardEntryCount;
 
 	hSteamLeaderboard = require_str_to_uint64_t(0);
 
-	ISteamUserStats_GetLeaderboardEntryCount = (FuncPtr_028)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetLeaderboardEntryCount");
+	ISteamUserStats_GetLeaderboardEntryCount = (FuncPtr_029)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetLeaderboardEntryCount");
 	result = ISteamUserStats_GetLeaderboardEntryCount(ISteamUserStats, hSteamLeaderboard);
 
 	jsal_push_int(result);
@@ -4549,14 +4633,14 @@ js_ISteamUserStats_GetMostAchievedAchievementInfo(int num_args, bool is_ctor, in
 	float pflPercent;
 	bool pbAchieved;
 	int32_t result;
-	FuncPtr_087 ISteamUserStats_GetMostAchievedAchievementInfo;
+	FuncPtr_089 ISteamUserStats_GetMostAchievedAchievementInfo;
 
 	unNameBufLen = jsal_require_uint(0);
 
 	if (!(pchName = (char *)calloc(unNameBufLen, sizeof(char))))
 		return false;
 
-	ISteamUserStats_GetMostAchievedAchievementInfo = (FuncPtr_087)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetMostAchievedAchievementInfo");
+	ISteamUserStats_GetMostAchievedAchievementInfo = (FuncPtr_089)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetMostAchievedAchievementInfo");
 	result = ISteamUserStats_GetMostAchievedAchievementInfo(ISteamUserStats, pchName, unNameBufLen, &pflPercent, &pbAchieved);
 
 	jsal_push_new_object();
@@ -4589,7 +4673,7 @@ js_ISteamUserStats_GetNextMostAchievedAchievementInfo(int num_args, bool is_ctor
 	float pflPercent;
 	bool pbAchieved;
 	int32_t result;
-	FuncPtr_088 ISteamUserStats_GetNextMostAchievedAchievementInfo;
+	FuncPtr_090 ISteamUserStats_GetNextMostAchievedAchievementInfo;
 
 	iIteratorPrevious = jsal_require_int(0);
 	unNameBufLen = jsal_require_uint(1);
@@ -4597,7 +4681,7 @@ js_ISteamUserStats_GetNextMostAchievedAchievementInfo(int num_args, bool is_ctor
 	if (!(pchName = (char *)calloc(unNameBufLen, sizeof(char))))
 		return false;
 
-	ISteamUserStats_GetNextMostAchievedAchievementInfo = (FuncPtr_088)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetNextMostAchievedAchievementInfo");
+	ISteamUserStats_GetNextMostAchievedAchievementInfo = (FuncPtr_090)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetNextMostAchievedAchievementInfo");
 	result = ISteamUserStats_GetNextMostAchievedAchievementInfo(ISteamUserStats, iIteratorPrevious, pchName, unNameBufLen, &pflPercent, &pbAchieved);
 
 	jsal_push_new_object();
@@ -4628,7 +4712,7 @@ js_ISteamUserStats_GetGlobalStatHistoryInt64(int num_args, bool is_ctor, intptr_
 	int64_t * pData;
 	uint32_t cubData;
 	int32_t result;
-	FuncPtr_091 ISteamUserStats_GetGlobalStatHistoryInt64;
+	FuncPtr_093 ISteamUserStats_GetGlobalStatHistoryInt64;
 
 	pchStatName = (char*)jsal_require_string(0);
 	cubData = jsal_require_uint(1);
@@ -4636,7 +4720,7 @@ js_ISteamUserStats_GetGlobalStatHistoryInt64(int num_args, bool is_ctor, intptr_
 	if (!(pData = (int64_t *)calloc(cubData, sizeof(int64_t))))
 		return false;
 
-	ISteamUserStats_GetGlobalStatHistoryInt64 = (FuncPtr_091)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetGlobalStatHistoryInt64");
+	ISteamUserStats_GetGlobalStatHistoryInt64 = (FuncPtr_093)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetGlobalStatHistoryInt64");
 	result = ISteamUserStats_GetGlobalStatHistoryInt64(ISteamUserStats, pchStatName, pData, cubData);
 
 	jsal_push_new_object();
@@ -4663,7 +4747,7 @@ js_ISteamUserStats_GetGlobalStatHistoryDouble(int num_args, bool is_ctor, intptr
 	double * pData;
 	uint32_t cubData;
 	int32_t result;
-	FuncPtr_092 ISteamUserStats_GetGlobalStatHistoryDouble;
+	FuncPtr_094 ISteamUserStats_GetGlobalStatHistoryDouble;
 
 	pchStatName = (char*)jsal_require_string(0);
 	cubData = jsal_require_uint(1);
@@ -4671,7 +4755,7 @@ js_ISteamUserStats_GetGlobalStatHistoryDouble(int num_args, bool is_ctor, intptr
 	if (!(pData = (double *)calloc(cubData, sizeof(double))))
 		return false;
 
-	ISteamUserStats_GetGlobalStatHistoryDouble = (FuncPtr_092)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetGlobalStatHistoryDouble");
+	ISteamUserStats_GetGlobalStatHistoryDouble = (FuncPtr_094)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetGlobalStatHistoryDouble");
 	result = ISteamUserStats_GetGlobalStatHistoryDouble(ISteamUserStats, pchStatName, pData, cubData);
 
 	jsal_push_new_object();
@@ -4697,12 +4781,12 @@ js_ISteamUserStats_GetAchievementDisplayAttribute(int num_args, bool is_ctor, in
 	const char * pchName;
 	const char * pchKey;
 	const char * result;
-	FuncPtr_075 ISteamUserStats_GetAchievementDisplayAttribute;
+	FuncPtr_076 ISteamUserStats_GetAchievementDisplayAttribute;
 
 	pchName = (char*)jsal_require_string(0);
 	pchKey = (char*)jsal_require_string(1);
 
-	ISteamUserStats_GetAchievementDisplayAttribute = (FuncPtr_075)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementDisplayAttribute");
+	ISteamUserStats_GetAchievementDisplayAttribute = (FuncPtr_076)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementDisplayAttribute");
 	result = ISteamUserStats_GetAchievementDisplayAttribute(ISteamUserStats, pchName, pchKey);
 
 	jsal_push_string(result);
@@ -4715,11 +4799,11 @@ js_ISteamUserStats_GetAchievementName(int num_args, bool is_ctor, intptr_t magic
 {
 	uint32_t iAchievement;
 	const char * result;
-	FuncPtr_077 ISteamUserStats_GetAchievementName;
+	FuncPtr_078 ISteamUserStats_GetAchievementName;
 
 	iAchievement = jsal_require_uint(0);
 
-	ISteamUserStats_GetAchievementName = (FuncPtr_077)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementName");
+	ISteamUserStats_GetAchievementName = (FuncPtr_078)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_GetAchievementName");
 	result = ISteamUserStats_GetAchievementName(ISteamUserStats, iAchievement);
 
 	jsal_push_string(result);
@@ -4797,11 +4881,11 @@ js_ISteamUserStats_RequestUserStats(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint64_t steamIDUser;
 	uint64_t result;
-	FuncPtr_045 ISteamUserStats_RequestUserStats;
+	FuncPtr_046 ISteamUserStats_RequestUserStats;
 
 	steamIDUser = require_str_to_uint64_t(0);
 
-	ISteamUserStats_RequestUserStats = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_RequestUserStats");
+	ISteamUserStats_RequestUserStats = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_RequestUserStats");
 	result = ISteamUserStats_RequestUserStats(ISteamUserStats, steamIDUser);
 
 	push_uint64_t_to_str(result);
@@ -4816,13 +4900,13 @@ js_ISteamUserStats_FindOrCreateLeaderboard(int num_args, bool is_ctor, intptr_t 
 	uint32_t eLeaderboardSortMethod;
 	uint32_t eLeaderboardDisplayType;
 	uint64_t result;
-	FuncPtr_082 ISteamUserStats_FindOrCreateLeaderboard;
+	FuncPtr_083 ISteamUserStats_FindOrCreateLeaderboard;
 
 	pchLeaderboardName = (char*)jsal_require_string(0);
 	eLeaderboardSortMethod = jsal_require_uint(1);
 	eLeaderboardDisplayType = jsal_require_uint(2);
 
-	ISteamUserStats_FindOrCreateLeaderboard = (FuncPtr_082)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_FindOrCreateLeaderboard");
+	ISteamUserStats_FindOrCreateLeaderboard = (FuncPtr_083)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_FindOrCreateLeaderboard");
 	result = ISteamUserStats_FindOrCreateLeaderboard(ISteamUserStats, pchLeaderboardName, eLeaderboardSortMethod, eLeaderboardDisplayType);
 
 	push_uint64_t_to_str(result);
@@ -4855,14 +4939,14 @@ js_ISteamUserStats_DownloadLeaderboardEntries(int num_args, bool is_ctor, intptr
 	int32_t nRangeStart;
 	int32_t nRangeEnd;
 	uint64_t result;
-	FuncPtr_083 ISteamUserStats_DownloadLeaderboardEntries;
+	FuncPtr_084 ISteamUserStats_DownloadLeaderboardEntries;
 
 	hSteamLeaderboard = require_str_to_uint64_t(0);
 	eLeaderboardDataRequest = jsal_require_uint(1);
 	nRangeStart = jsal_require_int(2);
 	nRangeEnd = jsal_require_int(3);
 
-	ISteamUserStats_DownloadLeaderboardEntries = (FuncPtr_083)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_DownloadLeaderboardEntries");
+	ISteamUserStats_DownloadLeaderboardEntries = (FuncPtr_084)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_DownloadLeaderboardEntries");
 	result = ISteamUserStats_DownloadLeaderboardEntries(ISteamUserStats, hSteamLeaderboard, eLeaderboardDataRequest, nRangeStart, nRangeEnd);
 
 	push_uint64_t_to_str(result);
@@ -4877,7 +4961,7 @@ js_ISteamUserStats_DownloadLeaderboardEntriesForUsers(int num_args, bool is_ctor
 	uint64_t * prgUsers;
 	int32_t cUsers;
 	uint64_t result;
-	FuncPtr_084 ISteamUserStats_DownloadLeaderboardEntriesForUsers;
+	FuncPtr_085 ISteamUserStats_DownloadLeaderboardEntriesForUsers;
 
 	hSteamLeaderboard = require_str_to_uint64_t(0);
 	cUsers = jsal_require_int(1);
@@ -4885,7 +4969,7 @@ js_ISteamUserStats_DownloadLeaderboardEntriesForUsers(int num_args, bool is_ctor
 	if (!(prgUsers = (uint64_t *)calloc(cUsers, sizeof(uint64_t))))
 		return false;
 
-	ISteamUserStats_DownloadLeaderboardEntriesForUsers = (FuncPtr_084)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_DownloadLeaderboardEntriesForUsers");
+	ISteamUserStats_DownloadLeaderboardEntriesForUsers = (FuncPtr_085)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_DownloadLeaderboardEntriesForUsers");
 	result = ISteamUserStats_DownloadLeaderboardEntriesForUsers(ISteamUserStats, hSteamLeaderboard, prgUsers, cUsers);
 
 	push_uint64_t_to_str(result);
@@ -4902,14 +4986,14 @@ js_ISteamUserStats_UploadLeaderboardScore(int num_args, bool is_ctor, intptr_t m
 	const int32_t pScoreDetails;
 	int32_t cScoreDetailsCount;
 	uint64_t result;
-	FuncPtr_085 ISteamUserStats_UploadLeaderboardScore;
+	FuncPtr_087 ISteamUserStats_UploadLeaderboardScore;
 
 	hSteamLeaderboard = require_str_to_uint64_t(0);
 	eLeaderboardUploadScoreMethod = jsal_require_uint(1);
 	nScore = jsal_require_int(2);
 	cScoreDetailsCount = jsal_require_int(3);
 
-	ISteamUserStats_UploadLeaderboardScore = (FuncPtr_085)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_UploadLeaderboardScore");
+	ISteamUserStats_UploadLeaderboardScore = (FuncPtr_087)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_UploadLeaderboardScore");
 	result = ISteamUserStats_UploadLeaderboardScore(ISteamUserStats, hSteamLeaderboard, eLeaderboardUploadScoreMethod, nScore, &pScoreDetails, cScoreDetailsCount);
 
 	push_uint64_t_to_str(result);
@@ -4923,12 +5007,12 @@ js_ISteamUserStats_AttachLeaderboardUGC(int num_args, bool is_ctor, intptr_t mag
 	uint64_t hSteamLeaderboard;
 	uint64_t hUGC;
 	uint64_t result;
-	FuncPtr_086 ISteamUserStats_AttachLeaderboardUGC;
+	FuncPtr_088 ISteamUserStats_AttachLeaderboardUGC;
 
 	hSteamLeaderboard = require_str_to_uint64_t(0);
 	hUGC = require_str_to_uint64_t(1);
 
-	ISteamUserStats_AttachLeaderboardUGC = (FuncPtr_086)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_AttachLeaderboardUGC");
+	ISteamUserStats_AttachLeaderboardUGC = (FuncPtr_088)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_AttachLeaderboardUGC");
 	result = ISteamUserStats_AttachLeaderboardUGC(ISteamUserStats, hSteamLeaderboard, hUGC);
 
 	push_uint64_t_to_str(result);
@@ -4969,11 +5053,11 @@ js_ISteamUserStats_RequestGlobalStats(int num_args, bool is_ctor, intptr_t magic
 {
 	int32_t nHistoryDays;
 	uint64_t result;
-	FuncPtr_034 ISteamUserStats_RequestGlobalStats;
+	FuncPtr_035 ISteamUserStats_RequestGlobalStats;
 
 	nHistoryDays = jsal_require_int(0);
 
-	ISteamUserStats_RequestGlobalStats = (FuncPtr_034)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_RequestGlobalStats");
+	ISteamUserStats_RequestGlobalStats = (FuncPtr_035)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_RequestGlobalStats");
 	result = ISteamUserStats_RequestGlobalStats(ISteamUserStats, nHistoryDays);
 
 	push_uint64_t_to_str(result);
@@ -5094,7 +5178,7 @@ js_ISteamApps_BGetDLCDataByIndex(int num_args, bool is_ctor, intptr_t magic)
 	char * pchName;
 	int32_t cchNameBufferSize;
 	bool result;
-	FuncPtr_095 ISteamApps_BGetDLCDataByIndex;
+	FuncPtr_097 ISteamApps_BGetDLCDataByIndex;
 
 	iDLC = jsal_require_int(0);
 	cchNameBufferSize = jsal_require_int(1);
@@ -5102,7 +5186,7 @@ js_ISteamApps_BGetDLCDataByIndex(int num_args, bool is_ctor, intptr_t magic)
 	if (!(pchName = (char *)calloc(cchNameBufferSize, sizeof(char))))
 		return false;
 
-	ISteamApps_BGetDLCDataByIndex = (FuncPtr_095)GETADDRESS(steam_api, "SteamAPI_ISteamApps_BGetDLCDataByIndex");
+	ISteamApps_BGetDLCDataByIndex = (FuncPtr_097)GETADDRESS(steam_api, "SteamAPI_ISteamApps_BGetDLCDataByIndex");
 	result = ISteamApps_BGetDLCDataByIndex(ISteamApps, iDLC, &pAppID, &pbAvailable, pchName, cchNameBufferSize);
 
 	jsal_push_new_object();
@@ -5164,11 +5248,11 @@ js_ISteamApps_MarkContentCorrupt(int num_args, bool is_ctor, intptr_t magic)
 {
 	bool bMissingFilesOnly;
 	bool result;
-	FuncPtr_050 ISteamApps_MarkContentCorrupt;
+	FuncPtr_051 ISteamApps_MarkContentCorrupt;
 
 	bMissingFilesOnly = jsal_require_boolean(0);
 
-	ISteamApps_MarkContentCorrupt = (FuncPtr_050)GETADDRESS(steam_api, "SteamAPI_ISteamApps_MarkContentCorrupt");
+	ISteamApps_MarkContentCorrupt = (FuncPtr_051)GETADDRESS(steam_api, "SteamAPI_ISteamApps_MarkContentCorrupt");
 	result = ISteamApps_MarkContentCorrupt(ISteamApps, bMissingFilesOnly);
 
 	jsal_push_boolean(result);
@@ -5200,11 +5284,11 @@ js_ISteamApps_GetDlcDownloadProgress(int num_args, bool is_ctor, intptr_t magic)
 	uint64_t punBytesDownloaded;
 	uint64_t punBytesTotal;
 	bool result;
-	FuncPtr_099 ISteamApps_GetDlcDownloadProgress;
+	FuncPtr_101 ISteamApps_GetDlcDownloadProgress;
 
 	nAppID = jsal_require_uint(0);
 
-	ISteamApps_GetDlcDownloadProgress = (FuncPtr_099)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetDlcDownloadProgress");
+	ISteamApps_GetDlcDownloadProgress = (FuncPtr_101)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetDlcDownloadProgress");
 	result = ISteamApps_GetDlcDownloadProgress(ISteamApps, nAppID, &punBytesDownloaded, &punBytesTotal);
 
 	jsal_push_new_object();
@@ -5238,9 +5322,9 @@ js_ISteamApps_BIsTimedTrial(int num_args, bool is_ctor, intptr_t magic)
 	uint32_t punSecondsAllowed;
 	uint32_t punSecondsPlayed;
 	bool result;
-	FuncPtr_101 ISteamApps_BIsTimedTrial;
+	FuncPtr_103 ISteamApps_BIsTimedTrial;
 
-	ISteamApps_BIsTimedTrial = (FuncPtr_101)GETADDRESS(steam_api, "SteamAPI_ISteamApps_BIsTimedTrial");
+	ISteamApps_BIsTimedTrial = (FuncPtr_103)GETADDRESS(steam_api, "SteamAPI_ISteamApps_BIsTimedTrial");
 	result = ISteamApps_BIsTimedTrial(ISteamApps, &punSecondsAllowed, &punSecondsPlayed);
 
 	jsal_push_new_object();
@@ -5304,11 +5388,11 @@ js_ISteamApps_GetLaunchQueryParam(int num_args, bool is_ctor, intptr_t magic)
 {
 	const char * pchKey;
 	const char * result;
-	FuncPtr_098 ISteamApps_GetLaunchQueryParam;
+	FuncPtr_100 ISteamApps_GetLaunchQueryParam;
 
 	pchKey = (char*)jsal_require_string(0);
 
-	ISteamApps_GetLaunchQueryParam = (FuncPtr_098)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetLaunchQueryParam");
+	ISteamApps_GetLaunchQueryParam = (FuncPtr_100)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetLaunchQueryParam");
 	result = ISteamApps_GetLaunchQueryParam(ISteamApps, pchKey);
 
 	jsal_push_string(result);
@@ -5321,11 +5405,11 @@ js_ISteamApps_GetEarliestPurchaseUnixTime(int num_args, bool is_ctor, intptr_t m
 {
 	uint32_t nAppID;
 	uint32_t result;
-	FuncPtr_065 ISteamApps_GetEarliestPurchaseUnixTime;
+	FuncPtr_066 ISteamApps_GetEarliestPurchaseUnixTime;
 
 	nAppID = jsal_require_uint(0);
 
-	ISteamApps_GetEarliestPurchaseUnixTime = (FuncPtr_065)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetEarliestPurchaseUnixTime");
+	ISteamApps_GetEarliestPurchaseUnixTime = (FuncPtr_066)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetEarliestPurchaseUnixTime");
 	result = ISteamApps_GetEarliestPurchaseUnixTime(ISteamApps, nAppID);
 
 	jsal_push_uint(result);
@@ -5340,7 +5424,7 @@ js_ISteamApps_GetInstalledDepots(int num_args, bool is_ctor, intptr_t magic)
 	uint32_t * pvecDepots;
 	uint32_t cMaxDepots;
 	uint32_t result;
-	FuncPtr_096 ISteamApps_GetInstalledDepots;
+	FuncPtr_098 ISteamApps_GetInstalledDepots;
 
 	appID = jsal_require_uint(0);
 	cMaxDepots = jsal_require_uint(1);
@@ -5348,7 +5432,7 @@ js_ISteamApps_GetInstalledDepots(int num_args, bool is_ctor, intptr_t magic)
 	if (!(pvecDepots = (uint32_t *)calloc(cMaxDepots, sizeof(uint32_t))))
 		return false;
 
-	ISteamApps_GetInstalledDepots = (FuncPtr_096)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetInstalledDepots");
+	ISteamApps_GetInstalledDepots = (FuncPtr_098)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetInstalledDepots");
 	result = ISteamApps_GetInstalledDepots(ISteamApps, appID, pvecDepots, cMaxDepots);
 
 	jsal_push_new_object();
@@ -5375,7 +5459,7 @@ js_ISteamApps_GetAppInstallDir(int num_args, bool is_ctor, intptr_t magic)
 	char * pchFolder;
 	uint32_t cchFolderBufferSize;
 	uint32_t result;
-	FuncPtr_097 ISteamApps_GetAppInstallDir;
+	FuncPtr_099 ISteamApps_GetAppInstallDir;
 
 	appID = jsal_require_uint(0);
 	cchFolderBufferSize = jsal_require_uint(1);
@@ -5383,7 +5467,7 @@ js_ISteamApps_GetAppInstallDir(int num_args, bool is_ctor, intptr_t magic)
 	if (!(pchFolder = (char *)calloc(cchFolderBufferSize, sizeof(char))))
 		return false;
 
-	ISteamApps_GetAppInstallDir = (FuncPtr_097)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetAppInstallDir");
+	ISteamApps_GetAppInstallDir = (FuncPtr_099)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetAppInstallDir");
 	result = ISteamApps_GetAppInstallDir(ISteamApps, appID, pchFolder, cchFolderBufferSize);
 
 	jsal_push_new_object();
@@ -5437,14 +5521,14 @@ js_ISteamApps_GetLaunchCommandLine(int num_args, bool is_ctor, intptr_t magic)
 	char * pszCommandLine;
 	int32_t cubCommandLine;
 	int32_t result;
-	FuncPtr_100 ISteamApps_GetLaunchCommandLine;
+	FuncPtr_102 ISteamApps_GetLaunchCommandLine;
 
 	cubCommandLine = jsal_require_int(0);
 
 	if (!(pszCommandLine = (char *)calloc(cubCommandLine, sizeof(char))))
 		return false;
 
-	ISteamApps_GetLaunchCommandLine = (FuncPtr_100)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetLaunchCommandLine");
+	ISteamApps_GetLaunchCommandLine = (FuncPtr_102)GETADDRESS(steam_api, "SteamAPI_ISteamApps_GetLaunchCommandLine");
 	result = ISteamApps_GetLaunchCommandLine(ISteamApps, pszCommandLine, cubCommandLine);
 
 	jsal_push_new_object();
@@ -5553,11 +5637,11 @@ js_ISteamInput_Init(int num_args, bool is_ctor, intptr_t magic)
 {
 	bool bExplicitlyCallRunFrame;
 	bool result;
-	FuncPtr_050 ISteamInput_Init;
+	FuncPtr_051 ISteamInput_Init;
 
 	bExplicitlyCallRunFrame = jsal_require_boolean(0);
 
-	ISteamInput_Init = (FuncPtr_050)GETADDRESS(steam_api, "SteamAPI_ISteamInput_Init");
+	ISteamInput_Init = (FuncPtr_051)GETADDRESS(steam_api, "SteamAPI_ISteamInput_Init");
 	result = ISteamInput_Init(ISteamInput, bExplicitlyCallRunFrame);
 
 	jsal_push_boolean(result);
@@ -5584,11 +5668,11 @@ js_ISteamInput_SetInputActionManifestFilePath(int num_args, bool is_ctor, intptr
 {
 	const char * pchInputActionManifestAbsolutePath;
 	bool result;
-	FuncPtr_052 ISteamInput_SetInputActionManifestFilePath;
+	FuncPtr_053 ISteamInput_SetInputActionManifestFilePath;
 
 	pchInputActionManifestAbsolutePath = (char*)jsal_require_string(0);
 
-	ISteamInput_SetInputActionManifestFilePath = (FuncPtr_052)GETADDRESS(steam_api, "SteamAPI_ISteamInput_SetInputActionManifestFilePath");
+	ISteamInput_SetInputActionManifestFilePath = (FuncPtr_053)GETADDRESS(steam_api, "SteamAPI_ISteamInput_SetInputActionManifestFilePath");
 	result = ISteamInput_SetInputActionManifestFilePath(ISteamInput, pchInputActionManifestAbsolutePath);
 
 	jsal_push_boolean(result);
@@ -5602,12 +5686,12 @@ js_ISteamInput_BWaitForData(int num_args, bool is_ctor, intptr_t magic)
 	bool bWaitForever;
 	uint32_t unTimeout;
 	bool result;
-	FuncPtr_102 ISteamInput_BWaitForData;
+	FuncPtr_104 ISteamInput_BWaitForData;
 
 	bWaitForever = jsal_require_boolean(0);
 	unTimeout = jsal_require_uint(1);
 
-	ISteamInput_BWaitForData = (FuncPtr_102)GETADDRESS(steam_api, "SteamAPI_ISteamInput_BWaitForData");
+	ISteamInput_BWaitForData = (FuncPtr_104)GETADDRESS(steam_api, "SteamAPI_ISteamInput_BWaitForData");
 	result = ISteamInput_BWaitForData(ISteamInput, bWaitForever, unTimeout);
 
 	jsal_push_boolean(result);
@@ -5634,11 +5718,11 @@ js_ISteamInput_ShowBindingPanel(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint64_t inputHandle;
 	bool result;
-	FuncPtr_049 ISteamInput_ShowBindingPanel;
+	FuncPtr_050 ISteamInput_ShowBindingPanel;
 
 	inputHandle = require_str_to_uint64_t(0);
 
-	ISteamInput_ShowBindingPanel = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamInput_ShowBindingPanel");
+	ISteamInput_ShowBindingPanel = (FuncPtr_050)GETADDRESS(steam_api, "SteamAPI_ISteamInput_ShowBindingPanel");
 	result = ISteamInput_ShowBindingPanel(ISteamInput, inputHandle);
 
 	jsal_push_boolean(result);
@@ -5653,11 +5737,11 @@ js_ISteamInput_GetDeviceBindingRevision(int num_args, bool is_ctor, intptr_t mag
 	int32_t pMajor;
 	int32_t pMinor;
 	bool result;
-	FuncPtr_118 ISteamInput_GetDeviceBindingRevision;
+	FuncPtr_120 ISteamInput_GetDeviceBindingRevision;
 
 	inputHandle = require_str_to_uint64_t(0);
 
-	ISteamInput_GetDeviceBindingRevision = (FuncPtr_118)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetDeviceBindingRevision");
+	ISteamInput_GetDeviceBindingRevision = (FuncPtr_120)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetDeviceBindingRevision");
 	result = ISteamInput_GetDeviceBindingRevision(ISteamInput, inputHandle, &pMajor, &pMinor);
 
 	jsal_push_new_object();
@@ -5675,11 +5759,11 @@ static bool
 js_ISteamInput_RunFrame(int num_args, bool is_ctor, intptr_t magic)
 {
 	bool bReservedValue;
-	FuncPtr_063 ISteamInput_RunFrame;
+	FuncPtr_064 ISteamInput_RunFrame;
 
 	bReservedValue = jsal_require_boolean(0);
 
-	ISteamInput_RunFrame = (FuncPtr_063)GETADDRESS(steam_api, "SteamAPI_ISteamInput_RunFrame");
+	ISteamInput_RunFrame = (FuncPtr_064)GETADDRESS(steam_api, "SteamAPI_ISteamInput_RunFrame");
 	ISteamInput_RunFrame(ISteamInput, bReservedValue);
 
 	return false;
@@ -5701,12 +5785,12 @@ js_ISteamInput_ActivateActionSet(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint64_t inputHandle;
 	uint64_t actionSetHandle;
-	FuncPtr_104 ISteamInput_ActivateActionSet;
+	FuncPtr_106 ISteamInput_ActivateActionSet;
 
 	inputHandle = require_str_to_uint64_t(0);
 	actionSetHandle = require_str_to_uint64_t(1);
 
-	ISteamInput_ActivateActionSet = (FuncPtr_104)GETADDRESS(steam_api, "SteamAPI_ISteamInput_ActivateActionSet");
+	ISteamInput_ActivateActionSet = (FuncPtr_106)GETADDRESS(steam_api, "SteamAPI_ISteamInput_ActivateActionSet");
 	ISteamInput_ActivateActionSet(ISteamInput, inputHandle, actionSetHandle);
 
 	return false;
@@ -5717,12 +5801,12 @@ js_ISteamInput_ActivateActionSetLayer(int num_args, bool is_ctor, intptr_t magic
 {
 	uint64_t inputHandle;
 	uint64_t actionSetLayerHandle;
-	FuncPtr_104 ISteamInput_ActivateActionSetLayer;
+	FuncPtr_106 ISteamInput_ActivateActionSetLayer;
 
 	inputHandle = require_str_to_uint64_t(0);
 	actionSetLayerHandle = require_str_to_uint64_t(1);
 
-	ISteamInput_ActivateActionSetLayer = (FuncPtr_104)GETADDRESS(steam_api, "SteamAPI_ISteamInput_ActivateActionSetLayer");
+	ISteamInput_ActivateActionSetLayer = (FuncPtr_106)GETADDRESS(steam_api, "SteamAPI_ISteamInput_ActivateActionSetLayer");
 	ISteamInput_ActivateActionSetLayer(ISteamInput, inputHandle, actionSetLayerHandle);
 
 	return false;
@@ -5733,12 +5817,12 @@ js_ISteamInput_DeactivateActionSetLayer(int num_args, bool is_ctor, intptr_t mag
 {
 	uint64_t inputHandle;
 	uint64_t actionSetLayerHandle;
-	FuncPtr_104 ISteamInput_DeactivateActionSetLayer;
+	FuncPtr_106 ISteamInput_DeactivateActionSetLayer;
 
 	inputHandle = require_str_to_uint64_t(0);
 	actionSetLayerHandle = require_str_to_uint64_t(1);
 
-	ISteamInput_DeactivateActionSetLayer = (FuncPtr_104)GETADDRESS(steam_api, "SteamAPI_ISteamInput_DeactivateActionSetLayer");
+	ISteamInput_DeactivateActionSetLayer = (FuncPtr_106)GETADDRESS(steam_api, "SteamAPI_ISteamInput_DeactivateActionSetLayer");
 	ISteamInput_DeactivateActionSetLayer(ISteamInput, inputHandle, actionSetLayerHandle);
 
 	return false;
@@ -5763,12 +5847,12 @@ js_ISteamInput_StopAnalogActionMomentum(int num_args, bool is_ctor, intptr_t mag
 {
 	uint64_t inputHandle;
 	uint64_t eAction;
-	FuncPtr_104 ISteamInput_StopAnalogActionMomentum;
+	FuncPtr_106 ISteamInput_StopAnalogActionMomentum;
 
 	inputHandle = require_str_to_uint64_t(0);
 	eAction = require_str_to_uint64_t(1);
 
-	ISteamInput_StopAnalogActionMomentum = (FuncPtr_104)GETADDRESS(steam_api, "SteamAPI_ISteamInput_StopAnalogActionMomentum");
+	ISteamInput_StopAnalogActionMomentum = (FuncPtr_106)GETADDRESS(steam_api, "SteamAPI_ISteamInput_StopAnalogActionMomentum");
 	ISteamInput_StopAnalogActionMomentum(ISteamInput, inputHandle, eAction);
 
 	return false;
@@ -5780,13 +5864,13 @@ js_ISteamInput_TriggerVibration(int num_args, bool is_ctor, intptr_t magic)
 	uint64_t inputHandle;
 	uint16_t usLeftSpeed;
 	uint16_t usRightSpeed;
-	FuncPtr_112 ISteamInput_TriggerVibration;
+	FuncPtr_114 ISteamInput_TriggerVibration;
 
 	inputHandle = require_str_to_uint64_t(0);
 	usLeftSpeed = jsal_require_uint(1);
 	usRightSpeed = jsal_require_uint(2);
 
-	ISteamInput_TriggerVibration = (FuncPtr_112)GETADDRESS(steam_api, "SteamAPI_ISteamInput_TriggerVibration");
+	ISteamInput_TriggerVibration = (FuncPtr_114)GETADDRESS(steam_api, "SteamAPI_ISteamInput_TriggerVibration");
 	ISteamInput_TriggerVibration(ISteamInput, inputHandle, usLeftSpeed, usRightSpeed);
 
 	return false;
@@ -5800,7 +5884,7 @@ js_ISteamInput_TriggerVibrationExtended(int num_args, bool is_ctor, intptr_t mag
 	uint16_t usRightSpeed;
 	uint16_t usLeftTriggerSpeed;
 	uint16_t usRightTriggerSpeed;
-	FuncPtr_113 ISteamInput_TriggerVibrationExtended;
+	FuncPtr_115 ISteamInput_TriggerVibrationExtended;
 
 	inputHandle = require_str_to_uint64_t(0);
 	usLeftSpeed = jsal_require_uint(1);
@@ -5808,7 +5892,7 @@ js_ISteamInput_TriggerVibrationExtended(int num_args, bool is_ctor, intptr_t mag
 	usLeftTriggerSpeed = jsal_require_uint(3);
 	usRightTriggerSpeed = jsal_require_uint(4);
 
-	ISteamInput_TriggerVibrationExtended = (FuncPtr_113)GETADDRESS(steam_api, "SteamAPI_ISteamInput_TriggerVibrationExtended");
+	ISteamInput_TriggerVibrationExtended = (FuncPtr_115)GETADDRESS(steam_api, "SteamAPI_ISteamInput_TriggerVibrationExtended");
 	ISteamInput_TriggerVibrationExtended(ISteamInput, inputHandle, usLeftSpeed, usRightSpeed, usLeftTriggerSpeed, usRightTriggerSpeed);
 
 	return false;
@@ -5823,7 +5907,7 @@ js_ISteamInput_TriggerSimpleHapticEvent(int num_args, bool is_ctor, intptr_t mag
 	char nGainDB;
 	uint8_t nOtherIntensity;
 	char nOtherGainDB;
-	FuncPtr_114 ISteamInput_TriggerSimpleHapticEvent;
+	FuncPtr_116 ISteamInput_TriggerSimpleHapticEvent;
 
 	inputHandle = require_str_to_uint64_t(0);
 	eHapticLocation = jsal_require_uint(1);
@@ -5832,7 +5916,7 @@ js_ISteamInput_TriggerSimpleHapticEvent(int num_args, bool is_ctor, intptr_t mag
 	nOtherIntensity = jsal_require_uint(4);
 	nOtherGainDB = jsal_require_int(5);
 
-	ISteamInput_TriggerSimpleHapticEvent = (FuncPtr_114)GETADDRESS(steam_api, "SteamAPI_ISteamInput_TriggerSimpleHapticEvent");
+	ISteamInput_TriggerSimpleHapticEvent = (FuncPtr_116)GETADDRESS(steam_api, "SteamAPI_ISteamInput_TriggerSimpleHapticEvent");
 	ISteamInput_TriggerSimpleHapticEvent(ISteamInput, inputHandle, eHapticLocation, nIntensity, nGainDB, nOtherIntensity, nOtherGainDB);
 
 	return false;
@@ -5846,7 +5930,7 @@ js_ISteamInput_SetLEDColor(int num_args, bool is_ctor, intptr_t magic)
 	uint8_t nColorG;
 	uint8_t nColorB;
 	uint32_t nFlags;
-	FuncPtr_115 ISteamInput_SetLEDColor;
+	FuncPtr_117 ISteamInput_SetLEDColor;
 
 	inputHandle = require_str_to_uint64_t(0);
 	nColorR = jsal_require_uint(1);
@@ -5854,7 +5938,7 @@ js_ISteamInput_SetLEDColor(int num_args, bool is_ctor, intptr_t magic)
 	nColorB = jsal_require_uint(3);
 	nFlags = jsal_require_uint(4);
 
-	ISteamInput_SetLEDColor = (FuncPtr_115)GETADDRESS(steam_api, "SteamAPI_ISteamInput_SetLEDColor");
+	ISteamInput_SetLEDColor = (FuncPtr_117)GETADDRESS(steam_api, "SteamAPI_ISteamInput_SetLEDColor");
 	ISteamInput_SetLEDColor(ISteamInput, inputHandle, nColorR, nColorG, nColorB, nFlags);
 
 	return false;
@@ -5887,7 +5971,7 @@ js_ISteamInput_Legacy_TriggerRepeatedHapticPulse(int num_args, bool is_ctor, int
 	uint16_t usOffMicroSec;
 	uint16_t unRepeat;
 	uint32_t nFlags;
-	FuncPtr_116 ISteamInput_Legacy_TriggerRepeatedHapticPulse;
+	FuncPtr_118 ISteamInput_Legacy_TriggerRepeatedHapticPulse;
 
 	inputHandle = require_str_to_uint64_t(0);
 	eTargetPad = jsal_require_uint(1);
@@ -5896,7 +5980,7 @@ js_ISteamInput_Legacy_TriggerRepeatedHapticPulse(int num_args, bool is_ctor, int
 	unRepeat = jsal_require_uint(4);
 	nFlags = jsal_require_uint(5);
 
-	ISteamInput_Legacy_TriggerRepeatedHapticPulse = (FuncPtr_116)GETADDRESS(steam_api, "SteamAPI_ISteamInput_Legacy_TriggerRepeatedHapticPulse");
+	ISteamInput_Legacy_TriggerRepeatedHapticPulse = (FuncPtr_118)GETADDRESS(steam_api, "SteamAPI_ISteamInput_Legacy_TriggerRepeatedHapticPulse");
 	ISteamInput_Legacy_TriggerRepeatedHapticPulse(ISteamInput, inputHandle, eTargetPad, usDurationMicroSec, usOffMicroSec, unRepeat, nFlags);
 
 	return false;
@@ -5907,12 +5991,12 @@ js_ISteamInput_GetConnectedControllers(int num_args, bool is_ctor, intptr_t magi
 {
 	uint64_t * handlesOut;
 	int32_t result;
-	FuncPtr_103 ISteamInput_GetConnectedControllers;
+	FuncPtr_105 ISteamInput_GetConnectedControllers;
 
 	if (!(handlesOut = (uint64_t *)calloc(16, sizeof(uint64_t))))
 		return false;
 
-	ISteamInput_GetConnectedControllers = (FuncPtr_103)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetConnectedControllers");
+	ISteamInput_GetConnectedControllers = (FuncPtr_105)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetConnectedControllers");
 	result = ISteamInput_GetConnectedControllers(ISteamInput, handlesOut);
 
 	jsal_push_new_object();
@@ -5938,14 +6022,14 @@ js_ISteamInput_GetActiveActionSetLayers(int num_args, bool is_ctor, intptr_t mag
 	uint64_t inputHandle;
 	uint64_t * handlesOut;
 	int32_t result;
-	FuncPtr_105 ISteamInput_GetActiveActionSetLayers;
+	FuncPtr_107 ISteamInput_GetActiveActionSetLayers;
 
 	inputHandle = require_str_to_uint64_t(0);
 
 	if (!(handlesOut = (uint64_t *)calloc(16, sizeof(uint64_t))))
 		return false;
 
-	ISteamInput_GetActiveActionSetLayers = (FuncPtr_105)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetActiveActionSetLayers");
+	ISteamInput_GetActiveActionSetLayers = (FuncPtr_107)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetActiveActionSetLayers");
 	result = ISteamInput_GetActiveActionSetLayers(ISteamInput, inputHandle, handlesOut);
 
 	jsal_push_new_object();
@@ -5973,7 +6057,7 @@ js_ISteamInput_GetDigitalActionOrigins(int num_args, bool is_ctor, intptr_t magi
 	uint64_t digitalActionHandle;
 	uint32_t * originsOut;
 	int32_t result;
-	FuncPtr_107 ISteamInput_GetDigitalActionOrigins;
+	FuncPtr_109 ISteamInput_GetDigitalActionOrigins;
 
 	inputHandle = require_str_to_uint64_t(0);
 	actionSetHandle = require_str_to_uint64_t(1);
@@ -5982,7 +6066,7 @@ js_ISteamInput_GetDigitalActionOrigins(int num_args, bool is_ctor, intptr_t magi
 	if (!(originsOut = (uint32_t *)calloc(8, sizeof(uint32_t))))
 		return false;
 
-	ISteamInput_GetDigitalActionOrigins = (FuncPtr_107)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetDigitalActionOrigins");
+	ISteamInput_GetDigitalActionOrigins = (FuncPtr_109)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetDigitalActionOrigins");
 	result = ISteamInput_GetDigitalActionOrigins(ISteamInput, inputHandle, actionSetHandle, digitalActionHandle, originsOut);
 
 	jsal_push_new_object();
@@ -6010,7 +6094,7 @@ js_ISteamInput_GetAnalogActionOrigins(int num_args, bool is_ctor, intptr_t magic
 	uint64_t analogActionHandle;
 	uint32_t * originsOut;
 	int32_t result;
-	FuncPtr_107 ISteamInput_GetAnalogActionOrigins;
+	FuncPtr_109 ISteamInput_GetAnalogActionOrigins;
 
 	inputHandle = require_str_to_uint64_t(0);
 	actionSetHandle = require_str_to_uint64_t(1);
@@ -6019,7 +6103,7 @@ js_ISteamInput_GetAnalogActionOrigins(int num_args, bool is_ctor, intptr_t magic
 	if (!(originsOut = (uint32_t *)calloc(8, sizeof(uint32_t))))
 		return false;
 
-	ISteamInput_GetAnalogActionOrigins = (FuncPtr_107)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetAnalogActionOrigins");
+	ISteamInput_GetAnalogActionOrigins = (FuncPtr_109)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetAnalogActionOrigins");
 	result = ISteamInput_GetAnalogActionOrigins(ISteamInput, inputHandle, actionSetHandle, analogActionHandle, originsOut);
 
 	jsal_push_new_object();
@@ -6044,11 +6128,11 @@ js_ISteamInput_GetGamepadIndexForController(int num_args, bool is_ctor, intptr_t
 {
 	uint64_t ulinputHandle;
 	int32_t result;
-	FuncPtr_028 ISteamInput_GetGamepadIndexForController;
+	FuncPtr_029 ISteamInput_GetGamepadIndexForController;
 
 	ulinputHandle = require_str_to_uint64_t(0);
 
-	ISteamInput_GetGamepadIndexForController = (FuncPtr_028)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetGamepadIndexForController");
+	ISteamInput_GetGamepadIndexForController = (FuncPtr_029)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetGamepadIndexForController");
 	result = ISteamInput_GetGamepadIndexForController(ISteamInput, ulinputHandle);
 
 	jsal_push_int(result);
@@ -6078,11 +6162,11 @@ js_ISteamInput_GetCurrentActionSet(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint64_t inputHandle;
 	uint64_t result;
-	FuncPtr_045 ISteamInput_GetCurrentActionSet;
+	FuncPtr_046 ISteamInput_GetCurrentActionSet;
 
 	inputHandle = require_str_to_uint64_t(0);
 
-	ISteamInput_GetCurrentActionSet = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetCurrentActionSet");
+	ISteamInput_GetCurrentActionSet = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetCurrentActionSet");
 	result = ISteamInput_GetCurrentActionSet(ISteamInput, inputHandle);
 
 	push_uint64_t_to_str(result);
@@ -6129,11 +6213,11 @@ js_ISteamInput_GetControllerForGamepadIndex(int num_args, bool is_ctor, intptr_t
 {
 	int32_t nIndex;
 	uint64_t result;
-	FuncPtr_034 ISteamInput_GetControllerForGamepadIndex;
+	FuncPtr_035 ISteamInput_GetControllerForGamepadIndex;
 
 	nIndex = jsal_require_int(0);
 
-	ISteamInput_GetControllerForGamepadIndex = (FuncPtr_034)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetControllerForGamepadIndex");
+	ISteamInput_GetControllerForGamepadIndex = (FuncPtr_035)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetControllerForGamepadIndex");
 	result = ISteamInput_GetControllerForGamepadIndex(ISteamInput, nIndex);
 
 	push_uint64_t_to_str(result);
@@ -6147,12 +6231,12 @@ js_ISteamInput_GetDigitalActionData(int num_args, bool is_ctor, intptr_t magic)
 	uint64_t inputHandle;
 	uint64_t digitalActionHandle;
 	InputDigitalActionData_t result;
-	FuncPtr_106 ISteamInput_GetDigitalActionData;
+	FuncPtr_108 ISteamInput_GetDigitalActionData;
 
 	inputHandle = require_str_to_uint64_t(0);
 	digitalActionHandle = require_str_to_uint64_t(1);
 
-	ISteamInput_GetDigitalActionData = (FuncPtr_106)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetDigitalActionData");
+	ISteamInput_GetDigitalActionData = (FuncPtr_108)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetDigitalActionData");
 	result = ISteamInput_GetDigitalActionData(ISteamInput, inputHandle, digitalActionHandle);
 
 	jsal_push_new_object();
@@ -6188,13 +6272,13 @@ js_ISteamInput_GetGlyphPNGForActionOrigin(int num_args, bool is_ctor, intptr_t m
 	uint32_t eSize;
 	uint32_t unFlags;
 	const char * result;
-	FuncPtr_109 ISteamInput_GetGlyphPNGForActionOrigin;
+	FuncPtr_111 ISteamInput_GetGlyphPNGForActionOrigin;
 
 	eOrigin = jsal_require_uint(0);
 	eSize = jsal_require_uint(1);
 	unFlags = jsal_require_uint(2);
 
-	ISteamInput_GetGlyphPNGForActionOrigin = (FuncPtr_109)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetGlyphPNGForActionOrigin");
+	ISteamInput_GetGlyphPNGForActionOrigin = (FuncPtr_111)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetGlyphPNGForActionOrigin");
 	result = ISteamInput_GetGlyphPNGForActionOrigin(ISteamInput, eOrigin, eSize, unFlags);
 
 	jsal_push_string(result);
@@ -6208,12 +6292,12 @@ js_ISteamInput_GetGlyphSVGForActionOrigin(int num_args, bool is_ctor, intptr_t m
 	uint32_t eOrigin;
 	uint32_t unFlags;
 	const char * result;
-	FuncPtr_110 ISteamInput_GetGlyphSVGForActionOrigin;
+	FuncPtr_112 ISteamInput_GetGlyphSVGForActionOrigin;
 
 	eOrigin = jsal_require_uint(0);
 	unFlags = jsal_require_uint(1);
 
-	ISteamInput_GetGlyphSVGForActionOrigin = (FuncPtr_110)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetGlyphSVGForActionOrigin");
+	ISteamInput_GetGlyphSVGForActionOrigin = (FuncPtr_112)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetGlyphSVGForActionOrigin");
 	result = ISteamInput_GetGlyphSVGForActionOrigin(ISteamInput, eOrigin, unFlags);
 
 	jsal_push_string(result);
@@ -6226,11 +6310,11 @@ js_ISteamInput_GetGlyphForActionOrigin_Legacy(int num_args, bool is_ctor, intptr
 {
 	uint32_t eOrigin;
 	const char * result;
-	FuncPtr_077 ISteamInput_GetGlyphForActionOrigin_Legacy;
+	FuncPtr_078 ISteamInput_GetGlyphForActionOrigin_Legacy;
 
 	eOrigin = jsal_require_uint(0);
 
-	ISteamInput_GetGlyphForActionOrigin_Legacy = (FuncPtr_077)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetGlyphForActionOrigin_Legacy");
+	ISteamInput_GetGlyphForActionOrigin_Legacy = (FuncPtr_078)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetGlyphForActionOrigin_Legacy");
 	result = ISteamInput_GetGlyphForActionOrigin_Legacy(ISteamInput, eOrigin);
 
 	jsal_push_string(result);
@@ -6243,11 +6327,11 @@ js_ISteamInput_GetStringForActionOrigin(int num_args, bool is_ctor, intptr_t mag
 {
 	uint32_t eOrigin;
 	const char * result;
-	FuncPtr_077 ISteamInput_GetStringForActionOrigin;
+	FuncPtr_078 ISteamInput_GetStringForActionOrigin;
 
 	eOrigin = jsal_require_uint(0);
 
-	ISteamInput_GetStringForActionOrigin = (FuncPtr_077)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetStringForActionOrigin");
+	ISteamInput_GetStringForActionOrigin = (FuncPtr_078)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetStringForActionOrigin");
 	result = ISteamInput_GetStringForActionOrigin(ISteamInput, eOrigin);
 
 	jsal_push_string(result);
@@ -6277,11 +6361,11 @@ js_ISteamInput_GetStringForXboxOrigin(int num_args, bool is_ctor, intptr_t magic
 {
 	uint32_t eOrigin;
 	const char * result;
-	FuncPtr_077 ISteamInput_GetStringForXboxOrigin;
+	FuncPtr_078 ISteamInput_GetStringForXboxOrigin;
 
 	eOrigin = jsal_require_uint(0);
 
-	ISteamInput_GetStringForXboxOrigin = (FuncPtr_077)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetStringForXboxOrigin");
+	ISteamInput_GetStringForXboxOrigin = (FuncPtr_078)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetStringForXboxOrigin");
 	result = ISteamInput_GetStringForXboxOrigin(ISteamInput, eOrigin);
 
 	jsal_push_string(result);
@@ -6294,11 +6378,11 @@ js_ISteamInput_GetGlyphForXboxOrigin(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint32_t eOrigin;
 	const char * result;
-	FuncPtr_077 ISteamInput_GetGlyphForXboxOrigin;
+	FuncPtr_078 ISteamInput_GetGlyphForXboxOrigin;
 
 	eOrigin = jsal_require_uint(0);
 
-	ISteamInput_GetGlyphForXboxOrigin = (FuncPtr_077)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetGlyphForXboxOrigin");
+	ISteamInput_GetGlyphForXboxOrigin = (FuncPtr_078)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetGlyphForXboxOrigin");
 	result = ISteamInput_GetGlyphForXboxOrigin(ISteamInput, eOrigin);
 
 	jsal_push_string(result);
@@ -6312,12 +6396,12 @@ js_ISteamInput_GetAnalogActionData(int num_args, bool is_ctor, intptr_t magic)
 	uint64_t inputHandle;
 	uint64_t analogActionHandle;
 	InputAnalogActionData_t result;
-	FuncPtr_108 ISteamInput_GetAnalogActionData;
+	FuncPtr_110 ISteamInput_GetAnalogActionData;
 
 	inputHandle = require_str_to_uint64_t(0);
 	analogActionHandle = require_str_to_uint64_t(1);
 
-	ISteamInput_GetAnalogActionData = (FuncPtr_108)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetAnalogActionData");
+	ISteamInput_GetAnalogActionData = (FuncPtr_110)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetAnalogActionData");
 	result = ISteamInput_GetAnalogActionData(ISteamInput, inputHandle, analogActionHandle);
 
 	jsal_push_new_object();
@@ -6338,11 +6422,11 @@ js_ISteamInput_GetMotionData(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint64_t inputHandle;
 	InputMotionData_t result;
-	FuncPtr_111 ISteamInput_GetMotionData;
+	FuncPtr_113 ISteamInput_GetMotionData;
 
 	inputHandle = require_str_to_uint64_t(0);
 
-	ISteamInput_GetMotionData = (FuncPtr_111)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetMotionData");
+	ISteamInput_GetMotionData = (FuncPtr_113)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetMotionData");
 	result = ISteamInput_GetMotionData(ISteamInput, inputHandle);
 
 	jsal_push_new_object();
@@ -6412,12 +6496,12 @@ js_ISteamInput_TranslateActionOrigin(int num_args, bool is_ctor, intptr_t magic)
 	uint32_t eDestinationInputType;
 	uint32_t eSourceOrigin;
 	uint32_t result;
-	FuncPtr_117 ISteamInput_TranslateActionOrigin;
+	FuncPtr_119 ISteamInput_TranslateActionOrigin;
 
 	eDestinationInputType = jsal_require_uint(0);
 	eSourceOrigin = jsal_require_uint(1);
 
-	ISteamInput_TranslateActionOrigin = (FuncPtr_117)GETADDRESS(steam_api, "SteamAPI_ISteamInput_TranslateActionOrigin");
+	ISteamInput_TranslateActionOrigin = (FuncPtr_119)GETADDRESS(steam_api, "SteamAPI_ISteamInput_TranslateActionOrigin");
 	result = ISteamInput_TranslateActionOrigin(ISteamInput, eDestinationInputType, eSourceOrigin);
 
 	jsal_push_uint(result);
@@ -6446,9 +6530,9 @@ static bool
 js_ISteamInput_GetSessionInputConfigurationSettings(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint16_t result;
-	FuncPtr_119 ISteamInput_GetSessionInputConfigurationSettings;
+	FuncPtr_121 ISteamInput_GetSessionInputConfigurationSettings;
 
-	ISteamInput_GetSessionInputConfigurationSettings = (FuncPtr_119)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetSessionInputConfigurationSettings");
+	ISteamInput_GetSessionInputConfigurationSettings = (FuncPtr_121)GETADDRESS(steam_api, "SteamAPI_ISteamInput_GetSessionInputConfigurationSettings");
 	result = ISteamInput_GetSessionInputConfigurationSettings(ISteamInput);
 
 	jsal_push_uint(result);
