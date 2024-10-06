@@ -284,7 +284,8 @@ def parse_method(method, category, type):
 
 		# We can't trust the meta data about the array size, if we have an out parameter,
 		# check if the next parameter is an int type and use that as size.
-		if (i + 1 < len(method['params'])) and param['out'] and 'array_size' not in param:
+		if (not param['paramname'] == 'self' and (i + 1 < len(method['params'])) and 'array_size' not in param
+			and ((param['out'] ) or ('*' in param['paramtype'] and param['paramtype'] != 'const char *'))):
 			next_param = method['params'][i + 1]
 			match convert_type(next_param['paramtype']):
 				case "int32_t" | "uint32_t":
@@ -413,7 +414,6 @@ def jsal_push_object(type, name, indents = 0):
 	
 # Return js friendly type for documentation.
 def js_type_convert(type):
-	print(type)
 	if type == "char *" or type == "const char *":
 		return "string"
 
@@ -732,7 +732,7 @@ require_str_to_uint64_t(int index)
 {
 	const char * str = jsal_require_string(index);
 	const char ** str_end = NULL;
-	return strtoul(str, str_end, 10);
+	return strtoull(str, str_end, 10);
 }
 
 int64_t
@@ -924,9 +924,10 @@ for category in methods:
 			# Declare required vars.
 			initialized_i = False
 			param_arg_array = []
-			jsal_requires = []
+			requires_source = ""
 			out_params = ["result"] if not returntype == "void" else []
 			arg_index = 0
+			array_param = None
 
 			# Declare documentation vars.
 			doc_params = []
@@ -942,19 +943,18 @@ for category in methods:
 				# If accessor.
 				if param['paramname'] == 'self':
 					param_arg_array.append(category)
-					continue
 
 				# If array.
 				elif "array_size" in param:
 					param_arg_array.append(param['paramname'])
-					source += "	" + param['paramtype'] + " " + param['paramname'] + ";\n"
-					continue
+					source += "	" + param['rawtype'] + " * " + param['paramname'] + ";\n"
+					if not param['out']:
+						array_param = param
 
 				# If pointer type.
 				elif "*" in param['paramtype'] and not "char *" in param['paramtype']:
 					source += "	" + param['rawtype'] + " " + param['paramname'] + ";\n"
 					param_arg_array.append("&" + param['paramname'])
-					continue
 
 				# Else, print param as normal.
 				else:
@@ -973,10 +973,25 @@ for category in methods:
 							doc_enum += "		Due to the length of the enum, refer to Steamworks documentation for details.\n\n"
 					
 					# Print param declaration.
+					if array_param is None:
+						requires_source += "	" + jsal_require_function(param['paramtype'], arg_index, param['paramname'])
+						source += "	" + param['paramtype'] + " " + param['paramname'] + ";\n"
+						doc_params.append(js_type_convert(param['paramtype']) + " " + param['paramname'])
+					else:
+						doc_params.append(f"{js_type_convert(array_param['paramtype'])}[] {array_param['paramname']}")
+						array_size_var = f'{array_param["array_size"]}'
+						requires_source += f'	jsal_require_array({arg_index});\n'
+						requires_source += f'	int {array_size_var} = jsal_get_length({arg_index});\n'
+						requires_source += f"	if (!({array_param['paramname']} = ({array_param['paramtype']})malloc({array_param['array_size']} * sizeof({array_param['rawtype']}))))\n"
+						requires_source += f"		return false;\n"
+						requires_source += f'	for (int i = 0; i < {array_size_var}; ++i)' + "{\n"
+						requires_source += f'		jsal_get_prop_index({arg_index}, i);\n'
+						requires_source += f'		{jsal_require_function(array_param["rawtype"], -1, array_param["paramname"] + "[i]")}'
+						requires_source += f'		jsal_pop(1);\n'
+						requires_source += '	}\n'
+						array_param = None
+
 					param_arg_array.append(param['paramname'])
-					jsal_requires.append(jsal_require_function(param['paramtype'], arg_index, param['paramname']))
-					source += "	" + param['paramtype'] + " " + param['paramname'] + ";\n"
-					doc_params.append(js_type_convert(param['paramtype']) + " " + param['paramname'])
 					arg_index += 1
 
 			# Print declaration for return type.
@@ -988,19 +1003,16 @@ for category in methods:
 			source += "\n"
 
 			# Print jsal require functions.
-			if len(jsal_requires) > 0:
-				for require in jsal_requires:
-					if len(require) > 0:
-						source += "	" + require
-				source += "\n"
+			source += requires_source + "\n" if len(requires_source) > 0 else ""
 
-			# Allocate memory to arrays.
+			# Allocate memory to out arrays.
 			array_alloc_trailing_newline = ""
 			for param in method['params']:
-				if "array_size" in param:
+				if param['out'] and "array_size" in param:
 					array_alloc_trailing_newline = "\n"
 					source += "	if (!(" + param['paramname'] + " = (" + param['paramtype'] + ")calloc(" + param['array_size'] + ", sizeof(" + param['rawtype'] + "))))\n"
 					source += "		return false;\n"
+
 			source += array_alloc_trailing_newline
 
 			# Execute steam api function.

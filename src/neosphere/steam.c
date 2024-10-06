@@ -12,7 +12,7 @@ require_str_to_uint64_t(int index)
 {
 	const char * str = jsal_require_string(index);
 	const char ** str_end = NULL;
-	return strtoul(str, str_end, 10);
+	return strtoull(str, str_end, 10);
 }
 
 int64_t
@@ -2357,14 +2357,18 @@ static bool
 js_ISteamFriends_DownloadClanActivityCounts(int num_args, bool is_ctor, intptr_t magic)
 {
 	uint64_t * psteamIDClans;
-	int32_t cClansToRequest;
 	uint64_t result;
 	FuncPtr_037 ISteamFriends_DownloadClanActivityCounts;
 
-	cClansToRequest = jsal_require_int(0);
-
-	if (!(psteamIDClans = (uint64_t *)calloc(cClansToRequest, sizeof(uint64_t))))
+	jsal_require_array(0);
+	int cClansToRequest = jsal_get_length(0);
+	if (!(psteamIDClans = (uint64_t *)malloc(cClansToRequest * sizeof(uint64_t))))
 		return false;
+	for (int i = 0; i < cClansToRequest; ++i){
+		jsal_get_prop_index(0, i);
+		psteamIDClans[i] = require_str_to_uint64_t(-1);
+		jsal_pop(1);
+	}
 
 	ISteamFriends_DownloadClanActivityCounts = (FuncPtr_037)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_DownloadClanActivityCounts");
 	result = ISteamFriends_DownloadClanActivityCounts(ISteamFriends, psteamIDClans, cClansToRequest);
@@ -4959,15 +4963,19 @@ js_ISteamUserStats_DownloadLeaderboardEntriesForUsers(int num_args, bool is_ctor
 {
 	uint64_t hSteamLeaderboard;
 	uint64_t * prgUsers;
-	int32_t cUsers;
 	uint64_t result;
 	FuncPtr_085 ISteamUserStats_DownloadLeaderboardEntriesForUsers;
 
 	hSteamLeaderboard = require_str_to_uint64_t(0);
-	cUsers = jsal_require_int(1);
-
-	if (!(prgUsers = (uint64_t *)calloc(cUsers, sizeof(uint64_t))))
+	jsal_require_array(1);
+	int cUsers = jsal_get_length(1);
+	if (!(prgUsers = (uint64_t *)malloc(cUsers * sizeof(uint64_t))))
 		return false;
+	for (int i = 0; i < cUsers; ++i){
+		jsal_get_prop_index(1, i);
+		prgUsers[i] = require_str_to_uint64_t(-1);
+		jsal_pop(1);
+	}
 
 	ISteamUserStats_DownloadLeaderboardEntriesForUsers = (FuncPtr_085)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_DownloadLeaderboardEntriesForUsers");
 	result = ISteamUserStats_DownloadLeaderboardEntriesForUsers(ISteamUserStats, hSteamLeaderboard, prgUsers, cUsers);
@@ -4983,18 +4991,25 @@ js_ISteamUserStats_UploadLeaderboardScore(int num_args, bool is_ctor, intptr_t m
 	uint64_t hSteamLeaderboard;
 	uint32_t eLeaderboardUploadScoreMethod;
 	int32_t nScore;
-	int32_t pScoreDetails;
-	int32_t cScoreDetailsCount;
+	int32_t * pScoreDetails;
 	uint64_t result;
 	FuncPtr_087 ISteamUserStats_UploadLeaderboardScore;
 
 	hSteamLeaderboard = require_str_to_uint64_t(0);
 	eLeaderboardUploadScoreMethod = jsal_require_uint(1);
 	nScore = jsal_require_int(2);
-	cScoreDetailsCount = jsal_require_int(3);
+	jsal_require_array(3);
+	int cScoreDetailsCount = jsal_get_length(3);
+	if (!(pScoreDetails = (const int32_t *)malloc(cScoreDetailsCount * sizeof(int32_t))))
+		return false;
+	for (int i = 0; i < cScoreDetailsCount; ++i){
+		jsal_get_prop_index(3, i);
+		pScoreDetails[i] = jsal_require_int(-1);
+		jsal_pop(1);
+	}
 
 	ISteamUserStats_UploadLeaderboardScore = (FuncPtr_087)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_UploadLeaderboardScore");
-	result = ISteamUserStats_UploadLeaderboardScore(ISteamUserStats, hSteamLeaderboard, eLeaderboardUploadScoreMethod, nScore, &pScoreDetails, cScoreDetailsCount);
+	result = ISteamUserStats_UploadLeaderboardScore(ISteamUserStats, hSteamLeaderboard, eLeaderboardUploadScoreMethod, nScore, pScoreDetails, cScoreDetailsCount);
 
 	push_uint64_t_to_str(result);
 

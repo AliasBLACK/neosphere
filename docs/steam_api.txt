@@ -250,7 +250,7 @@ Recurring Callbacks
 
 		Returns var of type `int_string`.
 
-	ISteamFriends.DownloadClanActivityCounts(int cClansToRequest)
+	ISteamFriends.DownloadClanActivityCounts(int_string[] psteamIDClans)
 
 		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
@@ -1166,7 +1166,7 @@ Recurring Callbacks
 			ELeaderboardDataRequest.k_ELeaderboardDataRequestFriends
 			ELeaderboardDataRequest.k_ELeaderboardDataRequestUsers
 
-	ISteamUserStats.DownloadLeaderboardEntriesForUsers(int_string hSteamLeaderboard, int cUsers)
+	ISteamUserStats.DownloadLeaderboardEntriesForUsers(int_string hSteamLeaderboard, int_string[] prgUsers)
 
 		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
@@ -1175,7 +1175,7 @@ Recurring Callbacks
 			result.m_hSteamLeaderboardEntries (int_string)
 			result.m_cEntryCount (int)
 
-	ISteamUserStats.UploadLeaderboardScore(int_string hSteamLeaderboard, int eLeaderboardUploadScoreMethod, int nScore, int cScoreDetailsCount)
+	ISteamUserStats.UploadLeaderboardScore(int_string hSteamLeaderboard, int eLeaderboardUploadScoreMethod, int nScore, int[] pScoreDetails)
 
 		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
