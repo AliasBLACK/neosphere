@@ -43,7 +43,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pchBuffer (int[cubBuffer])
+			value.pchBuffer (string[cubBuffer])
 
 	ISteamUser.BIsBehindNAT()
 
@@ -769,7 +769,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pchText (int[cchText])
+			value.pchText (string[cchText])
 
 	ISteamUtils.IsSteamRunningInVR()
 
@@ -877,7 +877,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.pchOutFilteredText (int[nByteSizeOutFilteredText])
+			value.pchOutFilteredText (string[nByteSizeOutFilteredText])
 
 
 `ISteamUserStats` Interface
@@ -1057,7 +1057,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.pchName (int[unNameBufLen])
+			value.pchName (string[unNameBufLen])
 			value.pflPercent (float)
 			value.pbAchieved (bool)
 
@@ -1066,7 +1066,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.pchName (int[unNameBufLen])
+			value.pchName (string[unNameBufLen])
 			value.pflPercent (float)
 			value.pbAchieved (bool)
 
@@ -1269,14 +1269,14 @@ Recurring Callbacks
 			value.result (bool)
 			value.pAppID (int)
 			value.pbAvailable (bool)
-			value.pchName (int[cchNameBufferSize])
+			value.pchName (string[cchNameBufferSize])
 
 	ISteamApps.GetCurrentBetaName(int cchNameBufferSize)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pchName (int[cchNameBufferSize])
+			value.pchName (string[cchNameBufferSize])
 
 	ISteamApps.MarkContentCorrupt(bool bMissingFilesOnly)
 
@@ -1345,7 +1345,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.pchFolder (int[cchFolderBufferSize])
+			value.pchFolder (string[cchFolderBufferSize])
 
 	ISteamApps.GetDLCCount()
 
@@ -1374,7 +1374,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.pszCommandLine (int[cubCommandLine])
+			value.pszCommandLine (string[cubCommandLine])
 
 	ISteamApps.InstallDLC(int nAppID)
 
