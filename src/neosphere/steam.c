@@ -4983,7 +4983,7 @@ js_ISteamUserStats_UploadLeaderboardScore(int num_args, bool is_ctor, intptr_t m
 	uint64_t hSteamLeaderboard;
 	uint32_t eLeaderboardUploadScoreMethod;
 	int32_t nScore;
-	const int32_t pScoreDetails;
+	int32_t pScoreDetails;
 	int32_t cScoreDetailsCount;
 	uint64_t result;
 	FuncPtr_087 ISteamUserStats_UploadLeaderboardScore;
