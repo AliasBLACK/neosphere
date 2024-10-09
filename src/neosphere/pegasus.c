@@ -1271,7 +1271,7 @@ static bool
 js_Sphere_get_desktopResolution(int num_args, bool is_ctor, intptr_t magic)
 {
 	ALLEGRO_MONITOR_INFO desktop_info;
-	al_get_monitor_info(screen_get_monitor(g_screen), &desktop_info);
+	al_get_monitor_info(get_current_monitor(g_screen), &desktop_info);
 	int x, y;
 
 	x = (desktop_info.x2 - desktop_info.x1);

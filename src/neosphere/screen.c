@@ -475,8 +475,11 @@ screen_queue_screenshot(screen_t* it)
 void
 screen_resize(screen_t* it, int x_size, int y_size)
 {
+	image_t* new_backbuffer = NULL;
+
 	it->x_size = x_size;
 	it->y_size = y_size;
+	image_resize(it->backbuffer, x_size, y_size);
 
 	refresh_display(it);
 }

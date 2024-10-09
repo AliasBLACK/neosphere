@@ -228,10 +228,33 @@ on_error:
 	return NULL;
 }
 
+void
+image_resize(image_t* image, int width, int height)
+{
+	ALLEGRO_BITMAP* new_bitmap;
+	ALLEGRO_STATE old_state;
+
+	al_set_new_bitmap_depth(16);
+#if !defined(__APPLE__)
+	al_set_new_bitmap_samples(8);
+#endif
+	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
+	al_store_state(&old_state, ALLEGRO_STATE_NEW_BITMAP_PARAMETERS);
+	al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY_24_NO_ALPHA);
+	new_bitmap = al_create_bitmap(width, height);
+	al_restore_state(&old_state);
+
+	al_destroy_bitmap(image->bitmap);
+	image->bitmap = new_bitmap;
+	image->width = width;
+	image->height = height;
+	image->scissor_box = mk_rect(0, 0, image->width, image->height);
+	al_set_target_bitmap(image->bitmap);
+}
+
 image_t*
 image_ref(image_t* it)
 {
-
 	if (it != NULL)
 		++it->refcount;
 	return it;
