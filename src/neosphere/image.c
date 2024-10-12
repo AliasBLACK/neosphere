@@ -77,6 +77,9 @@ image_new_ms(int width, int height, const color_t* pixels, int samples)
 {
 	image_t*        image;
 	ALLEGRO_BITMAP* old_target;
+	int oldSamples;
+
+	oldSamples = al_get_new_bitmap_samples();
 
 	console_log(3, "creating image #%u at %dx%d", s_next_image_id, width, height);
 	if (!(image = calloc(1, sizeof(image_t))))
@@ -110,9 +113,13 @@ image_new_ms(int width, int height, const color_t* pixels, int samples)
 		al_set_target_bitmap(old_target);
 	}
 
+	al_set_new_bitmap_samples(oldSamples);
+
 	return image;
 
 on_error:
+	al_set_new_bitmap_samples(oldSamples);
+
 	free(image);
 	return NULL;
 }
@@ -233,6 +240,9 @@ image_resize(image_t* image, int width, int height)
 {
 	ALLEGRO_BITMAP* new_bitmap;
 	ALLEGRO_STATE old_state;
+	int oldSamples;
+
+	oldSamples = al_get_new_bitmap_samples();
 
 	al_set_new_bitmap_depth(16);
 #if !defined(__APPLE__)
@@ -250,6 +260,7 @@ image_resize(image_t* image, int width, int height)
 	image->height = height;
 	image->scissor_box = mk_rect(0, 0, image->width, image->height);
 	al_set_target_bitmap(image->bitmap);
+	al_set_new_bitmap_samples(oldSamples);
 }
 
 image_t*

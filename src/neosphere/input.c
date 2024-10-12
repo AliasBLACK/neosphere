@@ -656,9 +656,7 @@ update_input(void)
 				screen_toggle_fps(g_screen);
 				break;
 			case ALLEGRO_KEY_F12:
-				if (!debugger_attached())
-					screen_queue_screenshot(g_screen);
-				else
+				if (debugger_attached())
 					jsal_debug_breakpoint_inject();
 				break;
 			default:
