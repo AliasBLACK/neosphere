@@ -133,7 +133,6 @@ screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, 
 			ALLEGRO_NO_PREMULTIPLIED_ALPHA | ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR
 			| bitmap_flags);
 		icon = image_dup(icon);
-		image_rescale(icon, 32, 32);
 		icon_bitmap = image_bitmap(icon);
 		al_set_new_bitmap_flags(bitmap_flags);
 		al_set_display_icon(display, icon_bitmap);
