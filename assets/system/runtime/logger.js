@@ -71,6 +71,9 @@ class Logger
 
 	flush()
 	{
-        this._stream.flush();
+		try {
+			this._stream.flush();
+		}
+		catch (e) { }
 	}
 }
