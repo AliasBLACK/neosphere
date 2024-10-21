@@ -518,10 +518,21 @@ refresh_display(screen_t* screen)
 	int                  real_width;
 	int                  real_height;
 
-	al_set_display_flag(screen->display, ALLEGRO_FULLSCREEN_WINDOW, screen->fullscreen);
 	if (al_get_monitor_info(get_current_monitor(screen), &desktop_info))
 	{
 		if (screen->fullscreen) {
+
+			// Make sure top-left edge of window is in correct monitor before fullscreen'ing.
+			int x;
+			int y;
+			al_get_window_position(screen->display, &x, &y);
+			al_set_window_position(
+				screen->display,
+				x < desktop_info.x1 ? desktop_info.x1 : x,
+				y < desktop_info.y1 ? desktop_info.y1 : y
+			);
+
+			// Scale and offset render bitmap.
 			real_width = desktop_info.x2 - desktop_info.x1;
 			real_height = desktop_info.y2 - desktop_info.y1;
 			screen->x_scale = (float)real_width / screen->x_size;
@@ -553,6 +564,7 @@ refresh_display(screen_t* screen)
 				(desktop_info.y1 + desktop_info.y2) / 2 - screen->y_size * screen->y_scale / 2);
 		}
 	}
+	al_set_display_flag(screen->display, ALLEGRO_FULLSCREEN_WINDOW, screen->fullscreen);
 	image_render_to(screen->backbuffer, NULL);
 }
 
