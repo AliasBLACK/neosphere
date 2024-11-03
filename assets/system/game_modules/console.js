@@ -312,6 +312,7 @@ async function showConsole(console)
 	console.keyboard.clearQueue();
 	console.mouse.clearQueue();
 	console.takeFocus();
+	console.numLines = Math.floor((Surface.Screen.height - 32) / console.font.height);
 	let fps = Sphere.frameRate;
 	await console.tween.easeOut({ fade: 1.0 }, 0.25 * fps);
 	console.view.visible = true;

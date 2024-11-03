@@ -35,7 +35,8 @@ typedefs = {
 
 # Params to ignore (too much work to get them working)
 forbidden_types = [
-	"ScePadTriggerEffectParam"
+	"ScePadTriggerEffectParam",
+	"SteamAPIWarningMessageHook_t"
 ]
 
 # Convert type to one already defined or base C type.
@@ -43,6 +44,7 @@ enums_to_bind = []
 structs_to_bind = [
 	"GameOverlayActivated_t",
 	"SteamAPICallCompleted_t"
+
 ]
 def convert_type(type):
 
@@ -105,6 +107,12 @@ def convert_base_type(type):
 		case _:
 			return type
 
+def remove_one_pointer_indirection(type):
+	if "**" in type:
+		return type.replace("**", "*").strip()
+	else:
+		return type.replace("*", "").strip()
+
 # Parse struct.
 unparsed_methods = []
 struct_string = """typedef struct {
@@ -118,6 +126,7 @@ struct_string = """typedef struct {
 def parse_struct(struct):
 
 	# If struct has no fields, ignore.
+
 	if not struct['fields']:
 		return
 
@@ -197,6 +206,7 @@ js_name_max_length = 0
 def parse_method(method, category, type):
 
 	# Skip if in methods_to_ignore.
+
 	if method['methodname_flat'] in methods_to_ignore:
 		skipped_methods.append(method['methodname_flat'] + " (listed in methods_to_ignore)")
 		return
@@ -209,13 +219,20 @@ def parse_method(method, category, type):
 			structs_to_bind.append(method['callresult'])
 		structs[method['callresult']]['is_api_callback'] = True
 	
+	allow_return_params = (steamAPICall == None)
+
 	# Parse params.
 	params = []
 	# global out_arrays
-	for param in method['params']:
+	for i in range(len(method['params'])):
+		param = method['params'][i]
 
 		# Remove namespace.
 		param['paramtype'] = re.sub(r"^.*::", "", param['paramtype'])
+
+		# Check if out param.
+		param['out'] = (allow_return_params and ('*' in param['paramtype'])
+			and (not 'const ' in param['paramtype']) and (not 'self' in param['paramname']))
 
 		# Check if array.
 		array_size = re.search(r"\[([0-9]*?)\]", param['paramtype'])
@@ -225,8 +242,9 @@ def parse_method(method, category, type):
 
 		# Skip if struct is required in param.
 		# TODO: Add this later.
-		if param['paramtype'].replace("*", "").replace("const", "").strip() in structs:
+		if (not param['out'] == True) and param['paramtype'].replace("*", "").replace("const", "").strip() in structs:
 			skipped_methods.append(method['methodname_flat'] + " (struct argument required)")
+			print("Skipping " + method['methodname_flat'] + " (struct argument required)")
 			return
 		
 		# Mark param if enum for documentation.
@@ -236,23 +254,43 @@ def parse_method(method, category, type):
 		# Convert type.
 		param['paramtype'] = convert_type(param['paramtype'])
 
+		if not param['paramtype'] == 'const char *':
+			param['rawtype'] = remove_one_pointer_indirection(param['paramtype']).replace("const", "").strip()
+		else:
+			param['rawtype'] = param['paramtype']
+
 		# Homogenize 'out_array_call' (there is only one in entire api)
 		if "out_array_call" in param:
 			param['out_array_count'] = param['out_array_call'].split(",")[0]
 
 		# Check if method outputs an array.
 		if "out_array_count" in param:
-
 			# Fixed sized array.
 			if param['out_array_count'] in defines:
 				param['out_array_fixed'] = True
-				param['out_array_size'] = defines[param['out_array_count']]
+				param['array_size'] = defines[param['out_array_count']]
 			
 			# Dynamically sized array.
 			else:
 				param['out_array_fixed'] = False
-				param['out_array_size'] = param['out_array_count']
-		
+				param['array_size'] = param['out_array_count']
+
+		elif "out_string_count" in param:
+			param['out_array_fixed'] = False
+			param['array_size'] = param['out_string_count']
+
+		if "array_count" in param:
+			param['array_size'] = param['array_count']
+
+		# We can't trust the meta data about the array size, if we have an out parameter,
+		# check if the next parameter is an int type and use that as size.
+		if (not param['paramname'] == 'self' and (i + 1 < len(method['params'])) and 'array_size' not in param
+			and ((param['out'] ) or ('*' in param['paramtype'] and param['paramtype'] != 'const char *'))):
+			next_param = method['params'][i + 1]
+			match convert_type(next_param['paramtype']):
+				case "int32_t" | "uint32_t":
+					param['array_size'] = next_param['paramname']
+
 		# Skip if require pointer to data blob.
 		# TODO: Figure out how to do this.
 		if "void *" in param['paramtype'] and not param['paramname'] == "self":
@@ -315,7 +353,11 @@ def require_string(type):
 			return "jsal_require_int("
 		case "uint8_t" | "uint16_t" | "uint32_t" | "unsigned int":
 			return  "jsal_require_uint("
-		case "int64_t" | "uint64_t" | "float" | "double":
+		case "int64_t":
+			return "require_str_to_int64_t("
+		case "uint64_t":
+			return "require_str_to_uint64_t("
+		case "float" | "double":
 			return  "jsal_require_number("
 		case "char *" | "const char *":
 			return "(char*)jsal_require_string("
@@ -332,8 +374,12 @@ def jsal_push_function(type):
 			return "jsal_push_int("
 		case "uint8_t" | "uint16_t" | "uint32_t" | "unsigned int":
 			return  "jsal_push_uint("
-		case "int64_t" | "uint64_t" | "float" | "double":
+		case "float" | "double":
 			return  "jsal_push_number("
+		case "int64_t":
+			return "push_int64_t_to_str("
+		case "uint64_t":
+			return "push_uint64_t_to_str("
 		case "char *" | "const char *":
 			return "jsal_push_string("
 		case _:
@@ -346,9 +392,9 @@ def jsal_push_array(param, initialized_i):
 		initialized_i = True
 		result += "	int i;\n"
 	result += "	jsal_push_new_array();\n"
-	result += "	for (i = 0; i < (int)" + param['out_array_size'] + "; ++i)\n"
+	result += "	for (i = 0; i < (int)" + param['array_size'] + "; ++i)\n"
 	result += "	{\n"
-	result += "		" + jsal_push_function(param['paramtype'].replace("*", "").strip()) + param['paramname'] + "[i]);\n"
+	result += "		" + jsal_push_function(param['rawtype']) + param['paramname'] + "[i]);\n"
 	result += "		jsal_put_prop_index(-2, i);\n"
 	result += "	}\n"
 	return result
@@ -368,15 +414,19 @@ def jsal_push_object(type, name, indents = 0):
 	
 # Return js friendly type for documentation.
 def js_type_convert(type):
-	match(type):
+	if type == "char *" or type == "const char *":
+		return "string"
+
+	rawType = type.replace("*", "").replace("const", "").strip()
+	match(rawType):
 		case "bool":
 			return "bool"
-		case "int8_t" | "int16_t" | "int32_t" | "const int32_t" | "int" | "char" | "uint8_t" | "uint16_t" | "uint32_t" | "unsigned int" | "int64_t" | "uint64_t" | "double":
+		case "int8_t" | "int16_t" | "int32_t" | "const int32_t" | "int" | "char" | "uint8_t" | "uint16_t" | "uint32_t" | "unsigned int" | "double":
 			return "int"
+		case "int64_t" | "uint64_t":
+			return "int_string"
 		case "float":
 			return "float"
-		case "const char":
-			return "string"
 		case _:
 			print("Javascript type " + type + " not recognized!")
 			return ""
@@ -571,7 +621,7 @@ for struct in structs_to_bind:
 			api_callback_switch_string += '							' + struct + '* callbackStruct = (' + struct + ' *)pTmpCallResult;\n'
 			api_callback_switch_string += '							jsal_push_new_object();\n'
 			api_callback_switch_string += '							uint64_t callID = pCallCompleted->m_hAsyncCall;\n'
-			api_callback_switch_string += '							jsal_push_number(callID);\n'
+			api_callback_switch_string += '							push_uint64_t_to_str(callID);\n'
 			api_callback_switch_string += '							jsal_put_prop_string(-2, "callID");\n'
 			
 			for prop in structs[struct]['fields']:
@@ -619,7 +669,7 @@ for struct in structs_to_bind:
 			# Create documentation.
 			callback_documentation += '	' + struct.replace("_t", "") + '\n\n'
 			for prop in structs[struct]['fields']:
-				callback_documentation += '		' + js_type_convert(prop['fieldtype'].replace("*", "").strip()) + ' ' + prop['fieldname'] + '\n'
+				callback_documentation += '		' + js_type_convert(prop['fieldtype']) + ' ' + prop['fieldname'] + '\n'
 			callback_documentation += '\n'
 
 # Sort function pointers by returntype.
@@ -674,6 +724,40 @@ for category in methods:
 # ---------------------
 # SOURCE FILE (steam.c)
 # ---------------------
+
+# require and push helpers1
+
+source += """uint64_t
+require_str_to_uint64_t(int index)
+{
+	const char * str = jsal_require_string(index);
+	const char ** str_end = NULL;
+	return strtoull(str, str_end, 10);
+}
+
+int64_t
+require_str_to_int64_t(int index)
+{
+	const char * str = jsal_require_string(index);
+	const char ** str_end = NULL;
+	return strtoll(str, str_end, 10);
+}
+
+char push_buffer[32];
+void
+push_uint64_t_to_str(uint64_t v)
+{
+	snprintf(push_buffer, sizeof(push_buffer), "%" PRIu64, v);
+	jsal_push_string(push_buffer);
+}
+
+void
+push_int64_t_to_str(int64_t v)
+{
+	snprintf(push_buffer, sizeof(push_buffer), "%" PRId64, v);
+	jsal_push_string(push_buffer);
+}
+"""
 
 # Write init function in source file.
 source += """void
@@ -840,9 +924,10 @@ for category in methods:
 			# Declare required vars.
 			initialized_i = False
 			param_arg_array = []
-			jsal_requires = []
+			requires_source = ""
 			out_params = ["result"] if not returntype == "void" else []
 			arg_index = 0
+			array_param = None
 
 			# Declare documentation vars.
 			doc_params = []
@@ -852,25 +937,24 @@ for category in methods:
 
 			# Print params.
 			for param in method['params']:
+				if param['out']:
+					out_params.append(param['paramname'])
 
 				# If accessor.
 				if param['paramname'] == 'self':
 					param_arg_array.append(category)
-					continue
 
 				# If array.
-				elif "out_array_size" in param:
+				elif "array_size" in param:
 					param_arg_array.append(param['paramname'])
-					source += "	" + param['paramtype'] + " " + param['paramname'] + ";\n"
-					out_params.append(param['paramname'])
-					continue
+					source += "	" + param['rawtype'] + " * " + param['paramname'] + ";\n"
+					if not param['out']:
+						array_param = param
 
 				# If pointer type.
 				elif "*" in param['paramtype'] and not "char *" in param['paramtype']:
-					source += "	" + param['paramtype'].replace("*", "").strip() + " " + param['paramname'] + ";\n"
+					source += "	" + param['rawtype'] + " " + param['paramname'] + ";\n"
 					param_arg_array.append("&" + param['paramname'])
-					out_params.append(param['paramname'])
-					continue
 
 				# Else, print param as normal.
 				else:
@@ -889,10 +973,25 @@ for category in methods:
 							doc_enum += "		Due to the length of the enum, refer to Steamworks documentation for details.\n\n"
 					
 					# Print param declaration.
+					if array_param is None:
+						requires_source += "	" + jsal_require_function(param['paramtype'], arg_index, param['paramname'])
+						source += "	" + param['paramtype'] + " " + param['paramname'] + ";\n"
+						doc_params.append(js_type_convert(param['paramtype']) + " " + param['paramname'])
+					else:
+						doc_params.append(f"{js_type_convert(array_param['paramtype'])}[] {array_param['paramname']}")
+						array_size_var = f'{array_param["array_size"]}'
+						requires_source += f'	jsal_require_array({arg_index});\n'
+						requires_source += f'	int {array_size_var} = jsal_get_length({arg_index});\n'
+						requires_source += f"	if (!({array_param['paramname']} = ({array_param['paramtype']})malloc({array_param['array_size']} * sizeof({array_param['rawtype']}))))\n"
+						requires_source += f"		return false;\n"
+						requires_source += f'	for (int i = 0; i < {array_size_var}; ++i)' + "{\n"
+						requires_source += f'		jsal_get_prop_index({arg_index}, i);\n'
+						requires_source += f'		{jsal_require_function(array_param["rawtype"], -1, array_param["paramname"] + "[i]")}'
+						requires_source += f'		jsal_pop(1);\n'
+						requires_source += '	}\n'
+						array_param = None
+
 					param_arg_array.append(param['paramname'])
-					jsal_requires.append(jsal_require_function(param['paramtype'], arg_index, param['paramname']))
-					source += "	" + param['paramtype'] + " " + param['paramname'] + ";\n"
-					doc_params.append(js_type_convert(param['paramtype'].replace("*", "").strip()) + " " + param['paramname'])
 					arg_index += 1
 
 			# Print declaration for return type.
@@ -904,19 +1003,16 @@ for category in methods:
 			source += "\n"
 
 			# Print jsal require functions.
-			if len(jsal_requires) > 0:
-				for require in jsal_requires:
-					if len(require) > 0:
-						source += "	" + require
-				source += "\n"
+			source += requires_source + "\n" if len(requires_source) > 0 else ""
 
-			# Allocate memory to arrays.
+			# Allocate memory to out arrays.
 			array_alloc_trailing_newline = ""
 			for param in method['params']:
-				if "out_array_size" in param:
+				if param['out'] and "array_size" in param:
 					array_alloc_trailing_newline = "\n"
-					source += "	if (!(" + param['paramname'] + " = (" + param['paramtype'] + ")calloc(" + param['out_array_size'] + ", sizeof(" + param['paramtype'].replace("*", "").strip() + "))))\n"
+					source += "	if (!(" + param['paramname'] + " = (" + param['paramtype'] + ")calloc(" + param['array_size'] + ", sizeof(" + param['rawtype'] + "))))\n"
 					source += "		return false;\n"
+
 			source += array_alloc_trailing_newline
 
 			# Execute steam api function.
@@ -944,12 +1040,12 @@ for category in methods:
 							if (method['steamAPICall'] != None):
 								callbackStruct = method['steamAPICall']
 								if (callbackStruct in structs):
-									doc_resulttype = "		Returns var of type `int`.\n"
+									doc_resulttype = "		Returns var of type `int_string`.\n"
 									doc_resulttype += "		Returns a callback ID that eventually returns a Javascript object with the following members:\n\n"
 									for field in structs[callbackStruct]['fields']:
 										doc_resulttype += "			result." + field['fieldname'] + " (" + js_type_convert(field['fieldtype']) + ")\n"
 							else:
-								doc_resulttype = "		Returns var of type `" + js_type_convert(returntype.replace("*","").strip()) + "`.\n"
+								doc_resulttype = "		Returns var of type `" + js_type_convert(returntype) + "`.\n"
 							source += "	" + jsal_push_function(returntype) + "result);\n"
 					
 					# Return out param.
@@ -957,16 +1053,16 @@ for category in methods:
 						if param['paramname'] in out_params:
 
 							# If array.
-							if "out_array_size" in param:
-								doc_resulttype = "		Returns an array of type `" + js_type_convert(param['paramtype'].replace("*","").strip()) + "` and size " + param['out_array_size'] + ".\n"
+							if "array_size" in param:
+								doc_resulttype = "		Returns an array of type `" + js_type_convert(param['paramtype']) + "` and size " + param['array_size'] + ".\n"
 								source += jsal_push_array(param, initialized_i)
 								source += "\n"
 								source += "	free (" + param['paramname'] + ");\n"
 							
 							# Else, return normally based on type.
 							else:
-								doc_resulttype = "		Returns var of type `" + js_type_convert(param['paramtype'].replace("*","").strip()) + ".\n"
-								source += "	" + jsal_push_function(param['paramtype'].replace("*", "").strip()) + param['paramname'] + ");\n"
+								doc_resulttype = "		Returns var of type `" + js_type_convert(param['paramtype']) + ".\n"
+								source += "	" + jsal_push_function(param['rawtype']) + param['paramname'] + ");\n"
 					
 					source += "\n"
 					source += "	return true;\n"
@@ -988,15 +1084,20 @@ for category in methods:
 						if param['paramname'] in out_params:
 
 							# If array.
-							if "out_array_size" in param:
+							if "array_size" in param:
 								source += jsal_push_array(param, initialized_i)
-								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype'].replace("*","").strip()) + "[" + param['out_array_size'] + "])\n")
+								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype']) + "[" + param['array_size'] + "])\n")
 								free_array_pointers_string += "	free(" + param['paramname'] + ");\n"
 							
+							elif param['rawtype'] in structs:
+								source += jsal_push_object(param['rawtype'], param['paramname'], 1)
+								for field in structs[param['rawtype']]['fields']:
+									doc_returntypes += f"			value.{param['paramname']}.{field['fieldname']} ({js_type_convert(field['fieldtype'])})\n"
+
 							# Else, return normally based on type.
 							else:
-								source += "	" + jsal_push_function(param['paramtype'].replace("*", "").strip()) + param['paramname'] + ");\n"
-								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype'].replace("*","").strip()) + ")\n")
+								source += "	" + jsal_push_function(param['rawtype']) + param['paramname'] + ");\n"
+								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype']) + ")\n")
 							
 							# Next param please.
 							source += '	jsal_put_prop_string(-2, "' + param['paramname'] + '");\n'
@@ -1041,7 +1142,7 @@ for category in methods:
 				# If first entry is returned var from steam api.
 				if "result" in out_params:
 					if not returntype in structs:
-						documentation += "			value.result (" + js_type_convert(returntype.replace("*", "").strip()) + ")\n"
+						documentation += "			value.result (" + js_type_convert(returntype) + ")\n"
 					
 					# If struct.
 					else:

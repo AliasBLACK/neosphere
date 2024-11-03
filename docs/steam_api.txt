@@ -35,11 +35,15 @@ Recurring Callbacks
 		busy.
 		The Steam client will automatically be trying to recreate the connection as often as possible.
 
-	ISteamUser.GetUserDataFolder(int pchBuffer, int cubBuffer)
+	ISteamUser.GetUserDataFolder(int cubBuffer)
 
-		Returns var of type `bool`.
 		get the local storage folder for current Steam account to write application data, e.g. save games, configs etc.
 		this will usually be something like "C:\Progam Files\Steam\userdata\<SteamID>\<AppID>\local"
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pchBuffer (string[cubBuffer])
 
 	ISteamUser.BIsBehindNAT()
 
@@ -80,20 +84,20 @@ Recurring Callbacks
 
 	ISteamUser.GetSteamID()
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		returns the CSteamID of the account currently logged into the Steam client
 		a CSteamID is a unique identifier for an account, and used to differentiate users in all parts of the Steamworks API
 
 	ISteamUser.RequestStoreAuthURL(string pchRedirectURL)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
 			result.m_szURL [512] (int)
 
 	ISteamUser.GetMarketEligibility()
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
 			result.m_bAllowed (bool)
@@ -104,7 +108,7 @@ Recurring Callbacks
 
 	ISteamUser.GetDurationControl()
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
 			result.m_eResult (int)
@@ -116,7 +120,7 @@ Recurring Callbacks
 			result.m_csecsToday (int)
 			result.m_csecsRemaining (int)
 
-	ISteamUser.TrackAppUsageEvent(int gameID, int eAppUsageEvent, string pchExtraInfo)
+	ISteamUser.TrackAppUsageEvent(int_string gameID, int eAppUsageEvent, string pchExtraInfo)
 
 		Legacy functions
 		used by only a few games to track usage events
@@ -127,7 +131,7 @@ Recurring Callbacks
 
 		k_eVoiceResultNotRecording
 
-	ISteamUser.EndAuthSession(int steamID)
+	ISteamUser.EndAuthSession(int_string steamID)
 
 		Stop tracking started by BeginAuthSession - called when no longer playing game with this entity
 
@@ -135,7 +139,7 @@ Recurring Callbacks
 
 		Cancel auth ticket from GetAuthSessionTicket, called when no longer playing game with the entity you gave the ticket to
 
-	ISteamUser.AdvertiseGame(int steamIDGameServer, int unIPServer, int usPortServer)
+	ISteamUser.AdvertiseGame(int_string steamIDGameServer, int unIPServer, int usPortServer)
 
 		set data to be replicated to friends so that they can join your game
 		CSteamID steamIDGameServer - the steamID of the game server, received from the game server by the client
@@ -155,7 +159,7 @@ Recurring Callbacks
 		pchIdentity is an optional input parameter to identify the service the ticket will be sent to
 		the ticket will be returned in callback GetTicketForWebApiResponse_t
 
-	ISteamUser.UserHasLicenseForApp(int steamID, int appID)
+	ISteamUser.UserHasLicenseForApp(int_string steamID, int appID)
 
 		Returns var of type `int`.
 		After receiving a user's authentication data, and passing it to BeginAuthSession, use this function
@@ -169,15 +173,15 @@ Recurring Callbacks
 
 		Returns var of type `string`.
 
-	ISteamFriends.GetFriendPersonaName(int steamIDFriend)
+	ISteamFriends.GetFriendPersonaName(int_string steamIDFriend)
 
 		Returns var of type `string`.
 
-	ISteamFriends.GetFriendPersonaNameHistory(int steamIDFriend, int iPersonaName)
+	ISteamFriends.GetFriendPersonaNameHistory(int_string steamIDFriend, int iPersonaName)
 
 		Returns var of type `string`.
 
-	ISteamFriends.GetPlayerNickname(int steamIDPlayer)
+	ISteamFriends.GetPlayerNickname(int_string steamIDPlayer)
 
 		Returns var of type `string`.
 
@@ -185,23 +189,23 @@ Recurring Callbacks
 
 		Returns var of type `string`.
 
-	ISteamFriends.GetClanName(int steamIDClan)
+	ISteamFriends.GetClanName(int_string steamIDClan)
 
 		Returns var of type `string`.
 
-	ISteamFriends.GetClanTag(int steamIDClan)
+	ISteamFriends.GetClanTag(int_string steamIDClan)
 
 		Returns var of type `string`.
 
-	ISteamFriends.GetFriendRichPresence(int steamIDFriend, string pchKey)
+	ISteamFriends.GetFriendRichPresence(int_string steamIDFriend, string pchKey)
 
 		Returns var of type `string`.
 
-	ISteamFriends.GetFriendRichPresenceKeyByIndex(int steamIDFriend, int iKey)
+	ISteamFriends.GetFriendRichPresenceKeyByIndex(int_string steamIDFriend, int iKey)
 
 		Returns var of type `string`.
 
-	ISteamFriends.GetProfileItemPropertyString(int steamID, int itemType, int prop)
+	ISteamFriends.GetProfileItemPropertyString(int_string steamID, int itemType, int prop)
 
 		Returns var of type `string`.
 
@@ -230,7 +234,7 @@ Recurring Callbacks
 
 	ISteamFriends.SetPersonaName(string pchPersonaName)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
 			result.m_bSuccess (bool)
@@ -239,94 +243,94 @@ Recurring Callbacks
 
 	ISteamFriends.GetFriendByIndex(int iFriend, int iFriendFlags)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		the returned CSteamID can then be used by all the functions below to access details about the user
 
 	ISteamFriends.GetClanByIndex(int iClan)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 
-	ISteamFriends.DownloadClanActivityCounts(int cClansToRequest)
+	ISteamFriends.DownloadClanActivityCounts(int_string[] psteamIDClans)
 
-		Returns a javascript object with the following members:
-
-			value.result (int)
-			value.psteamIDClans (int)
-
-	ISteamFriends.GetFriendFromSourceByIndex(int steamIDSource, int iFriend)
-
-		Returns var of type `int`.
-
-	ISteamFriends.RequestClanOfficerList(int steamIDClan)
-
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
-			result.m_steamIDClan (int)
+			result.m_bSuccess (bool)
+
+	ISteamFriends.GetFriendFromSourceByIndex(int_string steamIDSource, int iFriend)
+
+		Returns var of type `int_string`.
+
+	ISteamFriends.RequestClanOfficerList(int_string steamIDClan)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_steamIDClan (int_string)
 			result.m_cOfficers (int)
 			result.m_bSuccess (int)
 
-	ISteamFriends.GetClanOwner(int steamIDClan)
+	ISteamFriends.GetClanOwner(int_string steamIDClan)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		returns the steamID of the clan owner
 
-	ISteamFriends.GetClanOfficerByIndex(int steamIDClan, int iOfficer)
+	ISteamFriends.GetClanOfficerByIndex(int_string steamIDClan, int iOfficer)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		returns the steamID of a clan officer, by index, of range [0,GetClanOfficerCount)
 
 	ISteamFriends.GetCoplayFriend(int iCoplayFriend)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 
-	ISteamFriends.JoinClanChatRoom(int steamIDClan)
+	ISteamFriends.JoinClanChatRoom(int_string steamIDClan)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
-			result.m_steamIDClanChat (int)
+			result.m_steamIDClanChat (int_string)
 			result.m_eChatRoomEnterResponse (int)
 
-	ISteamFriends.GetChatMemberByIndex(int steamIDClan, int iUser)
+	ISteamFriends.GetChatMemberByIndex(int_string steamIDClan, int iUser)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 
-	ISteamFriends.GetFollowerCount(int steamID)
+	ISteamFriends.GetFollowerCount(int_string steamID)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
 			result.m_eResult (int)
-			result.m_steamID (int)
+			result.m_steamID (int_string)
 			result.m_nCount (int)
 
-	ISteamFriends.IsFollowing(int steamID)
+	ISteamFriends.IsFollowing(int_string steamID)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
 			result.m_eResult (int)
-			result.m_steamID (int)
+			result.m_steamID (int_string)
 			result.m_bIsFollowing (bool)
 
 	ISteamFriends.EnumerateFollowingList(int unStartIndex)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
 			result.m_eResult (int)
-			result.m_rgSteamID [50] (int)
+			result.m_rgSteamID [50] (int_string)
 			result.m_nResultsReturned (int)
 			result.m_nTotalResultCount (int)
 
-	ISteamFriends.RequestEquippedProfileItems(int steamID)
+	ISteamFriends.RequestEquippedProfileItems(int_string steamID)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
 			result.m_eResult (int)
-			result.m_steamID (int)
+			result.m_steamID (int_string)
 			result.m_bHasAnimatedAvatar (bool)
 			result.m_bHasAvatarFrame (bool)
 			result.m_bHasProfileModifier (bool)
@@ -338,12 +342,12 @@ Recurring Callbacks
 		Returns var of type `int`.
 		gets the status of the current user
 
-	ISteamFriends.GetFriendRelationship(int steamIDFriend)
+	ISteamFriends.GetFriendRelationship(int_string steamIDFriend)
 
 		Returns var of type `int`.
 		returns a relationship to a user
 
-	ISteamFriends.GetFriendPersonaState(int steamIDFriend)
+	ISteamFriends.GetFriendPersonaState(int_string steamIDFriend)
 
 		Returns var of type `int`.
 		returns the current status of the specified user
@@ -358,11 +362,11 @@ Recurring Callbacks
 		recv game invites.
 		a chat restricted user can't add friends or join any groups.
 
-	ISteamFriends.GetFriendCoplayGame(int steamIDFriend)
+	ISteamFriends.GetFriendCoplayGame(int_string steamIDFriend)
 
 		Returns var of type `int`.
 
-	ISteamFriends.GetProfileItemPropertyUint(int steamID, int itemType, int prop)
+	ISteamFriends.GetProfileItemPropertyUint(int_string steamID, int itemType, int prop)
 
 		Returns var of type `int`.
 
@@ -393,7 +397,7 @@ Recurring Callbacks
 
 		Returns var of type `int`.
 
-	ISteamFriends.GetFriendSteamLevel(int steamIDFriend)
+	ISteamFriends.GetFriendSteamLevel(int_string steamIDFriend)
 
 		Returns var of type `int`.
 		friends steam level
@@ -412,7 +416,7 @@ Recurring Callbacks
 
 		Returns var of type `int`.
 
-	ISteamFriends.GetFriendCountFromSource(int steamIDSource)
+	ISteamFriends.GetFriendCountFromSource(int_string steamIDSource)
 
 		Returns var of type `int`.
 		iterators for getting users in a chat room, lobby, game server or clan
@@ -420,24 +424,24 @@ Recurring Callbacks
 		note that the current user must be in a lobby to retrieve CSteamIDs of other users in that lobby
 		steamIDSource can be the steamID of a group, game server, lobby or chat room
 
-	ISteamFriends.GetSmallFriendAvatar(int steamIDFriend)
+	ISteamFriends.GetSmallFriendAvatar(int_string steamIDFriend)
 
 		Returns var of type `int`.
 
-	ISteamFriends.GetMediumFriendAvatar(int steamIDFriend)
+	ISteamFriends.GetMediumFriendAvatar(int_string steamIDFriend)
 
 		Returns var of type `int`.
 
-	ISteamFriends.GetLargeFriendAvatar(int steamIDFriend)
+	ISteamFriends.GetLargeFriendAvatar(int_string steamIDFriend)
 
 		Returns var of type `int`.
 		returns -1 if this image has yet to be loaded, in this case wait for a AvatarImageLoaded_t callback and then call this again
 
-	ISteamFriends.GetClanOfficerCount(int steamIDClan)
+	ISteamFriends.GetClanOfficerCount(int_string steamIDClan)
 
 		Returns var of type `int`.
 
-	ISteamFriends.GetFriendRichPresenceKeyCount(int steamIDFriend)
+	ISteamFriends.GetFriendRichPresenceKeyCount(int_string steamIDFriend)
 
 		Returns var of type `int`.
 
@@ -445,11 +449,11 @@ Recurring Callbacks
 
 		Returns var of type `int`.
 
-	ISteamFriends.GetFriendCoplayTime(int steamIDFriend)
+	ISteamFriends.GetFriendCoplayTime(int_string steamIDFriend)
 
 		Returns var of type `int`.
 
-	ISteamFriends.GetClanChatMemberCount(int steamIDClan)
+	ISteamFriends.GetClanChatMemberCount(int_string steamIDClan)
 
 		Returns var of type `int`.
 
@@ -461,16 +465,124 @@ Recurring Callbacks
 		You can register for UnreadChatMessagesChanged_t callbacks to know when this
 		has potentially changed.
 
+	ISteamFriends.GetFriendGamePlayed(int_string steamIDFriend)
+
+		returns true if the friend is actually in a game, and fills in pFriendGameInfo with an extra details
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pFriendGameInfo.m_gameID (int_string)
+			value.pFriendGameInfo.m_unGameIP (int)
+			value.pFriendGameInfo.m_usGamePort (int)
+			value.pFriendGameInfo.m_usQueryPort (int)
+			value.pFriendGameInfo.m_steamIDLobby (int_string)
+
+	ISteamFriends.HasFriend(int_string steamIDFriend, int iFriendFlags)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.GetClanActivityCounts(int_string steamIDClan)
+
+		returns the most recent information we have about what's happening in a clan
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pnOnline (int)
+			value.pnInGame (int)
+			value.pnChatting (int)
+
+	ISteamFriends.IsUserInSource(int_string steamIDUser, int_string steamIDSource)
+
+		Returns var of type `bool`.
+		returns true if the local user can see that steamIDUser is a member or in steamIDSource
+
+	ISteamFriends.RequestUserInformation(int_string steamIDUser, bool bRequireNameOnly)
+
+		Returns var of type `bool`.
+		requests information about a user - persona name & avatar
+		if bRequireNameOnly is set, then the avatar of a user isn't downloaded
+		- it's a lot slower to download avatars and churns the local cache, so if you don't need avatars, don't request them
+		if returns true, it means that data is being requested, and a PersonaStateChanged_t callback will be posted when it's retrieved
+		if returns false, it means that we already have all the details about that user, and functions can be called immediately
+
+	ISteamFriends.SetRichPresence(string pchKey, string pchValue)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.InviteUserToGame(int_string steamIDFriend, string pchConnectString)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.LeaveClanChatRoom(int_string steamIDClan)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.SendClanChatMessage(int_string steamIDClanChat, string pchText)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.IsClanChatAdmin(int_string steamIDClanChat, int_string steamIDUser)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.IsClanChatWindowOpenInSteam(int_string steamIDClanChat)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.OpenClanChatWindowInSteam(int_string steamIDClanChat)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.CloseClanChatWindowInSteam(int_string steamIDClanChat)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.SetListenForFriendsMessages(bool bInterceptEnabled)
+
+		Returns var of type `bool`.
+		peer-to-peer chat interception
+		this is so you can show P2P chats inline in the game
+
+	ISteamFriends.ReplyToFriendMessage(int_string steamIDFriend, string pchMsgToSend)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.IsClanPublic(int_string steamIDClan)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.IsClanOfficialGameGroup(int_string steamIDClan)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.RegisterProtocolInOverlayBrowser(string pchProtocol)
+
+		Returns var of type `bool`.
+
+	ISteamFriends.BHasEquippedProfileItem(int_string steamID, int itemType)
+
+		Returns var of type `bool`.
+
+		itemType is an enum with the following members:
+
+			ECommunityProfileItemType.k_ECommunityProfileItemType_AnimatedAvatar
+			ECommunityProfileItemType.k_ECommunityProfileItemType_AvatarFrame
+			ECommunityProfileItemType.k_ECommunityProfileItemType_ProfileModifier
+			ECommunityProfileItemType.k_ECommunityProfileItemType_ProfileBackground
+			ECommunityProfileItemType.k_ECommunityProfileItemType_MiniProfileBackground
+
 	ISteamFriends.GetFriendsGroupIDByIndex(int iFG)
 
 		Returns var of type `int`.
 
 	ISteamFriends.GetFriendsGroupMembersList(int friendsGroupID, int nMembersCount)
 
-		Returns an array of type `int` and size nMembersCount.
+		Returns an array of type `int_string` and size nMembersCount.
 		gets up to nMembersCount members of the given friends group, if fewer exist than requested those positions' SteamIDs will be invalid
 
-	ISteamFriends.SetInGameVoiceSpeaking(int steamIDUser, bool bSpeaking)
+	ISteamFriends.SetInGameVoiceSpeaking(int_string steamIDUser, bool bSpeaking)
 
 	ISteamFriends.ActivateGameOverlay(string pchDialog)
 
@@ -479,7 +591,7 @@ Recurring Callbacks
 		"chatroomgroup
 		nnnn"
 
-	ISteamFriends.ActivateGameOverlayToUser(string pchDialog, int steamID)
+	ISteamFriends.ActivateGameOverlayToUser(string pchDialog, int_string steamID)
 
 		activates game overlay to a specific place
 		valid options are
@@ -515,123 +627,28 @@ Recurring Callbacks
 			EOverlayToStoreFlag.k_EOverlayToStoreFlag_AddToCart
 			EOverlayToStoreFlag.k_EOverlayToStoreFlag_AddToCartAndShow
 
-	ISteamFriends.SetPlayedWith(int steamIDUserPlayedWith)
+	ISteamFriends.SetPlayedWith(int_string steamIDUserPlayedWith)
 
 		Mark a target user as 'played with'. This is a client-side only feature that requires that the calling user is
 		in game
 
-	ISteamFriends.ActivateGameOverlayInviteDialog(int steamIDLobby)
+	ISteamFriends.ActivateGameOverlayInviteDialog(int_string steamIDLobby)
 
 		activates game overlay to open the invite dialog. Invitations will be sent for the provided lobby.
 
 	ISteamFriends.ClearRichPresence()
 
-	ISteamFriends.RequestFriendRichPresence(int steamIDFriend)
+	ISteamFriends.RequestFriendRichPresence(int_string steamIDFriend)
 
 		Requests rich presence for a specific user.
 
-	ISteamFriends.ActivateGameOverlayRemotePlayTogetherInviteDialog(int steamIDLobby)
+	ISteamFriends.ActivateGameOverlayRemotePlayTogetherInviteDialog(int_string steamIDLobby)
 
 		activates game overlay to open the remote play together invite dialog. Invitations will be sent for remote play together
 
 	ISteamFriends.ActivateGameOverlayInviteDialogConnectString(string pchConnectString)
 
 		Activates the game overlay to open an invite dialog that will send the provided Rich Presence connect string to selected friends
-
-	ISteamFriends.HasFriend(int steamIDFriend, int iFriendFlags)
-
-		Returns var of type `bool`.
-
-	ISteamFriends.GetClanActivityCounts(int steamIDClan)
-
-		returns the most recent information we have about what's happening in a clan
-
-		Returns a javascript object with the following members:
-
-			value.result (bool)
-			value.pnOnline (int)
-			value.pnInGame (int)
-			value.pnChatting (int)
-
-	ISteamFriends.IsUserInSource(int steamIDUser, int steamIDSource)
-
-		Returns var of type `bool`.
-		returns true if the local user can see that steamIDUser is a member or in steamIDSource
-
-	ISteamFriends.RequestUserInformation(int steamIDUser, bool bRequireNameOnly)
-
-		Returns var of type `bool`.
-		requests information about a user - persona name & avatar
-		if bRequireNameOnly is set, then the avatar of a user isn't downloaded
-		- it's a lot slower to download avatars and churns the local cache, so if you don't need avatars, don't request them
-		if returns true, it means that data is being requested, and a PersonaStateChanged_t callback will be posted when it's retrieved
-		if returns false, it means that we already have all the details about that user, and functions can be called immediately
-
-	ISteamFriends.SetRichPresence(string pchKey, string pchValue)
-
-		Returns var of type `bool`.
-
-	ISteamFriends.InviteUserToGame(int steamIDFriend, string pchConnectString)
-
-		Returns var of type `bool`.
-
-	ISteamFriends.LeaveClanChatRoom(int steamIDClan)
-
-		Returns var of type `bool`.
-
-	ISteamFriends.SendClanChatMessage(int steamIDClanChat, string pchText)
-
-		Returns var of type `bool`.
-
-	ISteamFriends.IsClanChatAdmin(int steamIDClanChat, int steamIDUser)
-
-		Returns var of type `bool`.
-
-	ISteamFriends.IsClanChatWindowOpenInSteam(int steamIDClanChat)
-
-		Returns var of type `bool`.
-
-	ISteamFriends.OpenClanChatWindowInSteam(int steamIDClanChat)
-
-		Returns var of type `bool`.
-
-	ISteamFriends.CloseClanChatWindowInSteam(int steamIDClanChat)
-
-		Returns var of type `bool`.
-
-	ISteamFriends.SetListenForFriendsMessages(bool bInterceptEnabled)
-
-		Returns var of type `bool`.
-		peer-to-peer chat interception
-		this is so you can show P2P chats inline in the game
-
-	ISteamFriends.ReplyToFriendMessage(int steamIDFriend, string pchMsgToSend)
-
-		Returns var of type `bool`.
-
-	ISteamFriends.IsClanPublic(int steamIDClan)
-
-		Returns var of type `bool`.
-
-	ISteamFriends.IsClanOfficialGameGroup(int steamIDClan)
-
-		Returns var of type `bool`.
-
-	ISteamFriends.RegisterProtocolInOverlayBrowser(string pchProtocol)
-
-		Returns var of type `bool`.
-
-	ISteamFriends.BHasEquippedProfileItem(int steamID, int itemType)
-
-		Returns var of type `bool`.
-
-		itemType is an enum with the following members:
-
-			ECommunityProfileItemType.k_ECommunityProfileItemType_AnimatedAvatar
-			ECommunityProfileItemType.k_ECommunityProfileItemType_AvatarFrame
-			ECommunityProfileItemType.k_ECommunityProfileItemType_ProfileModifier
-			ECommunityProfileItemType.k_ECommunityProfileItemType_ProfileBackground
-			ECommunityProfileItemType.k_ECommunityProfileItemType_MiniProfileBackground
 
 
 `ISteamUtils` Interface
@@ -660,7 +677,7 @@ Recurring Callbacks
 		Returns var of type `int`.
 		returns the appID of the current process
 
-	ISteamUtils.GetAPICallFailureReason(int hSteamAPICall)
+	ISteamUtils.GetAPICallFailureReason(int_string hSteamAPICall)
 
 		Returns var of type `int`.
 
@@ -712,9 +729,9 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pubDest (int)
+			value.pubDest (int[nDestBufferSize])
 
-	ISteamUtils.IsAPICallCompleted(int hSteamAPICall)
+	ISteamUtils.IsAPICallCompleted(int_string hSteamAPICall)
 
 		Returns a javascript object with the following members:
 
@@ -747,9 +764,12 @@ Recurring Callbacks
 			EGamepadTextInputLineMode.k_EGamepadTextInputLineModeSingleLine
 			EGamepadTextInputLineMode.k_EGamepadTextInputLineModeMultipleLines
 
-	ISteamUtils.GetEnteredGamepadTextInput(int pchText, int cchText)
+	ISteamUtils.GetEnteredGamepadTextInput(int cchText)
 
-		Returns var of type `bool`.
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pchText (string[cchText])
 
 	ISteamUtils.IsSteamRunningInVR()
 
@@ -840,14 +860,12 @@ Recurring Callbacks
 
 	ISteamUtils.CheckFileSignature(string szFileName)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
 			result.m_eCheckFileSignature (int)
 
-	ISteamUtils.FilterText(int eContext, int sourceSteamID, string pchInputMessage, int pchOutFilteredText, int nByteSizeOutFilteredText)
-
-		Returns var of type `int`.
+	ISteamUtils.FilterText(int eContext, int_string sourceSteamID, string pchInputMessage, int nByteSizeOutFilteredText)
 
 		eContext is an enum with the following members:
 
@@ -855,6 +873,11 @@ Recurring Callbacks
 			ETextFilteringContext.k_ETextFilteringContextGameContent
 			ETextFilteringContext.k_ETextFilteringContextChat
 			ETextFilteringContext.k_ETextFilteringContextName
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pchOutFilteredText (string[nByteSizeOutFilteredText])
 
 
 `ISteamUserStats` Interface
@@ -932,28 +955,28 @@ Recurring Callbacks
 		Calling this w
 		N out of N progress will NOT set the achievement, the game must still do that.
 
-	ISteamUserStats.GetUserStatInt32(int steamIDUser, string pchName)
+	ISteamUserStats.GetUserStatInt32(int_string steamIDUser, string pchName)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
 			value.pData (int)
 
-	ISteamUserStats.GetUserStatFloat(int steamIDUser, string pchName)
+	ISteamUserStats.GetUserStatFloat(int_string steamIDUser, string pchName)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
 			value.pData (float)
 
-	ISteamUserStats.GetUserAchievement(int steamIDUser, string pchName)
+	ISteamUserStats.GetUserAchievement(int_string steamIDUser, string pchName)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
 			value.pbAchieved (bool)
 
-	ISteamUserStats.GetUserAchievementAndUnlockTime(int steamIDUser, string pchName)
+	ISteamUserStats.GetUserAchievementAndUnlockTime(int_string steamIDUser, string pchName)
 
 		See notes for GetAchievementAndUnlockTime above
 
@@ -968,6 +991,18 @@ Recurring Callbacks
 		Returns var of type `bool`.
 		Reset stats
 
+	ISteamUserStats.GetDownloadedLeaderboardEntry(int_string hSteamLeaderboardEntries, int index, int cDetailsMax)
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pLeaderboardEntry.m_steamIDUser (int_string)
+			value.pLeaderboardEntry.m_nGlobalRank (int)
+			value.pLeaderboardEntry.m_nScore (int)
+			value.pLeaderboardEntry.m_cDetails (int)
+			value.pLeaderboardEntry.m_hUGC (int_string)
+			value.pDetails (int[cDetailsMax])
+
 	ISteamUserStats.GetAchievementAchievedPercent(string pchName)
 
 		Returns a javascript object with the following members:
@@ -980,7 +1015,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pData (int)
+			value.pData (int_string)
 
 	ISteamUserStats.GetGlobalStatDouble(string pchStatName)
 
@@ -1012,24 +1047,26 @@ Recurring Callbacks
 		which will notify you when the bits are ready. If the callback still returns zero, then there is no image set for the
 		specified achievement.
 
-	ISteamUserStats.GetLeaderboardEntryCount(int hSteamLeaderboard)
+	ISteamUserStats.GetLeaderboardEntryCount(int_string hSteamLeaderboard)
 
 		Returns var of type `int`.
 		returns the total number of entries in a leaderboard, as of the last request
 
-	ISteamUserStats.GetMostAchievedAchievementInfo(int pchName, int unNameBufLen)
+	ISteamUserStats.GetMostAchievedAchievementInfo(int unNameBufLen)
 
 		Returns a javascript object with the following members:
 
 			value.result (int)
+			value.pchName (string[unNameBufLen])
 			value.pflPercent (float)
 			value.pbAchieved (bool)
 
-	ISteamUserStats.GetNextMostAchievedAchievementInfo(int iIteratorPrevious, int pchName, int unNameBufLen)
+	ISteamUserStats.GetNextMostAchievedAchievementInfo(int iIteratorPrevious, int unNameBufLen)
 
 		Returns a javascript object with the following members:
 
 			value.result (int)
+			value.pchName (string[unNameBufLen])
 			value.pflPercent (float)
 			value.pbAchieved (bool)
 
@@ -1038,7 +1075,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.pData (int[cubData])
+			value.pData (int_string[cubData])
 
 	ISteamUserStats.GetGlobalStatHistoryDouble(string pchStatName, int cubData)
 
@@ -1055,7 +1092,7 @@ Recurring Callbacks
 
 		Returns var of type `string`.
 
-	ISteamUserStats.GetLeaderboardName(int hSteamLeaderboard)
+	ISteamUserStats.GetLeaderboardName(int_string hSteamLeaderboard)
 
 		Returns var of type `string`.
 
@@ -1065,31 +1102,31 @@ Recurring Callbacks
 		Used for iterating achievements. In general games should not need these functions because they should have a
 		list of existing achievements compiled into them
 
-	ISteamUserStats.GetLeaderboardSortMethod(int hSteamLeaderboard)
+	ISteamUserStats.GetLeaderboardSortMethod(int_string hSteamLeaderboard)
 
 		Returns var of type `int`.
 		returns the sort method of the leaderboard
 
-	ISteamUserStats.GetLeaderboardDisplayType(int hSteamLeaderboard)
+	ISteamUserStats.GetLeaderboardDisplayType(int_string hSteamLeaderboard)
 
 		Returns var of type `int`.
 		returns the display type of the leaderboard
 
-	ISteamUserStats.RequestUserStats(int steamIDUser)
+	ISteamUserStats.RequestUserStats(int_string steamIDUser)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
-			result.m_nGameID (int)
+			result.m_nGameID (int_string)
 			result.m_eResult (int)
-			result.m_steamIDUser (int)
+			result.m_steamIDUser (int_string)
 
 	ISteamUserStats.FindOrCreateLeaderboard(string pchLeaderboardName, int eLeaderboardSortMethod, int eLeaderboardDisplayType)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
-			result.m_hSteamLeaderboard (int)
+			result.m_hSteamLeaderboard (int_string)
 			result.m_bLeaderboardFound (int)
 
 		eLeaderboardSortMethod is an enum with the following members:
@@ -1107,19 +1144,19 @@ Recurring Callbacks
 
 	ISteamUserStats.FindLeaderboard(string pchLeaderboardName)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
-			result.m_hSteamLeaderboard (int)
+			result.m_hSteamLeaderboard (int_string)
 			result.m_bLeaderboardFound (int)
 
-	ISteamUserStats.DownloadLeaderboardEntries(int hSteamLeaderboard, int eLeaderboardDataRequest, int nRangeStart, int nRangeEnd)
+	ISteamUserStats.DownloadLeaderboardEntries(int_string hSteamLeaderboard, int eLeaderboardDataRequest, int nRangeStart, int nRangeEnd)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
-			result.m_hSteamLeaderboard (int)
-			result.m_hSteamLeaderboardEntries (int)
+			result.m_hSteamLeaderboard (int_string)
+			result.m_hSteamLeaderboardEntries (int_string)
 			result.m_cEntryCount (int)
 
 		eLeaderboardDataRequest is an enum with the following members:
@@ -1129,14 +1166,26 @@ Recurring Callbacks
 			ELeaderboardDataRequest.k_ELeaderboardDataRequestFriends
 			ELeaderboardDataRequest.k_ELeaderboardDataRequestUsers
 
-	ISteamUserStats.DownloadLeaderboardEntriesForUsers(int hSteamLeaderboard, int cUsers)
+	ISteamUserStats.DownloadLeaderboardEntriesForUsers(int_string hSteamLeaderboard, int_string[] prgUsers)
 
-		Returns a javascript object with the following members:
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
 
-			value.result (int)
-			value.prgUsers (int)
+			result.m_hSteamLeaderboard (int_string)
+			result.m_hSteamLeaderboardEntries (int_string)
+			result.m_cEntryCount (int)
 
-	ISteamUserStats.UploadLeaderboardScore(int hSteamLeaderboard, int eLeaderboardUploadScoreMethod, int nScore, int cScoreDetailsCount)
+	ISteamUserStats.UploadLeaderboardScore(int_string hSteamLeaderboard, int eLeaderboardUploadScoreMethod, int nScore, int[] pScoreDetails)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_bSuccess (int)
+			result.m_hSteamLeaderboard (int_string)
+			result.m_nScore (int)
+			result.m_bScoreChanged (int)
+			result.m_nGlobalRankNew (int)
+			result.m_nGlobalRankPrevious (int)
 
 		eLeaderboardUploadScoreMethod is an enum with the following members:
 
@@ -1144,22 +1193,17 @@ Recurring Callbacks
 			ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodKeepBest
 			ELeaderboardUploadScoreMethod.k_ELeaderboardUploadScoreMethodForceUpdate
 
-		Returns a javascript object with the following members:
+	ISteamUserStats.AttachLeaderboardUGC(int_string hSteamLeaderboard, int_string hUGC)
 
-			value.result (int)
-			value.pScoreDetails (int)
-
-	ISteamUserStats.AttachLeaderboardUGC(int hSteamLeaderboard, int hUGC)
-
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
 			result.m_eResult (int)
-			result.m_hSteamLeaderboard (int)
+			result.m_hSteamLeaderboard (int_string)
 
 	ISteamUserStats.GetNumberOfCurrentPlayers()
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
 			result.m_bSuccess (int)
@@ -1167,18 +1211,18 @@ Recurring Callbacks
 
 	ISteamUserStats.RequestGlobalAchievementPercentages()
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
-			result.m_nGameID (int)
+			result.m_nGameID (int_string)
 			result.m_eResult (int)
 
 	ISteamUserStats.RequestGlobalStats(int nHistoryDays)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
-			result.m_nGameID (int)
+			result.m_nGameID (int_string)
 			result.m_eResult (int)
 
 
@@ -1218,17 +1262,21 @@ Recurring Callbacks
 		This function will return false for users who have a retail or other type of license
 		Before using, please ask your Valve technical contact how to package and secure your free weekened
 
-	ISteamApps.BGetDLCDataByIndex(int iDLC, int pchName, int cchNameBufferSize)
+	ISteamApps.BGetDLCDataByIndex(int iDLC, int cchNameBufferSize)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
 			value.pAppID (int)
 			value.pbAvailable (bool)
+			value.pchName (string[cchNameBufferSize])
 
-	ISteamApps.GetCurrentBetaName(int pchName, int cchNameBufferSize)
+	ISteamApps.GetCurrentBetaName(int cchNameBufferSize)
 
-		Returns var of type `bool`.
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pchName (string[cchNameBufferSize])
 
 	ISteamApps.MarkContentCorrupt(bool bMissingFilesOnly)
 
@@ -1245,8 +1293,8 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.punBytesDownloaded (int)
-			value.punBytesTotal (int)
+			value.punBytesDownloaded (int_string)
+			value.punBytesTotal (int_string)
 
 	ISteamApps.BIsSubscribedFromFamilySharing()
 
@@ -1288,12 +1336,16 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.pvecDepots (int)
+			value.pvecDepots (int[cMaxDepots])
 
-	ISteamApps.GetAppInstallDir(int appID, int pchFolder, int cchFolderBufferSize)
+	ISteamApps.GetAppInstallDir(int appID, int cchFolderBufferSize)
 
-		Returns var of type `int`.
 		returns current app install folder for AppID, returns folder name length
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pchFolder (string[cchFolderBufferSize])
 
 	ISteamApps.GetDLCCount()
 
@@ -1305,9 +1357,8 @@ Recurring Callbacks
 		Returns var of type `int`.
 		return the buildid of this app, may change at any time based on backend updates to the game
 
-	ISteamApps.GetLaunchCommandLine(int pszCommandLine, int cubCommandLine)
+	ISteamApps.GetLaunchCommandLine(int cubCommandLine)
 
-		Returns var of type `int`.
 		Get command line if game was launched via Steam URL, e.g. steam:
 		run
 		<appid>
@@ -1319,6 +1370,11 @@ Recurring Callbacks
 		path and not be placed on the OS command line, you must set a value in your app's
 		configuration on Steam.  Ask Valve for help with this.
 		If game was already running and launched again, the NewUrlLaunchParameters_t will be fired.
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pszCommandLine (string[cubCommandLine])
 
 	ISteamApps.InstallDLC(int nAppID)
 
@@ -1333,16 +1389,16 @@ Recurring Callbacks
 
 	ISteamApps.GetAppOwner()
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		the user has a temporary license borrowed via Family Sharing
 
 	ISteamApps.GetFileDetails(string pszFileName)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
 			result.m_eResult (int)
-			result.m_ulFileSize (int)
+			result.m_ulFileSize (int_string)
 			result.m_FileSHA [20] (int)
 			result.m_unFlags (int)
 
@@ -1376,7 +1432,7 @@ Recurring Callbacks
 
 		Returns var of type `bool`.
 
-	ISteamInput.ShowBindingPanel(int inputHandle)
+	ISteamInput.ShowBindingPanel(int_string inputHandle)
 
 		Returns var of type `bool`.
 		-----------------------------------------------------------------------------
@@ -1385,7 +1441,7 @@ Recurring Callbacks
 		Invokes the Steam overlay and brings up the binding screen if the user is using Big Picture Mode
 		If the user is not in Big Picture Mode it will open up the binding in a new window
 
-	ISteamInput.GetDeviceBindingRevision(int inputHandle)
+	ISteamInput.GetDeviceBindingRevision(int_string inputHandle)
 
 		Get the binding revision for a given device. Returns false if the handle was not valid or if a mapping is not yet loaded for the device
 
@@ -1409,35 +1465,35 @@ Recurring Callbacks
 		Each controller that is already connected will generate a device connected
 		callback when you enable them
 
-	ISteamInput.ActivateActionSet(int inputHandle, int actionSetHandle)
+	ISteamInput.ActivateActionSet(int_string inputHandle, int_string actionSetHandle)
 
 		This is cheap, and can be safely called repeatedly. It's often easier to repeatedly call it in
 		your state loops, instead of trying to place it in all of your state transitions.
 
-	ISteamInput.ActivateActionSetLayer(int inputHandle, int actionSetLayerHandle)
+	ISteamInput.ActivateActionSetLayer(int_string inputHandle, int_string actionSetLayerHandle)
 
 		ACTION SET LAYERS
 
-	ISteamInput.DeactivateActionSetLayer(int inputHandle, int actionSetLayerHandle)
+	ISteamInput.DeactivateActionSetLayer(int_string inputHandle, int_string actionSetLayerHandle)
 
-	ISteamInput.DeactivateAllActionSetLayers(int inputHandle)
+	ISteamInput.DeactivateAllActionSetLayers(int_string inputHandle)
 
-	ISteamInput.StopAnalogActionMomentum(int inputHandle, int eAction)
+	ISteamInput.StopAnalogActionMomentum(int_string inputHandle, int_string eAction)
 
 		Stop analog momentum for the action if it is a mouse action in trackball mode
 
-	ISteamInput.TriggerVibration(int inputHandle, int usLeftSpeed, int usRightSpeed)
+	ISteamInput.TriggerVibration(int_string inputHandle, int usLeftSpeed, int usRightSpeed)
 
 		-----------------------------------------------------------------------------
 		OUTPUTS
 		-----------------------------------------------------------------------------
 		Trigger a vibration event on supported controllers - Steam will translate these commands into haptic pulses for Steam Controllers
 
-	ISteamInput.TriggerVibrationExtended(int inputHandle, int usLeftSpeed, int usRightSpeed, int usLeftTriggerSpeed, int usRightTriggerSpeed)
+	ISteamInput.TriggerVibrationExtended(int_string inputHandle, int usLeftSpeed, int usRightSpeed, int usLeftTriggerSpeed, int usRightTriggerSpeed)
 
 		Trigger a vibration event on supported controllers including Xbox trigger impulse rumble - Steam will translate these commands into haptic pulses for Steam Controllers
 
-	ISteamInput.TriggerSimpleHapticEvent(int inputHandle, int eHapticLocation, int nIntensity, int nGainDB, int nOtherIntensity, int nOtherGainDB)
+	ISteamInput.TriggerSimpleHapticEvent(int_string inputHandle, int eHapticLocation, int nIntensity, int nGainDB, int nOtherIntensity, int nOtherGainDB)
 
 		Send a haptic pulse, works on Steam Deck and Steam Controller devices
 
@@ -1447,19 +1503,19 @@ Recurring Callbacks
 			EControllerHapticLocation.k_EControllerHapticLocation_Right
 			EControllerHapticLocation.k_EControllerHapticLocation_Both
 
-	ISteamInput.SetLEDColor(int inputHandle, int nColorR, int nColorG, int nColorB, int nFlags)
+	ISteamInput.SetLEDColor(int_string inputHandle, int nColorR, int nColorG, int nColorB, int nFlags)
 
 		Set the controller LED color on supported controllers. nFlags is a bitmask of values from ESteamInputLEDFlag - 0 will default to setting a color. Steam will handle
 		the behavior on exit of your program so you don't need to try restore the default as you are shutting down
 
-	ISteamInput.TriggerHapticPulse(int inputHandle, int eTargetPad, int usDurationMicroSec)
+	ISteamInput.TriggerHapticPulse(int_string inputHandle, int eTargetPad, int usDurationMicroSec)
 
 		eTargetPad is an enum with the following members:
 
 			ESteamControllerPad.k_ESteamControllerPad_Left
 			ESteamControllerPad.k_ESteamControllerPad_Right
 
-	ISteamInput.TriggerRepeatedHapticPulse(int inputHandle, int eTargetPad, int usDurationMicroSec, int usOffMicroSec, int unRepeat, int nFlags)
+	ISteamInput.TriggerRepeatedHapticPulse(int_string inputHandle, int eTargetPad, int usDurationMicroSec, int usOffMicroSec, int unRepeat, int nFlags)
 
 		eTargetPad is an enum with the following members:
 
@@ -1475,9 +1531,9 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.handlesOut (int[16])
+			value.handlesOut (int_string[16])
 
-	ISteamInput.GetActiveActionSetLayers(int inputHandle)
+	ISteamInput.GetActiveActionSetLayers(int_string inputHandle)
 
 		Enumerate currently active layers.
 		handlesOut should point to a STEAM_INPUT_MAX_ACTIVE_LAYERS sized array of InputActionSetHandle_t handles
@@ -1486,19 +1542,9 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.handlesOut (int[16])
+			value.handlesOut (int_string[16])
 
-	ISteamInput.GetDigitalActionOrigins(int inputHandle, int actionSetHandle, int digitalActionHandle)
-
-		originsOut should point to a STEAM_INPUT_MAX_ORIGINS sized array of EInputActionOrigin handles. The EInputActionOrigin enum will get extended as support for new controller controllers gets added to
-		the Steam client and will exceed the values from this header, please check bounds if you are using a look up table.
-
-		Returns a javascript object with the following members:
-
-			value.result (int)
-			value.originsOut (int[8])
-
-	ISteamInput.GetAnalogActionOrigins(int inputHandle, int actionSetHandle, int analogActionHandle)
+	ISteamInput.GetDigitalActionOrigins(int_string inputHandle, int_string actionSetHandle, int_string digitalActionHandle)
 
 		originsOut should point to a STEAM_INPUT_MAX_ORIGINS sized array of EInputActionOrigin handles. The EInputActionOrigin enum will get extended as support for new controller controllers gets added to
 		the Steam client and will exceed the values from this header, please check bounds if you are using a look up table.
@@ -1508,26 +1554,36 @@ Recurring Callbacks
 			value.result (int)
 			value.originsOut (int[8])
 
-	ISteamInput.GetGamepadIndexForController(int ulinputHandle)
+	ISteamInput.GetAnalogActionOrigins(int_string inputHandle, int_string actionSetHandle, int_string analogActionHandle)
+
+		originsOut should point to a STEAM_INPUT_MAX_ORIGINS sized array of EInputActionOrigin handles. The EInputActionOrigin enum will get extended as support for new controller controllers gets added to
+		the Steam client and will exceed the values from this header, please check bounds if you are using a look up table.
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.originsOut (int[8])
+
+	ISteamInput.GetGamepadIndexForController(int_string ulinputHandle)
 
 		Returns var of type `int`.
 		Returns the associated gamepad index for the specified controller, if emulating a gamepad or -1 if not associated with an Xinput index
 
 	ISteamInput.GetActionSetHandle(string pszActionSetName)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		-----------------------------------------------------------------------------
 		ACTION SETS
 		-----------------------------------------------------------------------------
 		Lookup the handle for an Action Set. Best to do this once on startup, and store the handles for all future API calls.
 
-	ISteamInput.GetCurrentActionSet(int inputHandle)
+	ISteamInput.GetCurrentActionSet(int_string inputHandle)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 
 	ISteamInput.GetDigitalActionHandle(string pszActionName)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		-----------------------------------------------------------------------------
 		ACTIONS
 		-----------------------------------------------------------------------------
@@ -1535,16 +1591,16 @@ Recurring Callbacks
 
 	ISteamInput.GetAnalogActionHandle(string pszActionName)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Lookup the handle for an analog action. Best to do this once on startup, and store the handles for all future API calls.
 
 	ISteamInput.GetControllerForGamepadIndex(int nIndex)
 
-		Returns var of type `int`.
+		Returns var of type `int_string`.
 		Returns the associated controller handle for the specified emulated gamepad - can be used with the above 2 functions
 		to identify controllers presented to your game over Xinput. Returns 0 if the Xinput index isn't associated with Steam Input
 
-	ISteamInput.GetDigitalActionData(int inputHandle, int digitalActionHandle)
+	ISteamInput.GetDigitalActionData(int_string inputHandle, int_string digitalActionHandle)
 
 		Returns the current state of the supplied digital game action
 
@@ -1553,7 +1609,7 @@ Recurring Callbacks
 			value.bState (bool)
 			value.bActive (bool)
 
-	ISteamInput.GetStringForDigitalActionName(int eActionHandle)
+	ISteamInput.GetStringForDigitalActionName(int_string eActionHandle)
 
 		Returns var of type `string`.
 
@@ -1592,7 +1648,7 @@ Recurring Callbacks
 		eOrigin is an enum type named EInputActionOrigin.
 		Due to the length of the enum, refer to Steamworks documentation for details.
 
-	ISteamInput.GetStringForAnalogActionName(int eActionHandle)
+	ISteamInput.GetStringForAnalogActionName(int_string eActionHandle)
 
 		Returns var of type `string`.
 
@@ -1610,7 +1666,7 @@ Recurring Callbacks
 		eOrigin is an enum type named EXboxOrigin.
 		Due to the length of the enum, refer to Steamworks documentation for details.
 
-	ISteamInput.GetAnalogActionData(int inputHandle, int analogActionHandle)
+	ISteamInput.GetAnalogActionData(int_string inputHandle, int_string analogActionHandle)
 
 		Returns the current state of these supplied analog game action
 
@@ -1621,7 +1677,7 @@ Recurring Callbacks
 			value.y (float)
 			value.bActive (bool)
 
-	ISteamInput.GetMotionData(int inputHandle)
+	ISteamInput.GetMotionData(int_string inputHandle)
 
 		Returns raw motion data from the specified device
 
@@ -1638,13 +1694,13 @@ Recurring Callbacks
 			value.rotVelY (float)
 			value.rotVelZ (float)
 
-	ISteamInput.GetInputTypeForHandle(int inputHandle)
+	ISteamInput.GetInputTypeForHandle(int_string inputHandle)
 
 		Returns var of type `int`.
 		Returns the input type for a particular handle - unlike EInputActionOrigin which update with Steam and may return unrecognized values
 		ESteamInputType will remain static and only return valid values from your SDK version
 
-	ISteamInput.GetActionOriginFromXboxOrigin(int inputHandle, int eOrigin)
+	ISteamInput.GetActionOriginFromXboxOrigin(int_string inputHandle, int eOrigin)
 
 		Returns var of type `int`.
 		Get the equivalent ActionOrigin for a given Xbox controller origin this can be chained with GetGlyphForActionOrigin to provide future proof glyphs for
@@ -1683,7 +1739,7 @@ Recurring Callbacks
 		eSourceOrigin is an enum type named EInputActionOrigin.
 		Due to the length of the enum, refer to Steamworks documentation for details.
 
-	ISteamInput.GetRemotePlaySessionID(int inputHandle)
+	ISteamInput.GetRemotePlaySessionID(int_string inputHandle)
 
 		Returns var of type `int`.
 		Get the Steam Remote Play session ID associated with a device, or 0 if there is no session associated with it
