@@ -153,6 +153,9 @@
     <ClCompile Include="..\src\neosphere\steam.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\neosphere\watchdog.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\shared\dyad.h">
@@ -303,6 +306,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\neosphere\steam.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\neosphere\watchdog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -64,7 +64,8 @@ engine_sources=src/neosphere/main.c \
    src/neosphere/table.c \
    src/neosphere/transform.c \
    src/neosphere/steam.c \
-   src/neosphere/utility.c
+   src/neosphere/utility.c \
+   src/neosphere/watchdog.c
 engine_libs= \
    -lallegro_acodec \
    -lallegro_audio \
