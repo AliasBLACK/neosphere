@@ -50,6 +50,7 @@
 #include "pegasus.h"
 #include "profiler.h"
 #include "sockets.h"
+#include "watchdog.h"
 
 // enable Windows visual styles (MSVC)
 #ifdef _MSC_VER
@@ -672,6 +673,8 @@ on_error:
 static void
 shutdown_engine(void)
 {
+	watchdog* shutdown_watchdog = watchdog_monitor(5000);
+
 	jsal_enable_vm(true);
 	
 	kb_save_keymap();
@@ -705,6 +708,8 @@ shutdown_engine(void)
 		al_destroy_event_queue(s_event_queue);
 	s_event_queue = NULL;
 	al_uninstall_system();
+
+	watchdog_done(shutdown_watchdog);
 }
 
 static bool
