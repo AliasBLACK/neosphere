@@ -268,6 +268,7 @@ xcopy /y /d /e /f "..\dep\lib\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="..\src\neosphere\module.c" />
     <ClCompile Include="..\src\neosphere\source_map.c" />
     <ClCompile Include="..\src\neosphere\steam.c" />
+    <ClCompile Include="..\src\neosphere\watchdog.c" />
     <ClCompile Include="..\src\shared\compress.c" />
     <ClCompile Include="..\src\neosphere\legacy.c" />
     <ClCompile Include="..\src\neosphere\profiler.c" />
@@ -316,6 +317,7 @@ xcopy /y /d /e /f "..\dep\lib\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="..\src\neosphere\module.h" />
     <ClInclude Include="..\src\neosphere\source_map.h" />
     <ClInclude Include="..\src\neosphere\steam.h" />
+    <ClInclude Include="..\src\neosphere\watchdog.h" />
     <ClInclude Include="..\src\shared\compress.h" />
     <ClInclude Include="..\src\neosphere\legacy.h" />
     <ClInclude Include="..\src\neosphere\profiler.h" />
