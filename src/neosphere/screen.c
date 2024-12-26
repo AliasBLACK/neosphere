@@ -518,6 +518,9 @@ refresh_display(screen_t* screen)
 	int                  real_width;
 	int                  real_height;
 
+	// Clear screen to avoid showing garbage data
+	screen_flip(screen, 0, true);
+
 	al_set_display_flag(screen->display, ALLEGRO_FULLSCREEN_WINDOW, screen->fullscreen);
 	if (al_get_monitor_info(get_current_monitor(screen), &desktop_info))
 	{
@@ -554,6 +557,9 @@ refresh_display(screen_t* screen)
 		}
 	}
 	image_render_to(screen->backbuffer, NULL);
+
+	// Clear screen to avoid showing garbage data
+	screen_flip(screen, 0, true);
 }
 
 int
