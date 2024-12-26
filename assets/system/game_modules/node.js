@@ -175,11 +175,27 @@ export class Node extends NodeAbstract
 			switch (this.renderMode)
 			{
 				case renderMode.colorRounded:
-					PrimNative.drawFilledRoundedRectangle(surface, x, y, x + this.getComputedWidth(), y + this.getComputedHeight(), 5, 5, this.texture)
+					PrimNative.drawFilledRoundedRectangle(
+						surface,
+						x,
+						y,
+						x + this.getComputedWidth(),
+						y + this.getComputedHeight(),
+						.005 * Surface.Screen.height,
+						.005 * Surface.Screen.height,
+						this.texture
+					)
 					break;
 
 				case renderMode.color:
-					PrimNative.drawFilledRectangle(surface, x, y, x + this.getComputedWidth(), y + this.getComputedHeight(), this.texture)
+					PrimNative.drawFilledRectangle(
+						surface,
+						x,
+						y,
+						x + this.getComputedWidth(),
+						y + this.getComputedHeight(),
+						this.texture
+					)
 					break;
 
 				case renderMode.tiled:

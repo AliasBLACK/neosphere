@@ -57,3 +57,8 @@ import { decomp } from 'decomp';
 global.decomp = decomp;
 export { Matter } from 'matter';
 export { Yoga } from 'yoga';
+
+DirectoryStream.fromURL = function(url)
+{
+	return Promise.resolve(new DirectoryStream(url))
+}
