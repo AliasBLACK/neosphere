@@ -7,6 +7,371 @@
 #include "steam.h"
 #include "jsal.h"
 
+static bool js_SteamAPI_Init                                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_SteamAPI_Shutdown                                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_SteamAPI_RunCallbacks                                           (int num_args, bool is_ctor, intptr_t magic);
+
+// ISteamUser
+static bool js_ISteamUser_GetHSteamUser                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_GetGameBadgeLevel                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_GetPlayerSteamLevel                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_BLoggedOn                                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_GetUserDataFolder                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_BIsBehindNAT                                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_BIsPhoneVerified                                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_BIsTwoFactorEnabled                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_BIsPhoneIdentifying                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_BIsPhoneRequiringVerification                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_BSetDurationControlOnlineState                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_GetSteamID                                           (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_RequestStoreAuthURL                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_GetMarketEligibility                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_GetDurationControl                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_TrackAppUsageEvent                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_StartVoiceRecording                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_StopVoiceRecording                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_EndAuthSession                                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_CancelAuthTicket                                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_AdvertiseGame                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_GetVoiceOptimalSampleRate                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_GetAuthTicketForWebApi                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUser_UserHasLicenseForApp                                 (int num_args, bool is_ctor, intptr_t magic);
+
+// ISteamFriends
+static bool js_ISteamFriends_GetPersonaName                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendPersonaName                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendPersonaNameHistory                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetPlayerNickname                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendsGroupName                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetClanName                                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetClanTag                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendRichPresence                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendRichPresenceKeyByIndex                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetProfileItemPropertyString                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_SetPersonaName                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendByIndex                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetClanByIndex                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_DownloadClanActivityCounts                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendFromSourceByIndex                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_RequestClanOfficerList                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetClanOwner                                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetClanOfficerByIndex                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetCoplayFriend                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_JoinClanChatRoom                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetChatMemberByIndex                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFollowerCount                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_IsFollowing                                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_EnumerateFollowingList                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_RequestEquippedProfileItems                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetPersonaState                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendRelationship                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendPersonaState                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetUserRestrictions                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendCoplayGame                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetProfileItemPropertyUint                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendCount                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendSteamLevel                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendsGroupCount                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendsGroupMembersCount                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetClanCount                                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendCountFromSource                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetSmallFriendAvatar                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetMediumFriendAvatar                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetLargeFriendAvatar                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetClanOfficerCount                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendRichPresenceKeyCount                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetCoplayFriendCount                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendCoplayTime                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetClanChatMemberCount                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetNumChatsWithUnreadPriorityMessages             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendGamePlayed                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_HasFriend                                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetClanActivityCounts                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_IsUserInSource                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_RequestUserInformation                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_SetRichPresence                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_InviteUserToGame                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_LeaveClanChatRoom                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_SendClanChatMessage                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_IsClanChatAdmin                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_IsClanChatWindowOpenInSteam                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_OpenClanChatWindowInSteam                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_CloseClanChatWindowInSteam                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_SetListenForFriendsMessages                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ReplyToFriendMessage                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_IsClanPublic                                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_IsClanOfficialGameGroup                           (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_RegisterProtocolInOverlayBrowser                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_BHasEquippedProfileItem                           (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendsGroupIDByIndex                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_GetFriendsGroupMembersList                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_SetInGameVoiceSpeaking                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlay                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlayToUser                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlayToWebPage                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlayToStore                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_SetPlayedWith                                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlayInviteDialog                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ClearRichPresence                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_RequestFriendRichPresence                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlayRemotePlayTogetherInviteDialog (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamFriends_ActivateGameOverlayInviteDialogConnectString      (int num_args, bool is_ctor, intptr_t magic);
+
+// ISteamUtils
+static bool js_ISteamUtils_GetSecondsSinceAppActive                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetSecondsSinceComputerActive                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetConnectedUniverse                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetServerRealTime                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetAppID                                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetAPICallFailureReason                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetIPCCallCount                                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetEnteredGamepadTextLength                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetIPv6ConnectivityState                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetIPCountry                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetSteamUILanguage                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetImageSize                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetImageRGBA                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_IsAPICallCompleted                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_IsOverlayEnabled                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_BOverlayNeedsPresent                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_ShowGamepadTextInput                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetEnteredGamepadTextInput                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_IsSteamRunningInVR                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_IsSteamInBigPictureMode                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_IsVRHeadsetStreamingEnabled                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_IsSteamChinaLauncher                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_InitFilterText                                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_IsSteamRunningOnSteamDeck                           (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_ShowFloatingGamepadTextInput                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_DismissFloatingGamepadTextInput                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_GetCurrentBatteryPower                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_SetOverlayNotificationPosition                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_SetOverlayNotificationInset                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_StartVRDashboard                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_SetVRHeadsetStreamingEnabled                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_SetGameLauncherMode                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_CheckFileSignature                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUtils_FilterText                                          (int num_args, bool is_ctor, intptr_t magic);
+
+// ISteamUserStats
+static bool js_ISteamUserStats_RequestCurrentStats                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetStatInt32                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetStatFloat                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_SetStatInt32                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_SetStatFloat                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_UpdateAvgRateStat                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetAchievement                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_SetAchievement                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_ClearAchievement                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetAchievementAndUnlockTime                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_StoreStats                                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_IndicateAchievementProgress                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetUserStatInt32                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetUserStatFloat                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetUserAchievement                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetUserAchievementAndUnlockTime                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_ResetAllStats                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetDownloadedLeaderboardEntry                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetAchievementAchievedPercent                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetGlobalStatInt64                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetGlobalStatDouble                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetAchievementProgressLimitsInt32               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetAchievementProgressLimitsFloat               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetAchievementIcon                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetLeaderboardEntryCount                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetMostAchievedAchievementInfo                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetNextMostAchievedAchievementInfo              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetGlobalStatHistoryInt64                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetGlobalStatHistoryDouble                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetAchievementDisplayAttribute                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetAchievementName                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetLeaderboardName                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetNumAchievements                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetLeaderboardSortMethod                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetLeaderboardDisplayType                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_RequestUserStats                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_FindOrCreateLeaderboard                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_FindLeaderboard                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_DownloadLeaderboardEntries                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_DownloadLeaderboardEntriesForUsers              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_UploadLeaderboardScore                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_AttachLeaderboardUGC                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_GetNumberOfCurrentPlayers                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_RequestGlobalAchievementPercentages             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUserStats_RequestGlobalStats                              (int num_args, bool is_ctor, intptr_t magic);
+
+// ISteamApps
+static bool js_ISteamApps_BIsSubscribed                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_BIsLowViolence                                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_BIsCybercafe                                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_BIsVACBanned                                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_BIsSubscribedApp                                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_BIsDlcInstalled                                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_BIsSubscribedFromFreeWeekend                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_BGetDLCDataByIndex                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_GetCurrentBetaName                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_MarkContentCorrupt                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_BIsAppInstalled                                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_GetDlcDownloadProgress                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_BIsSubscribedFromFamilySharing                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_BIsTimedTrial                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_SetDlcContext                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_GetCurrentGameLanguage                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_GetAvailableGameLanguages                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_GetLaunchQueryParam                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_GetEarliestPurchaseUnixTime                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_GetInstalledDepots                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_GetAppInstallDir                                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_GetDLCCount                                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_GetAppBuildId                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_GetLaunchCommandLine                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_InstallDLC                                           (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_UninstallDLC                                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_RequestAppProofOfPurchaseKey                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_RequestAllProofOfPurchaseKeys                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_GetAppOwner                                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamApps_GetFileDetails                                       (int num_args, bool is_ctor, intptr_t magic);
+
+// ISteamInput
+static bool js_ISteamInput_Init                                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_Shutdown                                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_SetInputActionManifestFilePath                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_BWaitForData                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_BNewDataAvailable                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_ShowBindingPanel                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetDeviceBindingRevision                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_RunFrame                                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_EnableDeviceCallbacks                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_ActivateActionSet                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_ActivateActionSetLayer                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_DeactivateActionSetLayer                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_DeactivateAllActionSetLayers                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_StopAnalogActionMomentum                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_TriggerVibration                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_TriggerVibrationExtended                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_TriggerSimpleHapticEvent                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_SetLEDColor                                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_Legacy_TriggerHapticPulse                           (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_Legacy_TriggerRepeatedHapticPulse                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetConnectedControllers                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetActiveActionSetLayers                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetDigitalActionOrigins                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetAnalogActionOrigins                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetGamepadIndexForController                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetActionSetHandle                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetCurrentActionSet                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetDigitalActionHandle                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetAnalogActionHandle                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetControllerForGamepadIndex                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetDigitalActionData                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetStringForDigitalActionName                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetGlyphPNGForActionOrigin                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetGlyphSVGForActionOrigin                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetGlyphForActionOrigin_Legacy                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetStringForActionOrigin                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetStringForAnalogActionName                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetStringForXboxOrigin                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetGlyphForXboxOrigin                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetAnalogActionData                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetMotionData                                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetInputTypeForHandle                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetActionOriginFromXboxOrigin                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_TranslateActionOrigin                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetRemotePlaySessionID                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamInput_GetSessionInputConfigurationSettings                (int num_args, bool is_ctor, intptr_t magic);
+
+// ISteamUGC
+static bool js_ISteamUGC_CreateQueryUserUGCRequest                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_CreateQueryAllUGCRequestPage                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_CreateQueryAllUGCRequestCursor                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_CreateQueryUGCDetailsRequest                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SendQueryUGCRequest                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_CreateItem                                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_StartItemUpdate                                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SubmitItemUpdate                                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetUserItemVote                                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetUserItemVote                                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_AddItemToFavorites                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_RemoveItemFromFavorites                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SubscribeItem                                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_UnsubscribeItem                                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_StartPlaytimeTracking                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_StopPlaytimeTracking                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_StopPlaytimeTrackingForAllItems                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_AddDependency                                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_RemoveDependency                                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_AddAppDependency                                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_RemoveAppDependency                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetAppDependencies                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_DeleteItem                                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetWorkshopEULAStatus                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryUGCResult                                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryUGCTag                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryUGCTagDisplayName                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryUGCPreviewURL                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryUGCMetadata                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryUGCChildren                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryUGCStatistic                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryUGCAdditionalPreview                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryUGCKeyValueTag                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryFirstUGCKeyValueTag                           (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_ReleaseQueryUGCRequest                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_AddRequiredTag                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_AddRequiredTagGroup                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_AddExcludedTag                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetReturnOnlyIDs                                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetReturnKeyValueTags                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetReturnLongDescription                              (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetReturnMetadata                                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetReturnChildren                                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetReturnAdditionalPreviews                           (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetReturnTotalOnly                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetReturnPlaytimeStats                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetLanguage                                           (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetAllowCachedResponse                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetCloudFileNameFilter                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetMatchAnyTag                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetSearchText                                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetRankedByTrendDays                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetTimeCreatedDateRange                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetTimeUpdatedDateRange                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_AddRequiredKeyValueTag                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetItemTitle                                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetItemDescription                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetItemUpdateLanguage                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetItemMetadata                                       (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetItemVisibility                                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetItemTags                                           (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetItemContent                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetItemPreview                                        (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SetAllowLegacyUpload                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_RemoveAllItemKeyValueTags                             (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_RemoveItemKeyValueTags                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_AddItemKeyValueTag                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_AddItemPreviewFile                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_AddItemPreviewVideo                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_UpdateItemPreviewFile                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_UpdateItemPreviewVideo                                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_RemoveItemPreview                                     (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_AddContentDescriptor                                  (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_RemoveContentDescriptor                               (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetItemInstallInfo                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetItemDownloadInfo                                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_DownloadItem                                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_BInitWorkshopForGameServer                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_ShowWorkshopEULA                                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryUGCNumTags                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryUGCNumAdditionalPreviews                      (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryUGCNumKeyValueTags                            (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetQueryUGCContentDescriptors                         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetItemUpdateProgress                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetNumSubscribedItems                                 (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetSubscribedItems                                    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetItemState                                          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_GetUserContentDescriptorPreferences                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_ISteamUGC_SuspendDownloads                                      (int num_args, bool is_ctor, intptr_t magic);
+
+
 uint64_t
 require_str_to_uint64_t(int index)
 {
@@ -745,6 +1110,128 @@ steamapi_init(void)
 	api_define_const("EXboxOrigin", "k_EXboxOrigin_DPad_East", 27);
 	api_define_const("EXboxOrigin", "k_EXboxOrigin_Count", 28);
 
+	// Enum EUserUGCList
+	api_define_const("EUserUGCList", "k_EUserUGCList_Published", 0);
+	api_define_const("EUserUGCList", "k_EUserUGCList_VotedOn", 1);
+	api_define_const("EUserUGCList", "k_EUserUGCList_VotedUp", 2);
+	api_define_const("EUserUGCList", "k_EUserUGCList_VotedDown", 3);
+	api_define_const("EUserUGCList", "k_EUserUGCList_WillVoteLater", 4);
+	api_define_const("EUserUGCList", "k_EUserUGCList_Favorited", 5);
+	api_define_const("EUserUGCList", "k_EUserUGCList_Subscribed", 6);
+	api_define_const("EUserUGCList", "k_EUserUGCList_UsedOrPlayed", 7);
+	api_define_const("EUserUGCList", "k_EUserUGCList_Followed", 8);
+
+	// Enum EUGCMatchingUGCType
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_Items", 0);
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_Items_Mtx", 1);
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_Items_ReadyToUse", 2);
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_Collections", 3);
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_Artwork", 4);
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_Videos", 5);
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_Screenshots", 6);
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_AllGuides", 7);
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_WebGuides", 8);
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_IntegratedGuides", 9);
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_UsableInGame", 10);
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_ControllerBindings", 11);
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_GameManagedItems", 12);
+	api_define_const("EUGCMatchingUGCType", "k_EUGCMatchingUGCType_All", 13);
+
+	// Enum EUserUGCListSortOrder
+	api_define_const("EUserUGCListSortOrder", "k_EUserUGCListSortOrder_CreationOrderDesc", 0);
+	api_define_const("EUserUGCListSortOrder", "k_EUserUGCListSortOrder_CreationOrderAsc", 1);
+	api_define_const("EUserUGCListSortOrder", "k_EUserUGCListSortOrder_TitleAsc", 2);
+	api_define_const("EUserUGCListSortOrder", "k_EUserUGCListSortOrder_LastUpdatedDesc", 3);
+	api_define_const("EUserUGCListSortOrder", "k_EUserUGCListSortOrder_SubscriptionDateDesc", 4);
+	api_define_const("EUserUGCListSortOrder", "k_EUserUGCListSortOrder_VoteScoreDesc", 5);
+	api_define_const("EUserUGCListSortOrder", "k_EUserUGCListSortOrder_ForModeration", 6);
+
+	// Enum EUGCQuery
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByVote", 0);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByPublicationDate", 1);
+	api_define_const("EUGCQuery", "k_EUGCQuery_AcceptedForGameRankedByAcceptanceDate", 2);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByTrend", 3);
+	api_define_const("EUGCQuery", "k_EUGCQuery_FavoritedByFriendsRankedByPublicationDate", 4);
+	api_define_const("EUGCQuery", "k_EUGCQuery_CreatedByFriendsRankedByPublicationDate", 5);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByNumTimesReported", 6);
+	api_define_const("EUGCQuery", "k_EUGCQuery_CreatedByFollowedUsersRankedByPublicationDate", 7);
+	api_define_const("EUGCQuery", "k_EUGCQuery_NotYetRated", 8);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByTotalVotesAsc", 9);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByVotesUp", 10);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByTextSearch", 11);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByTotalUniqueSubscriptions", 12);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByPlaytimeTrend", 13);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByTotalPlaytime", 14);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByAveragePlaytimeTrend", 15);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByLifetimeAveragePlaytime", 16);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByPlaytimeSessionsTrend", 17);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByLifetimePlaytimeSessions", 18);
+	api_define_const("EUGCQuery", "k_EUGCQuery_RankedByLastUpdatedDate", 19);
+
+	// Enum EItemStatistic
+	api_define_const("EItemStatistic", "k_EItemStatistic_NumSubscriptions", 0);
+	api_define_const("EItemStatistic", "k_EItemStatistic_NumFavorites", 1);
+	api_define_const("EItemStatistic", "k_EItemStatistic_NumFollowers", 2);
+	api_define_const("EItemStatistic", "k_EItemStatistic_NumUniqueSubscriptions", 3);
+	api_define_const("EItemStatistic", "k_EItemStatistic_NumUniqueFavorites", 4);
+	api_define_const("EItemStatistic", "k_EItemStatistic_NumUniqueFollowers", 5);
+	api_define_const("EItemStatistic", "k_EItemStatistic_NumUniqueWebsiteViews", 6);
+	api_define_const("EItemStatistic", "k_EItemStatistic_ReportScore", 7);
+	api_define_const("EItemStatistic", "k_EItemStatistic_NumSecondsPlayed", 8);
+	api_define_const("EItemStatistic", "k_EItemStatistic_NumPlaytimeSessions", 9);
+	api_define_const("EItemStatistic", "k_EItemStatistic_NumComments", 10);
+	api_define_const("EItemStatistic", "k_EItemStatistic_NumSecondsPlayedDuringTimePeriod", 11);
+	api_define_const("EItemStatistic", "k_EItemStatistic_NumPlaytimeSessionsDuringTimePeriod", 12);
+
+	// Enum EItemPreviewType
+	api_define_const("EItemPreviewType", "k_EItemPreviewType_Image", 0);
+	api_define_const("EItemPreviewType", "k_EItemPreviewType_YouTubeVideo", 1);
+	api_define_const("EItemPreviewType", "k_EItemPreviewType_Sketchfab", 2);
+	api_define_const("EItemPreviewType", "k_EItemPreviewType_EnvironmentMap_HorizontalCross", 3);
+	api_define_const("EItemPreviewType", "k_EItemPreviewType_EnvironmentMap_LatLong", 4);
+	api_define_const("EItemPreviewType", "k_EItemPreviewType_ReservedMax", 5);
+
+	// Enum EUGCContentDescriptorID
+	api_define_const("EUGCContentDescriptorID", "k_EUGCContentDescriptor_NudityOrSexualContent", 0);
+	api_define_const("EUGCContentDescriptorID", "k_EUGCContentDescriptor_FrequentViolenceOrGore", 1);
+	api_define_const("EUGCContentDescriptorID", "k_EUGCContentDescriptor_AdultOnlySexualContent", 2);
+	api_define_const("EUGCContentDescriptorID", "k_EUGCContentDescriptor_GratuitousSexualContent", 3);
+	api_define_const("EUGCContentDescriptorID", "k_EUGCContentDescriptor_AnyMatureContent", 4);
+
+	// Enum EWorkshopFileType
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeFirst", 0);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeCommunity", 1);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeMicrotransaction", 2);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeCollection", 3);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeArt", 4);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeVideo", 5);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeScreenshot", 6);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeGame", 7);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeSoftware", 8);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeConcept", 9);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeWebGuide", 10);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeIntegratedGuide", 11);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeMerch", 12);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeControllerBinding", 13);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeSteamworksAccessInvite", 14);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeSteamVideo", 15);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeGameManagedItem", 16);
+	api_define_const("EWorkshopFileType", "k_EWorkshopFileTypeMax", 17);
+
+	// Enum ERemoteStoragePublishedFileVisibility
+	api_define_const("ERemoteStoragePublishedFileVisibility", "k_ERemoteStoragePublishedFileVisibilityPublic", 0);
+	api_define_const("ERemoteStoragePublishedFileVisibility", "k_ERemoteStoragePublishedFileVisibilityFriendsOnly", 1);
+	api_define_const("ERemoteStoragePublishedFileVisibility", "k_ERemoteStoragePublishedFileVisibilityPrivate", 2);
+	api_define_const("ERemoteStoragePublishedFileVisibility", "k_ERemoteStoragePublishedFileVisibilityUnlisted", 3);
+
+	// Enum EItemUpdateStatus
+	api_define_const("EItemUpdateStatus", "k_EItemUpdateStatusInvalid", 0);
+	api_define_const("EItemUpdateStatus", "k_EItemUpdateStatusPreparingConfig", 1);
+	api_define_const("EItemUpdateStatus", "k_EItemUpdateStatusPreparingContent", 2);
+	api_define_const("EItemUpdateStatus", "k_EItemUpdateStatusUploadingContent", 3);
+	api_define_const("EItemUpdateStatus", "k_EItemUpdateStatusUploadingPreviewFile", 4);
+	api_define_const("EItemUpdateStatus", "k_EItemUpdateStatusCommittingChanges", 5);
+
 	// Enum EResult
 	api_define_const("EResult", "k_EResultNone", 0);
 	api_define_const("EResult", "k_EResultOK", 1);
@@ -1224,6 +1711,97 @@ steamapi_init(void)
 	api_define_func("ISteamInput", "TranslateActionOrigin", js_ISteamInput_TranslateActionOrigin, 0);
 	api_define_func("ISteamInput", "GetRemotePlaySessionID", js_ISteamInput_GetRemotePlaySessionID, 0);
 	api_define_func("ISteamInput", "GetSessionInputConfigurationSettings", js_ISteamInput_GetSessionInputConfigurationSettings, 0);
+
+	// ISteamUGC
+	api_define_func("ISteamUGC", "CreateQueryUserUGCRequest", js_ISteamUGC_CreateQueryUserUGCRequest, 0);
+	api_define_func("ISteamUGC", "CreateQueryAllUGCRequestPage", js_ISteamUGC_CreateQueryAllUGCRequestPage, 0);
+	api_define_func("ISteamUGC", "CreateQueryAllUGCRequestCursor", js_ISteamUGC_CreateQueryAllUGCRequestCursor, 0);
+	api_define_func("ISteamUGC", "CreateQueryUGCDetailsRequest", js_ISteamUGC_CreateQueryUGCDetailsRequest, 0);
+	api_define_func("ISteamUGC", "SendQueryUGCRequest", js_ISteamUGC_SendQueryUGCRequest, 0);
+	api_define_func("ISteamUGC", "CreateItem", js_ISteamUGC_CreateItem, 0);
+	api_define_func("ISteamUGC", "StartItemUpdate", js_ISteamUGC_StartItemUpdate, 0);
+	api_define_func("ISteamUGC", "SubmitItemUpdate", js_ISteamUGC_SubmitItemUpdate, 0);
+	api_define_func("ISteamUGC", "SetUserItemVote", js_ISteamUGC_SetUserItemVote, 0);
+	api_define_func("ISteamUGC", "GetUserItemVote", js_ISteamUGC_GetUserItemVote, 0);
+	api_define_func("ISteamUGC", "AddItemToFavorites", js_ISteamUGC_AddItemToFavorites, 0);
+	api_define_func("ISteamUGC", "RemoveItemFromFavorites", js_ISteamUGC_RemoveItemFromFavorites, 0);
+	api_define_func("ISteamUGC", "SubscribeItem", js_ISteamUGC_SubscribeItem, 0);
+	api_define_func("ISteamUGC", "UnsubscribeItem", js_ISteamUGC_UnsubscribeItem, 0);
+	api_define_func("ISteamUGC", "StartPlaytimeTracking", js_ISteamUGC_StartPlaytimeTracking, 0);
+	api_define_func("ISteamUGC", "StopPlaytimeTracking", js_ISteamUGC_StopPlaytimeTracking, 0);
+	api_define_func("ISteamUGC", "StopPlaytimeTrackingForAllItems", js_ISteamUGC_StopPlaytimeTrackingForAllItems, 0);
+	api_define_func("ISteamUGC", "AddDependency", js_ISteamUGC_AddDependency, 0);
+	api_define_func("ISteamUGC", "RemoveDependency", js_ISteamUGC_RemoveDependency, 0);
+	api_define_func("ISteamUGC", "AddAppDependency", js_ISteamUGC_AddAppDependency, 0);
+	api_define_func("ISteamUGC", "RemoveAppDependency", js_ISteamUGC_RemoveAppDependency, 0);
+	api_define_func("ISteamUGC", "GetAppDependencies", js_ISteamUGC_GetAppDependencies, 0);
+	api_define_func("ISteamUGC", "DeleteItem", js_ISteamUGC_DeleteItem, 0);
+	api_define_func("ISteamUGC", "GetWorkshopEULAStatus", js_ISteamUGC_GetWorkshopEULAStatus, 0);
+	api_define_func("ISteamUGC", "GetQueryUGCResult", js_ISteamUGC_GetQueryUGCResult, 0);
+	api_define_func("ISteamUGC", "GetQueryUGCTag", js_ISteamUGC_GetQueryUGCTag, 0);
+	api_define_func("ISteamUGC", "GetQueryUGCTagDisplayName", js_ISteamUGC_GetQueryUGCTagDisplayName, 0);
+	api_define_func("ISteamUGC", "GetQueryUGCPreviewURL", js_ISteamUGC_GetQueryUGCPreviewURL, 0);
+	api_define_func("ISteamUGC", "GetQueryUGCMetadata", js_ISteamUGC_GetQueryUGCMetadata, 0);
+	api_define_func("ISteamUGC", "GetQueryUGCChildren", js_ISteamUGC_GetQueryUGCChildren, 0);
+	api_define_func("ISteamUGC", "GetQueryUGCStatistic", js_ISteamUGC_GetQueryUGCStatistic, 0);
+	api_define_func("ISteamUGC", "GetQueryUGCAdditionalPreview", js_ISteamUGC_GetQueryUGCAdditionalPreview, 0);
+	api_define_func("ISteamUGC", "GetQueryUGCKeyValueTag", js_ISteamUGC_GetQueryUGCKeyValueTag, 0);
+	api_define_func("ISteamUGC", "GetQueryFirstUGCKeyValueTag", js_ISteamUGC_GetQueryFirstUGCKeyValueTag, 0);
+	api_define_func("ISteamUGC", "ReleaseQueryUGCRequest", js_ISteamUGC_ReleaseQueryUGCRequest, 0);
+	api_define_func("ISteamUGC", "AddRequiredTag", js_ISteamUGC_AddRequiredTag, 0);
+	api_define_func("ISteamUGC", "AddRequiredTagGroup", js_ISteamUGC_AddRequiredTagGroup, 0);
+	api_define_func("ISteamUGC", "AddExcludedTag", js_ISteamUGC_AddExcludedTag, 0);
+	api_define_func("ISteamUGC", "SetReturnOnlyIDs", js_ISteamUGC_SetReturnOnlyIDs, 0);
+	api_define_func("ISteamUGC", "SetReturnKeyValueTags", js_ISteamUGC_SetReturnKeyValueTags, 0);
+	api_define_func("ISteamUGC", "SetReturnLongDescription", js_ISteamUGC_SetReturnLongDescription, 0);
+	api_define_func("ISteamUGC", "SetReturnMetadata", js_ISteamUGC_SetReturnMetadata, 0);
+	api_define_func("ISteamUGC", "SetReturnChildren", js_ISteamUGC_SetReturnChildren, 0);
+	api_define_func("ISteamUGC", "SetReturnAdditionalPreviews", js_ISteamUGC_SetReturnAdditionalPreviews, 0);
+	api_define_func("ISteamUGC", "SetReturnTotalOnly", js_ISteamUGC_SetReturnTotalOnly, 0);
+	api_define_func("ISteamUGC", "SetReturnPlaytimeStats", js_ISteamUGC_SetReturnPlaytimeStats, 0);
+	api_define_func("ISteamUGC", "SetLanguage", js_ISteamUGC_SetLanguage, 0);
+	api_define_func("ISteamUGC", "SetAllowCachedResponse", js_ISteamUGC_SetAllowCachedResponse, 0);
+	api_define_func("ISteamUGC", "SetCloudFileNameFilter", js_ISteamUGC_SetCloudFileNameFilter, 0);
+	api_define_func("ISteamUGC", "SetMatchAnyTag", js_ISteamUGC_SetMatchAnyTag, 0);
+	api_define_func("ISteamUGC", "SetSearchText", js_ISteamUGC_SetSearchText, 0);
+	api_define_func("ISteamUGC", "SetRankedByTrendDays", js_ISteamUGC_SetRankedByTrendDays, 0);
+	api_define_func("ISteamUGC", "SetTimeCreatedDateRange", js_ISteamUGC_SetTimeCreatedDateRange, 0);
+	api_define_func("ISteamUGC", "SetTimeUpdatedDateRange", js_ISteamUGC_SetTimeUpdatedDateRange, 0);
+	api_define_func("ISteamUGC", "AddRequiredKeyValueTag", js_ISteamUGC_AddRequiredKeyValueTag, 0);
+	api_define_func("ISteamUGC", "SetItemTitle", js_ISteamUGC_SetItemTitle, 0);
+	api_define_func("ISteamUGC", "SetItemDescription", js_ISteamUGC_SetItemDescription, 0);
+	api_define_func("ISteamUGC", "SetItemUpdateLanguage", js_ISteamUGC_SetItemUpdateLanguage, 0);
+	api_define_func("ISteamUGC", "SetItemMetadata", js_ISteamUGC_SetItemMetadata, 0);
+	api_define_func("ISteamUGC", "SetItemVisibility", js_ISteamUGC_SetItemVisibility, 0);
+	api_define_func("ISteamUGC", "SetItemTags", js_ISteamUGC_SetItemTags, 0);
+	api_define_func("ISteamUGC", "SetItemContent", js_ISteamUGC_SetItemContent, 0);
+	api_define_func("ISteamUGC", "SetItemPreview", js_ISteamUGC_SetItemPreview, 0);
+	api_define_func("ISteamUGC", "SetAllowLegacyUpload", js_ISteamUGC_SetAllowLegacyUpload, 0);
+	api_define_func("ISteamUGC", "RemoveAllItemKeyValueTags", js_ISteamUGC_RemoveAllItemKeyValueTags, 0);
+	api_define_func("ISteamUGC", "RemoveItemKeyValueTags", js_ISteamUGC_RemoveItemKeyValueTags, 0);
+	api_define_func("ISteamUGC", "AddItemKeyValueTag", js_ISteamUGC_AddItemKeyValueTag, 0);
+	api_define_func("ISteamUGC", "AddItemPreviewFile", js_ISteamUGC_AddItemPreviewFile, 0);
+	api_define_func("ISteamUGC", "AddItemPreviewVideo", js_ISteamUGC_AddItemPreviewVideo, 0);
+	api_define_func("ISteamUGC", "UpdateItemPreviewFile", js_ISteamUGC_UpdateItemPreviewFile, 0);
+	api_define_func("ISteamUGC", "UpdateItemPreviewVideo", js_ISteamUGC_UpdateItemPreviewVideo, 0);
+	api_define_func("ISteamUGC", "RemoveItemPreview", js_ISteamUGC_RemoveItemPreview, 0);
+	api_define_func("ISteamUGC", "AddContentDescriptor", js_ISteamUGC_AddContentDescriptor, 0);
+	api_define_func("ISteamUGC", "RemoveContentDescriptor", js_ISteamUGC_RemoveContentDescriptor, 0);
+	api_define_func("ISteamUGC", "GetItemInstallInfo", js_ISteamUGC_GetItemInstallInfo, 0);
+	api_define_func("ISteamUGC", "GetItemDownloadInfo", js_ISteamUGC_GetItemDownloadInfo, 0);
+	api_define_func("ISteamUGC", "DownloadItem", js_ISteamUGC_DownloadItem, 0);
+	api_define_func("ISteamUGC", "BInitWorkshopForGameServer", js_ISteamUGC_BInitWorkshopForGameServer, 0);
+	api_define_func("ISteamUGC", "ShowWorkshopEULA", js_ISteamUGC_ShowWorkshopEULA, 0);
+	api_define_func("ISteamUGC", "GetQueryUGCNumTags", js_ISteamUGC_GetQueryUGCNumTags, 0);
+	api_define_func("ISteamUGC", "GetQueryUGCNumAdditionalPreviews", js_ISteamUGC_GetQueryUGCNumAdditionalPreviews, 0);
+	api_define_func("ISteamUGC", "GetQueryUGCNumKeyValueTags", js_ISteamUGC_GetQueryUGCNumKeyValueTags, 0);
+	api_define_func("ISteamUGC", "GetQueryUGCContentDescriptors", js_ISteamUGC_GetQueryUGCContentDescriptors, 0);
+	api_define_func("ISteamUGC", "GetItemUpdateProgress", js_ISteamUGC_GetItemUpdateProgress, 0);
+	api_define_func("ISteamUGC", "GetNumSubscribedItems", js_ISteamUGC_GetNumSubscribedItems, 0);
+	api_define_func("ISteamUGC", "GetSubscribedItems", js_ISteamUGC_GetSubscribedItems, 0);
+	api_define_func("ISteamUGC", "GetItemState", js_ISteamUGC_GetItemState, 0);
+	api_define_func("ISteamUGC", "GetUserContentDescriptorPreferences", js_ISteamUGC_GetUserContentDescriptorPreferences, 0);
+	api_define_func("ISteamUGC", "SuspendDownloads", js_ISteamUGC_SuspendDownloads, 0);
 }
 
 static bool
@@ -1265,6 +1843,9 @@ js_SteamAPI_Init(int num_args, bool is_ctor, intptr_t magic)
 
 			FuncPtr_001 ISteamInput_Accessor = (FuncPtr_001)GETADDRESS(steam_api, "SteamAPI_SteamInput_v006");
 			ISteamInput = ISteamInput_Accessor();
+
+			FuncPtr_001 ISteamUGC_Accessor = (FuncPtr_001)GETADDRESS(steam_api, "SteamAPI_SteamUGC_v018");
+			ISteamUGC = ISteamUGC_Accessor();
 		}
 		else
 			jsal_error(JS_ERROR, "SteamAPI_Init() failed. Is Steam running or is steam_appid.txt missing from executable folder?");
@@ -1704,6 +2285,315 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 							i++;
 							break;
 						}
+						case 3401:
+						{
+							SteamUGCQueryCompleted_t* callbackStruct = (SteamUGCQueryCompleted_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							push_uint64_t_to_str(callbackStruct->m_handle);
+							jsal_put_prop_string(-2, "m_handle");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							jsal_push_uint(callbackStruct->m_unNumResultsReturned);
+							jsal_put_prop_string(-2, "m_unNumResultsReturned");
+							jsal_push_uint(callbackStruct->m_unTotalMatchingResults);
+							jsal_put_prop_string(-2, "m_unTotalMatchingResults");
+							jsal_push_boolean(callbackStruct->m_bCachedData);
+							jsal_put_prop_string(-2, "m_bCachedData");
+							int k;
+							size_t n = sizeof(callbackStruct->m_rgchNextCursor)/sizeof(char);
+							jsal_push_new_array();
+							for (k = 0; k < n; k++)
+							{
+								jsal_push_int(callbackStruct->m_rgchNextCursor[k]);
+								jsal_put_prop_index(-2, k);
+							}
+							jsal_put_prop_string(-2, "m_rgchNextCursor");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3403:
+						{
+							CreateItemResult_t* callbackStruct = (CreateItemResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+							jsal_put_prop_string(-2, "m_nPublishedFileId");
+							jsal_push_boolean(callbackStruct->m_bUserNeedsToAcceptWorkshopLegalAgreement);
+							jsal_put_prop_string(-2, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3404:
+						{
+							SubmitItemUpdateResult_t* callbackStruct = (SubmitItemUpdateResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							jsal_push_boolean(callbackStruct->m_bUserNeedsToAcceptWorkshopLegalAgreement);
+							jsal_put_prop_string(-2, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+							push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+							jsal_put_prop_string(-2, "m_nPublishedFileId");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3408:
+						{
+							SetUserItemVoteResult_t* callbackStruct = (SetUserItemVoteResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+							jsal_put_prop_string(-2, "m_nPublishedFileId");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							jsal_push_boolean(callbackStruct->m_bVoteUp);
+							jsal_put_prop_string(-2, "m_bVoteUp");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3409:
+						{
+							GetUserItemVoteResult_t* callbackStruct = (GetUserItemVoteResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+							jsal_put_prop_string(-2, "m_nPublishedFileId");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							jsal_push_boolean(callbackStruct->m_bVotedUp);
+							jsal_put_prop_string(-2, "m_bVotedUp");
+							jsal_push_boolean(callbackStruct->m_bVotedDown);
+							jsal_put_prop_string(-2, "m_bVotedDown");
+							jsal_push_boolean(callbackStruct->m_bVoteSkipped);
+							jsal_put_prop_string(-2, "m_bVoteSkipped");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3407:
+						{
+							UserFavoriteItemsListChanged_t* callbackStruct = (UserFavoriteItemsListChanged_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+							jsal_put_prop_string(-2, "m_nPublishedFileId");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							jsal_push_boolean(callbackStruct->m_bWasAddRequest);
+							jsal_put_prop_string(-2, "m_bWasAddRequest");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 1313:
+						{
+							RemoteStorageSubscribePublishedFileResult_t* callbackStruct = (RemoteStorageSubscribePublishedFileResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+							jsal_put_prop_string(-2, "m_nPublishedFileId");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 1315:
+						{
+							RemoteStorageUnsubscribePublishedFileResult_t* callbackStruct = (RemoteStorageUnsubscribePublishedFileResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+							jsal_put_prop_string(-2, "m_nPublishedFileId");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3410:
+						{
+							StartPlaytimeTrackingResult_t* callbackStruct = (StartPlaytimeTrackingResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3411:
+						{
+							StopPlaytimeTrackingResult_t* callbackStruct = (StopPlaytimeTrackingResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3412:
+						{
+							AddUGCDependencyResult_t* callbackStruct = (AddUGCDependencyResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+							jsal_put_prop_string(-2, "m_nPublishedFileId");
+							push_uint64_t_to_str(callbackStruct->m_nChildPublishedFileId);
+							jsal_put_prop_string(-2, "m_nChildPublishedFileId");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3413:
+						{
+							RemoveUGCDependencyResult_t* callbackStruct = (RemoveUGCDependencyResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+							jsal_put_prop_string(-2, "m_nPublishedFileId");
+							push_uint64_t_to_str(callbackStruct->m_nChildPublishedFileId);
+							jsal_put_prop_string(-2, "m_nChildPublishedFileId");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3414:
+						{
+							AddAppDependencyResult_t* callbackStruct = (AddAppDependencyResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+							jsal_put_prop_string(-2, "m_nPublishedFileId");
+							jsal_push_uint(callbackStruct->m_nAppID);
+							jsal_put_prop_string(-2, "m_nAppID");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3415:
+						{
+							RemoveAppDependencyResult_t* callbackStruct = (RemoveAppDependencyResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+							jsal_put_prop_string(-2, "m_nPublishedFileId");
+							jsal_push_uint(callbackStruct->m_nAppID);
+							jsal_put_prop_string(-2, "m_nAppID");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3416:
+						{
+							GetAppDependenciesResult_t* callbackStruct = (GetAppDependenciesResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+							jsal_put_prop_string(-2, "m_nPublishedFileId");
+							int k;
+							size_t n = sizeof(callbackStruct->m_rgAppIDs)/sizeof(uint32_t);
+							jsal_push_new_array();
+							for (k = 0; k < n; k++)
+							{
+								jsal_push_uint(callbackStruct->m_rgAppIDs[k]);
+								jsal_put_prop_index(-2, k);
+							}
+							jsal_put_prop_string(-2, "m_rgAppIDs");
+							jsal_push_uint(callbackStruct->m_nNumAppDependencies);
+							jsal_put_prop_string(-2, "m_nNumAppDependencies");
+							jsal_push_uint(callbackStruct->m_nTotalNumAppDependencies);
+							jsal_put_prop_string(-2, "m_nTotalNumAppDependencies");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3417:
+						{
+							DeleteItemResult_t* callbackStruct = (DeleteItemResult_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+							jsal_put_prop_string(-2, "m_nPublishedFileId");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
+						case 3420:
+						{
+							WorkshopEULAStatus_t* callbackStruct = (WorkshopEULAStatus_t *)pTmpCallResult;
+							jsal_push_new_object();
+							uint64_t callID = pCallCompleted->m_hAsyncCall;
+							push_uint64_t_to_str(callID);
+							jsal_put_prop_string(-2, "callID");
+							jsal_push_uint(callbackStruct->m_eResult);
+							jsal_put_prop_string(-2, "m_eResult");
+							jsal_push_uint(callbackStruct->m_nAppID);
+							jsal_put_prop_string(-2, "m_nAppID");
+							jsal_push_uint(callbackStruct->m_unVersion);
+							jsal_put_prop_string(-2, "m_unVersion");
+							jsal_push_uint(callbackStruct->m_rtAction);
+							jsal_put_prop_string(-2, "m_rtAction");
+							jsal_push_boolean(callbackStruct->m_bAccepted);
+							jsal_put_prop_string(-2, "m_bAccepted");
+							jsal_push_boolean(callbackStruct->m_bNeedsAction);
+							jsal_put_prop_string(-2, "m_bNeedsAction");
+							jsal_put_prop_index(-2, i);
+							i++;
+							break;
+						}
 					}
 				}
 				free( pTmpCallResult );
@@ -1827,12 +2717,12 @@ js_ISteamUser_GetUserDataFolder(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int pchBufferIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)cubBuffer; ++i)
+	for (pchBufferIndex = 0; pchBufferIndex < (int)cubBuffer; ++pchBufferIndex)
 	{
-		jsal_push_int(pchBuffer[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_int(pchBuffer[pchBufferIndex]);
+		jsal_put_prop_index(-2, pchBufferIndex);
 	}
 	jsal_put_prop_string(-2, "pchBuffer");
 
@@ -2372,6 +3262,8 @@ js_ISteamFriends_DownloadClanActivityCounts(int num_args, bool is_ctor, intptr_t
 
 	ISteamFriends_DownloadClanActivityCounts = (FuncPtr_037)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_DownloadClanActivityCounts");
 	result = ISteamFriends_DownloadClanActivityCounts(ISteamFriends, psteamIDClans, cClansToRequest);
+
+	free(psteamIDClans);
 
 	push_uint64_t_to_str(result);
 
@@ -3315,12 +4207,12 @@ js_ISteamFriends_GetFriendsGroupMembersList(int num_args, bool is_ctor, intptr_t
 	ISteamFriends_GetFriendsGroupMembersList = (FuncPtr_033)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_GetFriendsGroupMembersList");
 	ISteamFriends_GetFriendsGroupMembersList(ISteamFriends, friendsGroupID, pOutSteamIDMembers, nMembersCount);
 
-	int i;
+	int pOutSteamIDMembersIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)nMembersCount; ++i)
+	for (pOutSteamIDMembersIndex = 0; pOutSteamIDMembersIndex < (int)nMembersCount; ++pOutSteamIDMembersIndex)
 	{
-		push_uint64_t_to_str(pOutSteamIDMembers[i]);
-		jsal_put_prop_index(-2, i);
+		push_uint64_t_to_str(pOutSteamIDMembers[pOutSteamIDMembersIndex]);
+		jsal_put_prop_index(-2, pOutSteamIDMembersIndex);
 	}
 
 	free (pOutSteamIDMembers);
@@ -3693,12 +4585,12 @@ js_ISteamUtils_GetImageRGBA(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int pubDestIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)nDestBufferSize; ++i)
+	for (pubDestIndex = 0; pubDestIndex < (int)nDestBufferSize; ++pubDestIndex)
 	{
-		jsal_push_uint(pubDest[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_uint(pubDest[pubDestIndex]);
+		jsal_put_prop_index(-2, pubDestIndex);
 	}
 	jsal_put_prop_string(-2, "pubDest");
 
@@ -3801,12 +4693,12 @@ js_ISteamUtils_GetEnteredGamepadTextInput(int num_args, bool is_ctor, intptr_t m
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int pchTextIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)cchText; ++i)
+	for (pchTextIndex = 0; pchTextIndex < (int)cchText; ++pchTextIndex)
 	{
-		jsal_push_int(pchText[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_int(pchText[pchTextIndex]);
+		jsal_put_prop_index(-2, pchTextIndex);
 	}
 	jsal_put_prop_string(-2, "pchText");
 
@@ -4066,12 +4958,12 @@ js_ISteamUtils_FilterText(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int pchOutFilteredTextIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)nByteSizeOutFilteredText; ++i)
+	for (pchOutFilteredTextIndex = 0; pchOutFilteredTextIndex < (int)nByteSizeOutFilteredText; ++pchOutFilteredTextIndex)
 	{
-		jsal_push_int(pchOutFilteredText[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_int(pchOutFilteredText[pchOutFilteredTextIndex]);
+		jsal_put_prop_index(-2, pchOutFilteredTextIndex);
 	}
 	jsal_put_prop_string(-2, "pchOutFilteredText");
 
@@ -4465,12 +5357,12 @@ js_ISteamUserStats_GetDownloadedLeaderboardEntry(int num_args, bool is_ctor, int
 	push_uint64_t_to_str(pLeaderboardEntry.m_hUGC);
 	jsal_put_prop_string(-2, "m_hUGC");
 	jsal_put_prop_string(-2, "pLeaderboardEntry");
-	int i;
+	int pDetailsIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)cDetailsMax; ++i)
+	for (pDetailsIndex = 0; pDetailsIndex < (int)cDetailsMax; ++pDetailsIndex)
 	{
-		jsal_push_int(pDetails[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_int(pDetails[pDetailsIndex]);
+		jsal_put_prop_index(-2, pDetailsIndex);
 	}
 	jsal_put_prop_string(-2, "pDetails");
 
@@ -4650,12 +5542,12 @@ js_ISteamUserStats_GetMostAchievedAchievementInfo(int num_args, bool is_ctor, in
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int pchNameIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)unNameBufLen; ++i)
+	for (pchNameIndex = 0; pchNameIndex < (int)unNameBufLen; ++pchNameIndex)
 	{
-		jsal_push_int(pchName[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_int(pchName[pchNameIndex]);
+		jsal_put_prop_index(-2, pchNameIndex);
 	}
 	jsal_put_prop_string(-2, "pchName");
 	jsal_push_number(pflPercent);
@@ -4691,12 +5583,12 @@ js_ISteamUserStats_GetNextMostAchievedAchievementInfo(int num_args, bool is_ctor
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int pchNameIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)unNameBufLen; ++i)
+	for (pchNameIndex = 0; pchNameIndex < (int)unNameBufLen; ++pchNameIndex)
 	{
-		jsal_push_int(pchName[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_int(pchName[pchNameIndex]);
+		jsal_put_prop_index(-2, pchNameIndex);
 	}
 	jsal_put_prop_string(-2, "pchName");
 	jsal_push_number(pflPercent);
@@ -4730,12 +5622,12 @@ js_ISteamUserStats_GetGlobalStatHistoryInt64(int num_args, bool is_ctor, intptr_
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int pDataIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)cubData; ++i)
+	for (pDataIndex = 0; pDataIndex < (int)cubData; ++pDataIndex)
 	{
-		push_int64_t_to_str(pData[i]);
-		jsal_put_prop_index(-2, i);
+		push_int64_t_to_str(pData[pDataIndex]);
+		jsal_put_prop_index(-2, pDataIndex);
 	}
 	jsal_put_prop_string(-2, "pData");
 
@@ -4765,12 +5657,12 @@ js_ISteamUserStats_GetGlobalStatHistoryDouble(int num_args, bool is_ctor, intptr
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int pDataIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)cubData; ++i)
+	for (pDataIndex = 0; pDataIndex < (int)cubData; ++pDataIndex)
 	{
-		jsal_push_number(pData[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_number(pData[pDataIndex]);
+		jsal_put_prop_index(-2, pDataIndex);
 	}
 	jsal_put_prop_string(-2, "pData");
 
@@ -4980,6 +5872,8 @@ js_ISteamUserStats_DownloadLeaderboardEntriesForUsers(int num_args, bool is_ctor
 	ISteamUserStats_DownloadLeaderboardEntriesForUsers = (FuncPtr_085)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_DownloadLeaderboardEntriesForUsers");
 	result = ISteamUserStats_DownloadLeaderboardEntriesForUsers(ISteamUserStats, hSteamLeaderboard, prgUsers, cUsers);
 
+	free(prgUsers);
+
 	push_uint64_t_to_str(result);
 
 	return true;
@@ -5000,7 +5894,7 @@ js_ISteamUserStats_UploadLeaderboardScore(int num_args, bool is_ctor, intptr_t m
 	nScore = jsal_require_int(2);
 	jsal_require_array(3);
 	int cScoreDetailsCount = jsal_get_length(3);
-	if (!(pScoreDetails = (const int32_t *)malloc(cScoreDetailsCount * sizeof(int32_t))))
+	if (!(pScoreDetails = (int32_t *)malloc(cScoreDetailsCount * sizeof(int32_t))))
 		return false;
 	for (int i = 0; i < cScoreDetailsCount; ++i){
 		jsal_get_prop_index(3, i);
@@ -5010,6 +5904,8 @@ js_ISteamUserStats_UploadLeaderboardScore(int num_args, bool is_ctor, intptr_t m
 
 	ISteamUserStats_UploadLeaderboardScore = (FuncPtr_087)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_UploadLeaderboardScore");
 	result = ISteamUserStats_UploadLeaderboardScore(ISteamUserStats, hSteamLeaderboard, eLeaderboardUploadScoreMethod, nScore, pScoreDetails, cScoreDetailsCount);
+
+	free(pScoreDetails);
 
 	push_uint64_t_to_str(result);
 
@@ -5211,12 +6107,12 @@ js_ISteamApps_BGetDLCDataByIndex(int num_args, bool is_ctor, intptr_t magic)
 	jsal_put_prop_string(-2, "pAppID");
 	jsal_push_boolean(pbAvailable);
 	jsal_put_prop_string(-2, "pbAvailable");
-	int i;
+	int pchNameIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)cchNameBufferSize; ++i)
+	for (pchNameIndex = 0; pchNameIndex < (int)cchNameBufferSize; ++pchNameIndex)
 	{
-		jsal_push_int(pchName[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_int(pchName[pchNameIndex]);
+		jsal_put_prop_index(-2, pchNameIndex);
 	}
 	jsal_put_prop_string(-2, "pchName");
 
@@ -5244,12 +6140,12 @@ js_ISteamApps_GetCurrentBetaName(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int pchNameIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)cchNameBufferSize; ++i)
+	for (pchNameIndex = 0; pchNameIndex < (int)cchNameBufferSize; ++pchNameIndex)
 	{
-		jsal_push_int(pchName[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_int(pchName[pchNameIndex]);
+		jsal_put_prop_index(-2, pchNameIndex);
 	}
 	jsal_put_prop_string(-2, "pchName");
 
@@ -5453,12 +6349,12 @@ js_ISteamApps_GetInstalledDepots(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_uint(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int pvecDepotsIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)cMaxDepots; ++i)
+	for (pvecDepotsIndex = 0; pvecDepotsIndex < (int)cMaxDepots; ++pvecDepotsIndex)
 	{
-		jsal_push_uint(pvecDepots[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_uint(pvecDepots[pvecDepotsIndex]);
+		jsal_put_prop_index(-2, pvecDepotsIndex);
 	}
 	jsal_put_prop_string(-2, "pvecDepots");
 
@@ -5488,12 +6384,12 @@ js_ISteamApps_GetAppInstallDir(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_uint(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int pchFolderIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)cchFolderBufferSize; ++i)
+	for (pchFolderIndex = 0; pchFolderIndex < (int)cchFolderBufferSize; ++pchFolderIndex)
 	{
-		jsal_push_int(pchFolder[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_int(pchFolder[pchFolderIndex]);
+		jsal_put_prop_index(-2, pchFolderIndex);
 	}
 	jsal_put_prop_string(-2, "pchFolder");
 
@@ -5549,12 +6445,12 @@ js_ISteamApps_GetLaunchCommandLine(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int pszCommandLineIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)cubCommandLine; ++i)
+	for (pszCommandLineIndex = 0; pszCommandLineIndex < (int)cubCommandLine; ++pszCommandLineIndex)
 	{
-		jsal_push_int(pszCommandLine[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_int(pszCommandLine[pszCommandLineIndex]);
+		jsal_put_prop_index(-2, pszCommandLineIndex);
 	}
 	jsal_put_prop_string(-2, "pszCommandLine");
 
@@ -6017,12 +6913,12 @@ js_ISteamInput_GetConnectedControllers(int num_args, bool is_ctor, intptr_t magi
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int handlesOutIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)16; ++i)
+	for (handlesOutIndex = 0; handlesOutIndex < (int)16; ++handlesOutIndex)
 	{
-		push_uint64_t_to_str(handlesOut[i]);
-		jsal_put_prop_index(-2, i);
+		push_uint64_t_to_str(handlesOut[handlesOutIndex]);
+		jsal_put_prop_index(-2, handlesOutIndex);
 	}
 	jsal_put_prop_string(-2, "handlesOut");
 
@@ -6050,12 +6946,12 @@ js_ISteamInput_GetActiveActionSetLayers(int num_args, bool is_ctor, intptr_t mag
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int handlesOutIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)16; ++i)
+	for (handlesOutIndex = 0; handlesOutIndex < (int)16; ++handlesOutIndex)
 	{
-		push_uint64_t_to_str(handlesOut[i]);
-		jsal_put_prop_index(-2, i);
+		push_uint64_t_to_str(handlesOut[handlesOutIndex]);
+		jsal_put_prop_index(-2, handlesOutIndex);
 	}
 	jsal_put_prop_string(-2, "handlesOut");
 
@@ -6087,12 +6983,12 @@ js_ISteamInput_GetDigitalActionOrigins(int num_args, bool is_ctor, intptr_t magi
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int originsOutIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)8; ++i)
+	for (originsOutIndex = 0; originsOutIndex < (int)8; ++originsOutIndex)
 	{
-		jsal_push_uint(originsOut[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_uint(originsOut[originsOutIndex]);
+		jsal_put_prop_index(-2, originsOutIndex);
 	}
 	jsal_put_prop_string(-2, "originsOut");
 
@@ -6124,12 +7020,12 @@ js_ISteamInput_GetAnalogActionOrigins(int num_args, bool is_ctor, intptr_t magic
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int i;
+	int originsOutIndex;
 	jsal_push_new_array();
-	for (i = 0; i < (int)8; ++i)
+	for (originsOutIndex = 0; originsOutIndex < (int)8; ++originsOutIndex)
 	{
-		jsal_push_uint(originsOut[i]);
-		jsal_put_prop_index(-2, i);
+		jsal_push_uint(originsOut[originsOutIndex]);
+		jsal_put_prop_index(-2, originsOutIndex);
 	}
 	jsal_put_prop_string(-2, "originsOut");
 
@@ -6553,5 +7449,2070 @@ js_ISteamInput_GetSessionInputConfigurationSettings(int num_args, bool is_ctor, 
 	jsal_push_uint(result);
 
 	return true;
+}
+
+static bool
+js_ISteamUGC_CreateQueryUserUGCRequest(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint32_t unAccountID;
+	uint32_t eListType;
+	uint32_t eMatchingUGCType;
+	uint32_t eSortOrder;
+	uint32_t nCreatorAppID;
+	uint32_t nConsumerAppID;
+	uint32_t unPage;
+	uint64_t result;
+	FuncPtr_122 ISteamUGC_CreateQueryUserUGCRequest;
+
+	unAccountID = jsal_require_uint(0);
+	eListType = jsal_require_uint(1);
+	eMatchingUGCType = jsal_require_uint(2);
+	eSortOrder = jsal_require_uint(3);
+	nCreatorAppID = jsal_require_uint(4);
+	nConsumerAppID = jsal_require_uint(5);
+	unPage = jsal_require_uint(6);
+
+	ISteamUGC_CreateQueryUserUGCRequest = (FuncPtr_122)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_CreateQueryUserUGCRequest");
+	result = ISteamUGC_CreateQueryUserUGCRequest(ISteamUGC, unAccountID, eListType, eMatchingUGCType, eSortOrder, nCreatorAppID, nConsumerAppID, unPage);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_CreateQueryAllUGCRequestPage(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint32_t eQueryType;
+	uint32_t eMatchingeMatchingUGCTypeFileType;
+	uint32_t nCreatorAppID;
+	uint32_t nConsumerAppID;
+	uint32_t unPage;
+	uint64_t result;
+	FuncPtr_123 ISteamUGC_CreateQueryAllUGCRequestPage;
+
+	eQueryType = jsal_require_uint(0);
+	eMatchingeMatchingUGCTypeFileType = jsal_require_uint(1);
+	nCreatorAppID = jsal_require_uint(2);
+	nConsumerAppID = jsal_require_uint(3);
+	unPage = jsal_require_uint(4);
+
+	ISteamUGC_CreateQueryAllUGCRequestPage = (FuncPtr_123)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_CreateQueryAllUGCRequestPage");
+	result = ISteamUGC_CreateQueryAllUGCRequestPage(ISteamUGC, eQueryType, eMatchingeMatchingUGCTypeFileType, nCreatorAppID, nConsumerAppID, unPage);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_CreateQueryAllUGCRequestCursor(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint32_t eQueryType;
+	uint32_t eMatchingeMatchingUGCTypeFileType;
+	uint32_t nCreatorAppID;
+	uint32_t nConsumerAppID;
+	const char * pchCursor;
+	uint64_t result;
+	FuncPtr_124 ISteamUGC_CreateQueryAllUGCRequestCursor;
+
+	eQueryType = jsal_require_uint(0);
+	eMatchingeMatchingUGCTypeFileType = jsal_require_uint(1);
+	nCreatorAppID = jsal_require_uint(2);
+	nConsumerAppID = jsal_require_uint(3);
+	pchCursor = (char*)jsal_require_string(4);
+
+	ISteamUGC_CreateQueryAllUGCRequestCursor = (FuncPtr_124)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_CreateQueryAllUGCRequestCursor");
+	result = ISteamUGC_CreateQueryAllUGCRequestCursor(ISteamUGC, eQueryType, eMatchingeMatchingUGCTypeFileType, nCreatorAppID, nConsumerAppID, pchCursor);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_CreateQueryUGCDetailsRequest(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t * pvecPublishedFileID;
+	uint32_t unNumPublishedFileIDs;
+	uint64_t result;
+	FuncPtr_125 ISteamUGC_CreateQueryUGCDetailsRequest;
+
+	unNumPublishedFileIDs = jsal_require_uint(0);
+
+	if (!(pvecPublishedFileID = (uint64_t *)calloc(unNumPublishedFileIDs, sizeof(uint64_t))))
+		return false;
+
+	ISteamUGC_CreateQueryUGCDetailsRequest = (FuncPtr_125)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_CreateQueryUGCDetailsRequest");
+	result = ISteamUGC_CreateQueryUGCDetailsRequest(ISteamUGC, pvecPublishedFileID, unNumPublishedFileIDs);
+
+	jsal_push_new_object();
+	push_uint64_t_to_str(result);
+	jsal_put_prop_string(-2, "result");
+	int pvecPublishedFileIDIndex;
+	jsal_push_new_array();
+	for (pvecPublishedFileIDIndex = 0; pvecPublishedFileIDIndex < (int)unNumPublishedFileIDs; ++pvecPublishedFileIDIndex)
+	{
+		push_uint64_t_to_str(pvecPublishedFileID[pvecPublishedFileIDIndex]);
+		jsal_put_prop_index(-2, pvecPublishedFileIDIndex);
+	}
+	jsal_put_prop_string(-2, "pvecPublishedFileID");
+
+	free(pvecPublishedFileID);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SendQueryUGCRequest(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint64_t result;
+	FuncPtr_046 ISteamUGC_SendQueryUGCRequest;
+
+	handle = require_str_to_uint64_t(0);
+
+	ISteamUGC_SendQueryUGCRequest = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SendQueryUGCRequest");
+	result = ISteamUGC_SendQueryUGCRequest(ISteamUGC, handle);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_CreateItem(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint32_t nConsumerAppId;
+	uint32_t eFileType;
+	uint64_t result;
+	FuncPtr_138 ISteamUGC_CreateItem;
+
+	nConsumerAppId = jsal_require_uint(0);
+	eFileType = jsal_require_uint(1);
+
+	ISteamUGC_CreateItem = (FuncPtr_138)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_CreateItem");
+	result = ISteamUGC_CreateItem(ISteamUGC, nConsumerAppId, eFileType);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_StartItemUpdate(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint32_t nConsumerAppId;
+	uint64_t nPublishedFileID;
+	uint64_t result;
+	FuncPtr_139 ISteamUGC_StartItemUpdate;
+
+	nConsumerAppId = jsal_require_uint(0);
+	nPublishedFileID = require_str_to_uint64_t(1);
+
+	ISteamUGC_StartItemUpdate = (FuncPtr_139)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_StartItemUpdate");
+	result = ISteamUGC_StartItemUpdate(ISteamUGC, nConsumerAppId, nPublishedFileID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SubmitItemUpdate(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pchChangeNote;
+	uint64_t result;
+	FuncPtr_143 ISteamUGC_SubmitItemUpdate;
+
+	handle = require_str_to_uint64_t(0);
+	pchChangeNote = (char*)jsal_require_string(1);
+
+	ISteamUGC_SubmitItemUpdate = (FuncPtr_143)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SubmitItemUpdate");
+	result = ISteamUGC_SubmitItemUpdate(ISteamUGC, handle, pchChangeNote);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetUserItemVote(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nPublishedFileID;
+	bool bVoteUp;
+	uint64_t result;
+	FuncPtr_145 ISteamUGC_SetUserItemVote;
+
+	nPublishedFileID = require_str_to_uint64_t(0);
+	bVoteUp = jsal_require_boolean(1);
+
+	ISteamUGC_SetUserItemVote = (FuncPtr_145)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetUserItemVote");
+	result = ISteamUGC_SetUserItemVote(ISteamUGC, nPublishedFileID, bVoteUp);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetUserItemVote(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nPublishedFileID;
+	uint64_t result;
+	FuncPtr_046 ISteamUGC_GetUserItemVote;
+
+	nPublishedFileID = require_str_to_uint64_t(0);
+
+	ISteamUGC_GetUserItemVote = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetUserItemVote");
+	result = ISteamUGC_GetUserItemVote(ISteamUGC, nPublishedFileID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_AddItemToFavorites(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint32_t nAppId;
+	uint64_t nPublishedFileID;
+	uint64_t result;
+	FuncPtr_139 ISteamUGC_AddItemToFavorites;
+
+	nAppId = jsal_require_uint(0);
+	nPublishedFileID = require_str_to_uint64_t(1);
+
+	ISteamUGC_AddItemToFavorites = (FuncPtr_139)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_AddItemToFavorites");
+	result = ISteamUGC_AddItemToFavorites(ISteamUGC, nAppId, nPublishedFileID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_RemoveItemFromFavorites(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint32_t nAppId;
+	uint64_t nPublishedFileID;
+	uint64_t result;
+	FuncPtr_139 ISteamUGC_RemoveItemFromFavorites;
+
+	nAppId = jsal_require_uint(0);
+	nPublishedFileID = require_str_to_uint64_t(1);
+
+	ISteamUGC_RemoveItemFromFavorites = (FuncPtr_139)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_RemoveItemFromFavorites");
+	result = ISteamUGC_RemoveItemFromFavorites(ISteamUGC, nAppId, nPublishedFileID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SubscribeItem(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nPublishedFileID;
+	uint64_t result;
+	FuncPtr_046 ISteamUGC_SubscribeItem;
+
+	nPublishedFileID = require_str_to_uint64_t(0);
+
+	ISteamUGC_SubscribeItem = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SubscribeItem");
+	result = ISteamUGC_SubscribeItem(ISteamUGC, nPublishedFileID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_UnsubscribeItem(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nPublishedFileID;
+	uint64_t result;
+	FuncPtr_046 ISteamUGC_UnsubscribeItem;
+
+	nPublishedFileID = require_str_to_uint64_t(0);
+
+	ISteamUGC_UnsubscribeItem = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_UnsubscribeItem");
+	result = ISteamUGC_UnsubscribeItem(ISteamUGC, nPublishedFileID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_StartPlaytimeTracking(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t * pvecPublishedFileID;
+	uint64_t result;
+	FuncPtr_125 ISteamUGC_StartPlaytimeTracking;
+
+	jsal_require_array(0);
+	int unNumPublishedFileIDs = jsal_get_length(0);
+	if (!(pvecPublishedFileID = (uint64_t *)malloc(unNumPublishedFileIDs * sizeof(uint64_t))))
+		return false;
+	for (int i = 0; i < unNumPublishedFileIDs; ++i){
+		jsal_get_prop_index(0, i);
+		pvecPublishedFileID[i] = require_str_to_uint64_t(-1);
+		jsal_pop(1);
+	}
+
+	ISteamUGC_StartPlaytimeTracking = (FuncPtr_125)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_StartPlaytimeTracking");
+	result = ISteamUGC_StartPlaytimeTracking(ISteamUGC, pvecPublishedFileID, unNumPublishedFileIDs);
+
+	free(pvecPublishedFileID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_StopPlaytimeTracking(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t * pvecPublishedFileID;
+	uint64_t result;
+	FuncPtr_125 ISteamUGC_StopPlaytimeTracking;
+
+	jsal_require_array(0);
+	int unNumPublishedFileIDs = jsal_get_length(0);
+	if (!(pvecPublishedFileID = (uint64_t *)malloc(unNumPublishedFileIDs * sizeof(uint64_t))))
+		return false;
+	for (int i = 0; i < unNumPublishedFileIDs; ++i){
+		jsal_get_prop_index(0, i);
+		pvecPublishedFileID[i] = require_str_to_uint64_t(-1);
+		jsal_pop(1);
+	}
+
+	ISteamUGC_StopPlaytimeTracking = (FuncPtr_125)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_StopPlaytimeTracking");
+	result = ISteamUGC_StopPlaytimeTracking(ISteamUGC, pvecPublishedFileID, unNumPublishedFileIDs);
+
+	free(pvecPublishedFileID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_StopPlaytimeTrackingForAllItems(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t result;
+	FuncPtr_009 ISteamUGC_StopPlaytimeTrackingForAllItems;
+
+	ISteamUGC_StopPlaytimeTrackingForAllItems = (FuncPtr_009)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_StopPlaytimeTrackingForAllItems");
+	result = ISteamUGC_StopPlaytimeTrackingForAllItems(ISteamUGC);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_AddDependency(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nParentPublishedFileID;
+	uint64_t nChildPublishedFileID;
+	uint64_t result;
+	FuncPtr_088 ISteamUGC_AddDependency;
+
+	nParentPublishedFileID = require_str_to_uint64_t(0);
+	nChildPublishedFileID = require_str_to_uint64_t(1);
+
+	ISteamUGC_AddDependency = (FuncPtr_088)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_AddDependency");
+	result = ISteamUGC_AddDependency(ISteamUGC, nParentPublishedFileID, nChildPublishedFileID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_RemoveDependency(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nParentPublishedFileID;
+	uint64_t nChildPublishedFileID;
+	uint64_t result;
+	FuncPtr_088 ISteamUGC_RemoveDependency;
+
+	nParentPublishedFileID = require_str_to_uint64_t(0);
+	nChildPublishedFileID = require_str_to_uint64_t(1);
+
+	ISteamUGC_RemoveDependency = (FuncPtr_088)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_RemoveDependency");
+	result = ISteamUGC_RemoveDependency(ISteamUGC, nParentPublishedFileID, nChildPublishedFileID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_AddAppDependency(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nPublishedFileID;
+	uint32_t nAppID;
+	uint64_t result;
+	FuncPtr_150 ISteamUGC_AddAppDependency;
+
+	nPublishedFileID = require_str_to_uint64_t(0);
+	nAppID = jsal_require_uint(1);
+
+	ISteamUGC_AddAppDependency = (FuncPtr_150)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_AddAppDependency");
+	result = ISteamUGC_AddAppDependency(ISteamUGC, nPublishedFileID, nAppID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_RemoveAppDependency(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nPublishedFileID;
+	uint32_t nAppID;
+	uint64_t result;
+	FuncPtr_150 ISteamUGC_RemoveAppDependency;
+
+	nPublishedFileID = require_str_to_uint64_t(0);
+	nAppID = jsal_require_uint(1);
+
+	ISteamUGC_RemoveAppDependency = (FuncPtr_150)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_RemoveAppDependency");
+	result = ISteamUGC_RemoveAppDependency(ISteamUGC, nPublishedFileID, nAppID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetAppDependencies(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nPublishedFileID;
+	uint64_t result;
+	FuncPtr_046 ISteamUGC_GetAppDependencies;
+
+	nPublishedFileID = require_str_to_uint64_t(0);
+
+	ISteamUGC_GetAppDependencies = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetAppDependencies");
+	result = ISteamUGC_GetAppDependencies(ISteamUGC, nPublishedFileID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_DeleteItem(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nPublishedFileID;
+	uint64_t result;
+	FuncPtr_046 ISteamUGC_DeleteItem;
+
+	nPublishedFileID = require_str_to_uint64_t(0);
+
+	ISteamUGC_DeleteItem = (FuncPtr_046)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_DeleteItem");
+	result = ISteamUGC_DeleteItem(ISteamUGC, nPublishedFileID);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetWorkshopEULAStatus(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t result;
+	FuncPtr_009 ISteamUGC_GetWorkshopEULAStatus;
+
+	ISteamUGC_GetWorkshopEULAStatus = (FuncPtr_009)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetWorkshopEULAStatus");
+	result = ISteamUGC_GetWorkshopEULAStatus(ISteamUGC);
+
+	push_uint64_t_to_str(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryUGCResult(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	SteamUGCDetails_t pDetails;
+	bool result;
+	FuncPtr_126 ISteamUGC_GetQueryUGCResult;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+
+	ISteamUGC_GetQueryUGCResult = (FuncPtr_126)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryUGCResult");
+	result = ISteamUGC_GetQueryUGCResult(ISteamUGC, handle, index, &pDetails);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	jsal_push_new_object();
+	push_uint64_t_to_str(pDetails.m_nPublishedFileId);
+	jsal_put_prop_string(-2, "m_nPublishedFileId");
+	jsal_push_uint(pDetails.m_eResult);
+	jsal_put_prop_string(-2, "m_eResult");
+	jsal_push_uint(pDetails.m_eFileType);
+	jsal_put_prop_string(-2, "m_eFileType");
+	jsal_push_uint(pDetails.m_nCreatorAppID);
+	jsal_put_prop_string(-2, "m_nCreatorAppID");
+	jsal_push_uint(pDetails.m_nConsumerAppID);
+	jsal_put_prop_string(-2, "m_nConsumerAppID");
+	jsal_push_int(pDetails.m_rgchTitle [129]);
+	jsal_put_prop_string(-2, "m_rgchTitle [129]");
+	jsal_push_int(pDetails.m_rgchDescription [8000]);
+	jsal_put_prop_string(-2, "m_rgchDescription [8000]");
+	push_uint64_t_to_str(pDetails.m_ulSteamIDOwner);
+	jsal_put_prop_string(-2, "m_ulSteamIDOwner");
+	jsal_push_uint(pDetails.m_rtimeCreated);
+	jsal_put_prop_string(-2, "m_rtimeCreated");
+	jsal_push_uint(pDetails.m_rtimeUpdated);
+	jsal_put_prop_string(-2, "m_rtimeUpdated");
+	jsal_push_uint(pDetails.m_rtimeAddedToUserList);
+	jsal_put_prop_string(-2, "m_rtimeAddedToUserList");
+	jsal_push_uint(pDetails.m_eVisibility);
+	jsal_put_prop_string(-2, "m_eVisibility");
+	jsal_push_boolean(pDetails.m_bBanned);
+	jsal_put_prop_string(-2, "m_bBanned");
+	jsal_push_boolean(pDetails.m_bAcceptedForUse);
+	jsal_put_prop_string(-2, "m_bAcceptedForUse");
+	jsal_push_boolean(pDetails.m_bTagsTruncated);
+	jsal_put_prop_string(-2, "m_bTagsTruncated");
+	jsal_push_int(pDetails.m_rgchTags [1025]);
+	jsal_put_prop_string(-2, "m_rgchTags [1025]");
+	push_uint64_t_to_str(pDetails.m_hFile);
+	jsal_put_prop_string(-2, "m_hFile");
+	push_uint64_t_to_str(pDetails.m_hPreviewFile);
+	jsal_put_prop_string(-2, "m_hPreviewFile");
+	jsal_push_int(pDetails.m_pchFileName [260]);
+	jsal_put_prop_string(-2, "m_pchFileName [260]");
+	jsal_push_int(pDetails.m_nFileSize);
+	jsal_put_prop_string(-2, "m_nFileSize");
+	jsal_push_int(pDetails.m_nPreviewFileSize);
+	jsal_put_prop_string(-2, "m_nPreviewFileSize");
+	jsal_push_int(pDetails.m_rgchURL [256]);
+	jsal_put_prop_string(-2, "m_rgchURL [256]");
+	jsal_push_uint(pDetails.m_unVotesUp);
+	jsal_put_prop_string(-2, "m_unVotesUp");
+	jsal_push_uint(pDetails.m_unVotesDown);
+	jsal_put_prop_string(-2, "m_unVotesDown");
+	jsal_push_number(pDetails.m_flScore);
+	jsal_put_prop_string(-2, "m_flScore");
+	jsal_push_uint(pDetails.m_unNumChildren);
+	jsal_put_prop_string(-2, "m_unNumChildren");
+	jsal_put_prop_string(-2, "pDetails");
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryUGCTag(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	uint32_t indexTag;
+	char * pchValue;
+	uint32_t cchValueSize;
+	bool result;
+	FuncPtr_127 ISteamUGC_GetQueryUGCTag;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+	indexTag = jsal_require_uint(2);
+	cchValueSize = jsal_require_uint(3);
+
+	if (!(pchValue = (char *)calloc(cchValueSize, sizeof(char))))
+		return false;
+
+	ISteamUGC_GetQueryUGCTag = (FuncPtr_127)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryUGCTag");
+	result = ISteamUGC_GetQueryUGCTag(ISteamUGC, handle, index, indexTag, pchValue, cchValueSize);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	int pchValueIndex;
+	jsal_push_new_array();
+	for (pchValueIndex = 0; pchValueIndex < (int)cchValueSize; ++pchValueIndex)
+	{
+		jsal_push_int(pchValue[pchValueIndex]);
+		jsal_put_prop_index(-2, pchValueIndex);
+	}
+	jsal_put_prop_string(-2, "pchValue");
+
+	free(pchValue);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryUGCTagDisplayName(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	uint32_t indexTag;
+	char * pchValue;
+	uint32_t cchValueSize;
+	bool result;
+	FuncPtr_127 ISteamUGC_GetQueryUGCTagDisplayName;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+	indexTag = jsal_require_uint(2);
+	cchValueSize = jsal_require_uint(3);
+
+	if (!(pchValue = (char *)calloc(cchValueSize, sizeof(char))))
+		return false;
+
+	ISteamUGC_GetQueryUGCTagDisplayName = (FuncPtr_127)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryUGCTagDisplayName");
+	result = ISteamUGC_GetQueryUGCTagDisplayName(ISteamUGC, handle, index, indexTag, pchValue, cchValueSize);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	int pchValueIndex;
+	jsal_push_new_array();
+	for (pchValueIndex = 0; pchValueIndex < (int)cchValueSize; ++pchValueIndex)
+	{
+		jsal_push_int(pchValue[pchValueIndex]);
+		jsal_put_prop_index(-2, pchValueIndex);
+	}
+	jsal_put_prop_string(-2, "pchValue");
+
+	free(pchValue);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryUGCPreviewURL(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	char * pchURL;
+	uint32_t cchURLSize;
+	bool result;
+	FuncPtr_128 ISteamUGC_GetQueryUGCPreviewURL;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+	cchURLSize = jsal_require_uint(2);
+
+	if (!(pchURL = (char *)calloc(cchURLSize, sizeof(char))))
+		return false;
+
+	ISteamUGC_GetQueryUGCPreviewURL = (FuncPtr_128)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryUGCPreviewURL");
+	result = ISteamUGC_GetQueryUGCPreviewURL(ISteamUGC, handle, index, pchURL, cchURLSize);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	int pchURLIndex;
+	jsal_push_new_array();
+	for (pchURLIndex = 0; pchURLIndex < (int)cchURLSize; ++pchURLIndex)
+	{
+		jsal_push_int(pchURL[pchURLIndex]);
+		jsal_put_prop_index(-2, pchURLIndex);
+	}
+	jsal_put_prop_string(-2, "pchURL");
+
+	free(pchURL);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryUGCMetadata(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	char * pchMetadata;
+	uint32_t cchMetadatasize;
+	bool result;
+	FuncPtr_128 ISteamUGC_GetQueryUGCMetadata;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+	cchMetadatasize = jsal_require_uint(2);
+
+	if (!(pchMetadata = (char *)calloc(cchMetadatasize, sizeof(char))))
+		return false;
+
+	ISteamUGC_GetQueryUGCMetadata = (FuncPtr_128)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryUGCMetadata");
+	result = ISteamUGC_GetQueryUGCMetadata(ISteamUGC, handle, index, pchMetadata, cchMetadatasize);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	int pchMetadataIndex;
+	jsal_push_new_array();
+	for (pchMetadataIndex = 0; pchMetadataIndex < (int)cchMetadatasize; ++pchMetadataIndex)
+	{
+		jsal_push_int(pchMetadata[pchMetadataIndex]);
+		jsal_put_prop_index(-2, pchMetadataIndex);
+	}
+	jsal_put_prop_string(-2, "pchMetadata");
+
+	free(pchMetadata);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryUGCChildren(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	uint64_t * pvecPublishedFileID;
+	uint32_t cMaxEntries;
+	bool result;
+	FuncPtr_129 ISteamUGC_GetQueryUGCChildren;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+	cMaxEntries = jsal_require_uint(2);
+
+	if (!(pvecPublishedFileID = (uint64_t *)calloc(cMaxEntries, sizeof(uint64_t))))
+		return false;
+
+	ISteamUGC_GetQueryUGCChildren = (FuncPtr_129)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryUGCChildren");
+	result = ISteamUGC_GetQueryUGCChildren(ISteamUGC, handle, index, pvecPublishedFileID, cMaxEntries);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	int pvecPublishedFileIDIndex;
+	jsal_push_new_array();
+	for (pvecPublishedFileIDIndex = 0; pvecPublishedFileIDIndex < (int)cMaxEntries; ++pvecPublishedFileIDIndex)
+	{
+		push_uint64_t_to_str(pvecPublishedFileID[pvecPublishedFileIDIndex]);
+		jsal_put_prop_index(-2, pvecPublishedFileIDIndex);
+	}
+	jsal_put_prop_string(-2, "pvecPublishedFileID");
+
+	free(pvecPublishedFileID);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryUGCStatistic(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	uint32_t eStatType;
+	uint64_t pStatValue;
+	bool result;
+	FuncPtr_130 ISteamUGC_GetQueryUGCStatistic;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+	eStatType = jsal_require_uint(2);
+
+	ISteamUGC_GetQueryUGCStatistic = (FuncPtr_130)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryUGCStatistic");
+	result = ISteamUGC_GetQueryUGCStatistic(ISteamUGC, handle, index, eStatType, &pStatValue);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	push_uint64_t_to_str(pStatValue);
+	jsal_put_prop_string(-2, "pStatValue");
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryUGCAdditionalPreview(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	uint32_t previewIndex;
+	char * pchURLOrVideoID;
+	uint32_t cchURLSize;
+	char * pchOriginalFileName;
+	uint32_t cchOriginalFileNameSize;
+	uint32_t pPreviewType;
+	bool result;
+	FuncPtr_131 ISteamUGC_GetQueryUGCAdditionalPreview;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+	previewIndex = jsal_require_uint(2);
+	cchURLSize = jsal_require_uint(3);
+	cchOriginalFileNameSize = jsal_require_uint(4);
+
+	if (!(pchURLOrVideoID = (char *)calloc(cchURLSize, sizeof(char))))
+		return false;
+	if (!(pchOriginalFileName = (char *)calloc(cchURLSize, sizeof(char))))
+		return false;
+
+	ISteamUGC_GetQueryUGCAdditionalPreview = (FuncPtr_131)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryUGCAdditionalPreview");
+	result = ISteamUGC_GetQueryUGCAdditionalPreview(ISteamUGC, handle, index, previewIndex, pchURLOrVideoID, cchURLSize, pchOriginalFileName, cchOriginalFileNameSize, &pPreviewType);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	int pchURLOrVideoIDIndex;
+	jsal_push_new_array();
+	for (pchURLOrVideoIDIndex = 0; pchURLOrVideoIDIndex < (int)cchURLSize; ++pchURLOrVideoIDIndex)
+	{
+		jsal_push_int(pchURLOrVideoID[pchURLOrVideoIDIndex]);
+		jsal_put_prop_index(-2, pchURLOrVideoIDIndex);
+	}
+	jsal_put_prop_string(-2, "pchURLOrVideoID");
+	int pchOriginalFileNameIndex;
+	jsal_push_new_array();
+	for (pchOriginalFileNameIndex = 0; pchOriginalFileNameIndex < (int)cchURLSize; ++pchOriginalFileNameIndex)
+	{
+		jsal_push_int(pchOriginalFileName[pchOriginalFileNameIndex]);
+		jsal_put_prop_index(-2, pchOriginalFileNameIndex);
+	}
+	jsal_put_prop_string(-2, "pchOriginalFileName");
+	jsal_push_uint(pPreviewType);
+	jsal_put_prop_string(-2, "pPreviewType");
+
+	free(pchURLOrVideoID);
+	free(pchOriginalFileName);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryUGCKeyValueTag(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	uint32_t keyValueTagIndex;
+	char * pchKey;
+	uint32_t cchKeySize;
+	char * pchValue;
+	uint32_t cchValueSize;
+	bool result;
+	FuncPtr_132 ISteamUGC_GetQueryUGCKeyValueTag;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+	keyValueTagIndex = jsal_require_uint(2);
+	cchKeySize = jsal_require_uint(3);
+	cchValueSize = jsal_require_uint(4);
+
+	if (!(pchKey = (char *)calloc(cchKeySize, sizeof(char))))
+		return false;
+	if (!(pchValue = (char *)calloc(cchValueSize, sizeof(char))))
+		return false;
+
+	ISteamUGC_GetQueryUGCKeyValueTag = (FuncPtr_132)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryUGCKeyValueTag");
+	result = ISteamUGC_GetQueryUGCKeyValueTag(ISteamUGC, handle, index, keyValueTagIndex, pchKey, cchKeySize, pchValue, cchValueSize);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	int pchKeyIndex;
+	jsal_push_new_array();
+	for (pchKeyIndex = 0; pchKeyIndex < (int)cchKeySize; ++pchKeyIndex)
+	{
+		jsal_push_int(pchKey[pchKeyIndex]);
+		jsal_put_prop_index(-2, pchKeyIndex);
+	}
+	jsal_put_prop_string(-2, "pchKey");
+	int pchValueIndex;
+	jsal_push_new_array();
+	for (pchValueIndex = 0; pchValueIndex < (int)cchValueSize; ++pchValueIndex)
+	{
+		jsal_push_int(pchValue[pchValueIndex]);
+		jsal_put_prop_index(-2, pchValueIndex);
+	}
+	jsal_put_prop_string(-2, "pchValue");
+
+	free(pchKey);
+	free(pchValue);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryFirstUGCKeyValueTag(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	const char * pchKey;
+	char * pchValue;
+	uint32_t cchValueSize;
+	bool result;
+	FuncPtr_133 ISteamUGC_GetQueryFirstUGCKeyValueTag;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+	pchKey = (char*)jsal_require_string(2);
+	cchValueSize = jsal_require_uint(3);
+
+	if (!(pchValue = (char *)calloc(cchValueSize, sizeof(char))))
+		return false;
+
+	ISteamUGC_GetQueryFirstUGCKeyValueTag = (FuncPtr_133)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryFirstUGCKeyValueTag");
+	result = ISteamUGC_GetQueryFirstUGCKeyValueTag(ISteamUGC, handle, index, pchKey, pchValue, cchValueSize);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	int pchValueIndex;
+	jsal_push_new_array();
+	for (pchValueIndex = 0; pchValueIndex < (int)cchValueSize; ++pchValueIndex)
+	{
+		jsal_push_int(pchValue[pchValueIndex]);
+		jsal_put_prop_index(-2, pchValueIndex);
+	}
+	jsal_put_prop_string(-2, "pchValue");
+
+	free(pchValue);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_ReleaseQueryUGCRequest(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	bool result;
+	FuncPtr_050 ISteamUGC_ReleaseQueryUGCRequest;
+
+	handle = require_str_to_uint64_t(0);
+
+	ISteamUGC_ReleaseQueryUGCRequest = (FuncPtr_050)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_ReleaseQueryUGCRequest");
+	result = ISteamUGC_ReleaseQueryUGCRequest(ISteamUGC, handle);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_AddRequiredTag(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pTagName;
+	bool result;
+	FuncPtr_049 ISteamUGC_AddRequiredTag;
+
+	handle = require_str_to_uint64_t(0);
+	pTagName = (char*)jsal_require_string(1);
+
+	ISteamUGC_AddRequiredTag = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_AddRequiredTag");
+	result = ISteamUGC_AddRequiredTag(ISteamUGC, handle, pTagName);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_AddRequiredTagGroup(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	SteamParamStringArray_t pTagGroups;
+	bool result;
+	FuncPtr_135 ISteamUGC_AddRequiredTagGroup;
+
+	handle = require_str_to_uint64_t(0);
+	jsal_require_array(1);
+	pTagGroups.m_nNumStrings = jsal_get_length(1);
+	if (!(pTagGroups.m_ppStrings = (char **)malloc(pTagGroups.m_nNumStrings * sizeof(char *))))
+		return false;
+	for (int i = 0; i < pTagGroups.m_nNumStrings; ++i){
+		jsal_get_prop_index(1, i);
+		pTagGroups.m_ppStrings[i] = (char*)jsal_require_string(-1);
+		jsal_pop(1);
+	}
+
+	ISteamUGC_AddRequiredTagGroup = (FuncPtr_135)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_AddRequiredTagGroup");
+	result = ISteamUGC_AddRequiredTagGroup(ISteamUGC, handle, &pTagGroups);
+
+	free(pTagGroups.m_ppStrings);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_AddExcludedTag(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pTagName;
+	bool result;
+	FuncPtr_049 ISteamUGC_AddExcludedTag;
+
+	handle = require_str_to_uint64_t(0);
+	pTagName = (char*)jsal_require_string(1);
+
+	ISteamUGC_AddExcludedTag = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_AddExcludedTag");
+	result = ISteamUGC_AddExcludedTag(ISteamUGC, handle, pTagName);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetReturnOnlyIDs(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	bool bReturnOnlyIDs;
+	bool result;
+	FuncPtr_045 ISteamUGC_SetReturnOnlyIDs;
+
+	handle = require_str_to_uint64_t(0);
+	bReturnOnlyIDs = jsal_require_boolean(1);
+
+	ISteamUGC_SetReturnOnlyIDs = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetReturnOnlyIDs");
+	result = ISteamUGC_SetReturnOnlyIDs(ISteamUGC, handle, bReturnOnlyIDs);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetReturnKeyValueTags(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	bool bReturnKeyValueTags;
+	bool result;
+	FuncPtr_045 ISteamUGC_SetReturnKeyValueTags;
+
+	handle = require_str_to_uint64_t(0);
+	bReturnKeyValueTags = jsal_require_boolean(1);
+
+	ISteamUGC_SetReturnKeyValueTags = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetReturnKeyValueTags");
+	result = ISteamUGC_SetReturnKeyValueTags(ISteamUGC, handle, bReturnKeyValueTags);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetReturnLongDescription(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	bool bReturnLongDescription;
+	bool result;
+	FuncPtr_045 ISteamUGC_SetReturnLongDescription;
+
+	handle = require_str_to_uint64_t(0);
+	bReturnLongDescription = jsal_require_boolean(1);
+
+	ISteamUGC_SetReturnLongDescription = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetReturnLongDescription");
+	result = ISteamUGC_SetReturnLongDescription(ISteamUGC, handle, bReturnLongDescription);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetReturnMetadata(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	bool bReturnMetadata;
+	bool result;
+	FuncPtr_045 ISteamUGC_SetReturnMetadata;
+
+	handle = require_str_to_uint64_t(0);
+	bReturnMetadata = jsal_require_boolean(1);
+
+	ISteamUGC_SetReturnMetadata = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetReturnMetadata");
+	result = ISteamUGC_SetReturnMetadata(ISteamUGC, handle, bReturnMetadata);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetReturnChildren(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	bool bReturnChildren;
+	bool result;
+	FuncPtr_045 ISteamUGC_SetReturnChildren;
+
+	handle = require_str_to_uint64_t(0);
+	bReturnChildren = jsal_require_boolean(1);
+
+	ISteamUGC_SetReturnChildren = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetReturnChildren");
+	result = ISteamUGC_SetReturnChildren(ISteamUGC, handle, bReturnChildren);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetReturnAdditionalPreviews(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	bool bReturnAdditionalPreviews;
+	bool result;
+	FuncPtr_045 ISteamUGC_SetReturnAdditionalPreviews;
+
+	handle = require_str_to_uint64_t(0);
+	bReturnAdditionalPreviews = jsal_require_boolean(1);
+
+	ISteamUGC_SetReturnAdditionalPreviews = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetReturnAdditionalPreviews");
+	result = ISteamUGC_SetReturnAdditionalPreviews(ISteamUGC, handle, bReturnAdditionalPreviews);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetReturnTotalOnly(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	bool bReturnTotalOnly;
+	bool result;
+	FuncPtr_045 ISteamUGC_SetReturnTotalOnly;
+
+	handle = require_str_to_uint64_t(0);
+	bReturnTotalOnly = jsal_require_boolean(1);
+
+	ISteamUGC_SetReturnTotalOnly = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetReturnTotalOnly");
+	result = ISteamUGC_SetReturnTotalOnly(ISteamUGC, handle, bReturnTotalOnly);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetReturnPlaytimeStats(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t unDays;
+	bool result;
+	FuncPtr_054 ISteamUGC_SetReturnPlaytimeStats;
+
+	handle = require_str_to_uint64_t(0);
+	unDays = jsal_require_uint(1);
+
+	ISteamUGC_SetReturnPlaytimeStats = (FuncPtr_054)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetReturnPlaytimeStats");
+	result = ISteamUGC_SetReturnPlaytimeStats(ISteamUGC, handle, unDays);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetLanguage(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pchLanguage;
+	bool result;
+	FuncPtr_049 ISteamUGC_SetLanguage;
+
+	handle = require_str_to_uint64_t(0);
+	pchLanguage = (char*)jsal_require_string(1);
+
+	ISteamUGC_SetLanguage = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetLanguage");
+	result = ISteamUGC_SetLanguage(ISteamUGC, handle, pchLanguage);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetAllowCachedResponse(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t unMaxAgeSeconds;
+	bool result;
+	FuncPtr_054 ISteamUGC_SetAllowCachedResponse;
+
+	handle = require_str_to_uint64_t(0);
+	unMaxAgeSeconds = jsal_require_uint(1);
+
+	ISteamUGC_SetAllowCachedResponse = (FuncPtr_054)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetAllowCachedResponse");
+	result = ISteamUGC_SetAllowCachedResponse(ISteamUGC, handle, unMaxAgeSeconds);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetCloudFileNameFilter(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pMatchCloudFileName;
+	bool result;
+	FuncPtr_049 ISteamUGC_SetCloudFileNameFilter;
+
+	handle = require_str_to_uint64_t(0);
+	pMatchCloudFileName = (char*)jsal_require_string(1);
+
+	ISteamUGC_SetCloudFileNameFilter = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetCloudFileNameFilter");
+	result = ISteamUGC_SetCloudFileNameFilter(ISteamUGC, handle, pMatchCloudFileName);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetMatchAnyTag(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	bool bMatchAnyTag;
+	bool result;
+	FuncPtr_045 ISteamUGC_SetMatchAnyTag;
+
+	handle = require_str_to_uint64_t(0);
+	bMatchAnyTag = jsal_require_boolean(1);
+
+	ISteamUGC_SetMatchAnyTag = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetMatchAnyTag");
+	result = ISteamUGC_SetMatchAnyTag(ISteamUGC, handle, bMatchAnyTag);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetSearchText(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pSearchText;
+	bool result;
+	FuncPtr_049 ISteamUGC_SetSearchText;
+
+	handle = require_str_to_uint64_t(0);
+	pSearchText = (char*)jsal_require_string(1);
+
+	ISteamUGC_SetSearchText = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetSearchText");
+	result = ISteamUGC_SetSearchText(ISteamUGC, handle, pSearchText);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetRankedByTrendDays(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t unDays;
+	bool result;
+	FuncPtr_054 ISteamUGC_SetRankedByTrendDays;
+
+	handle = require_str_to_uint64_t(0);
+	unDays = jsal_require_uint(1);
+
+	ISteamUGC_SetRankedByTrendDays = (FuncPtr_054)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetRankedByTrendDays");
+	result = ISteamUGC_SetRankedByTrendDays(ISteamUGC, handle, unDays);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetTimeCreatedDateRange(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t rtStart;
+	uint32_t rtEnd;
+	bool result;
+	FuncPtr_136 ISteamUGC_SetTimeCreatedDateRange;
+
+	handle = require_str_to_uint64_t(0);
+	rtStart = jsal_require_uint(1);
+	rtEnd = jsal_require_uint(2);
+
+	ISteamUGC_SetTimeCreatedDateRange = (FuncPtr_136)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetTimeCreatedDateRange");
+	result = ISteamUGC_SetTimeCreatedDateRange(ISteamUGC, handle, rtStart, rtEnd);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetTimeUpdatedDateRange(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t rtStart;
+	uint32_t rtEnd;
+	bool result;
+	FuncPtr_136 ISteamUGC_SetTimeUpdatedDateRange;
+
+	handle = require_str_to_uint64_t(0);
+	rtStart = jsal_require_uint(1);
+	rtEnd = jsal_require_uint(2);
+
+	ISteamUGC_SetTimeUpdatedDateRange = (FuncPtr_136)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetTimeUpdatedDateRange");
+	result = ISteamUGC_SetTimeUpdatedDateRange(ISteamUGC, handle, rtStart, rtEnd);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_AddRequiredKeyValueTag(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pKey;
+	const char * pValue;
+	bool result;
+	FuncPtr_137 ISteamUGC_AddRequiredKeyValueTag;
+
+	handle = require_str_to_uint64_t(0);
+	pKey = (char*)jsal_require_string(1);
+	pValue = (char*)jsal_require_string(2);
+
+	ISteamUGC_AddRequiredKeyValueTag = (FuncPtr_137)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_AddRequiredKeyValueTag");
+	result = ISteamUGC_AddRequiredKeyValueTag(ISteamUGC, handle, pKey, pValue);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetItemTitle(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pchTitle;
+	bool result;
+	FuncPtr_049 ISteamUGC_SetItemTitle;
+
+	handle = require_str_to_uint64_t(0);
+	pchTitle = (char*)jsal_require_string(1);
+
+	ISteamUGC_SetItemTitle = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetItemTitle");
+	result = ISteamUGC_SetItemTitle(ISteamUGC, handle, pchTitle);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetItemDescription(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pchDescription;
+	bool result;
+	FuncPtr_049 ISteamUGC_SetItemDescription;
+
+	handle = require_str_to_uint64_t(0);
+	pchDescription = (char*)jsal_require_string(1);
+
+	ISteamUGC_SetItemDescription = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetItemDescription");
+	result = ISteamUGC_SetItemDescription(ISteamUGC, handle, pchDescription);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetItemUpdateLanguage(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pchLanguage;
+	bool result;
+	FuncPtr_049 ISteamUGC_SetItemUpdateLanguage;
+
+	handle = require_str_to_uint64_t(0);
+	pchLanguage = (char*)jsal_require_string(1);
+
+	ISteamUGC_SetItemUpdateLanguage = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetItemUpdateLanguage");
+	result = ISteamUGC_SetItemUpdateLanguage(ISteamUGC, handle, pchLanguage);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetItemMetadata(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pchMetaData;
+	bool result;
+	FuncPtr_049 ISteamUGC_SetItemMetadata;
+
+	handle = require_str_to_uint64_t(0);
+	pchMetaData = (char*)jsal_require_string(1);
+
+	ISteamUGC_SetItemMetadata = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetItemMetadata");
+	result = ISteamUGC_SetItemMetadata(ISteamUGC, handle, pchMetaData);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetItemVisibility(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t eVisibility;
+	bool result;
+	FuncPtr_054 ISteamUGC_SetItemVisibility;
+
+	handle = require_str_to_uint64_t(0);
+	eVisibility = jsal_require_uint(1);
+
+	ISteamUGC_SetItemVisibility = (FuncPtr_054)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetItemVisibility");
+	result = ISteamUGC_SetItemVisibility(ISteamUGC, handle, eVisibility);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetItemTags(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t updateHandle;
+	SteamParamStringArray_t pTags;
+	bool bAllowAdminTags;
+	bool result;
+	FuncPtr_140 ISteamUGC_SetItemTags;
+
+	updateHandle = require_str_to_uint64_t(0);
+	jsal_require_array(1);
+	pTags.m_nNumStrings = jsal_get_length(1);
+	if (!(pTags.m_ppStrings = (char **)malloc(pTags.m_nNumStrings * sizeof(char *))))
+		return false;
+	for (int i = 0; i < pTags.m_nNumStrings; ++i){
+		jsal_get_prop_index(1, i);
+		pTags.m_ppStrings[i] = (char*)jsal_require_string(-1);
+		jsal_pop(1);
+	}
+	bAllowAdminTags = jsal_require_boolean(2);
+
+	ISteamUGC_SetItemTags = (FuncPtr_140)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetItemTags");
+	result = ISteamUGC_SetItemTags(ISteamUGC, updateHandle, &pTags, bAllowAdminTags);
+
+	free(pTags.m_ppStrings);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetItemContent(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pszContentFolder;
+	bool result;
+	FuncPtr_049 ISteamUGC_SetItemContent;
+
+	handle = require_str_to_uint64_t(0);
+	pszContentFolder = (char*)jsal_require_string(1);
+
+	ISteamUGC_SetItemContent = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetItemContent");
+	result = ISteamUGC_SetItemContent(ISteamUGC, handle, pszContentFolder);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetItemPreview(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pszPreviewFile;
+	bool result;
+	FuncPtr_049 ISteamUGC_SetItemPreview;
+
+	handle = require_str_to_uint64_t(0);
+	pszPreviewFile = (char*)jsal_require_string(1);
+
+	ISteamUGC_SetItemPreview = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetItemPreview");
+	result = ISteamUGC_SetItemPreview(ISteamUGC, handle, pszPreviewFile);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SetAllowLegacyUpload(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	bool bAllowLegacyUpload;
+	bool result;
+	FuncPtr_045 ISteamUGC_SetAllowLegacyUpload;
+
+	handle = require_str_to_uint64_t(0);
+	bAllowLegacyUpload = jsal_require_boolean(1);
+
+	ISteamUGC_SetAllowLegacyUpload = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetAllowLegacyUpload");
+	result = ISteamUGC_SetAllowLegacyUpload(ISteamUGC, handle, bAllowLegacyUpload);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_RemoveAllItemKeyValueTags(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	bool result;
+	FuncPtr_050 ISteamUGC_RemoveAllItemKeyValueTags;
+
+	handle = require_str_to_uint64_t(0);
+
+	ISteamUGC_RemoveAllItemKeyValueTags = (FuncPtr_050)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_RemoveAllItemKeyValueTags");
+	result = ISteamUGC_RemoveAllItemKeyValueTags(ISteamUGC, handle);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_RemoveItemKeyValueTags(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pchKey;
+	bool result;
+	FuncPtr_049 ISteamUGC_RemoveItemKeyValueTags;
+
+	handle = require_str_to_uint64_t(0);
+	pchKey = (char*)jsal_require_string(1);
+
+	ISteamUGC_RemoveItemKeyValueTags = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_RemoveItemKeyValueTags");
+	result = ISteamUGC_RemoveItemKeyValueTags(ISteamUGC, handle, pchKey);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_AddItemKeyValueTag(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pchKey;
+	const char * pchValue;
+	bool result;
+	FuncPtr_137 ISteamUGC_AddItemKeyValueTag;
+
+	handle = require_str_to_uint64_t(0);
+	pchKey = (char*)jsal_require_string(1);
+	pchValue = (char*)jsal_require_string(2);
+
+	ISteamUGC_AddItemKeyValueTag = (FuncPtr_137)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_AddItemKeyValueTag");
+	result = ISteamUGC_AddItemKeyValueTag(ISteamUGC, handle, pchKey, pchValue);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_AddItemPreviewFile(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pszPreviewFile;
+	uint32_t type;
+	bool result;
+	FuncPtr_141 ISteamUGC_AddItemPreviewFile;
+
+	handle = require_str_to_uint64_t(0);
+	pszPreviewFile = (char*)jsal_require_string(1);
+	type = jsal_require_uint(2);
+
+	ISteamUGC_AddItemPreviewFile = (FuncPtr_141)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_AddItemPreviewFile");
+	result = ISteamUGC_AddItemPreviewFile(ISteamUGC, handle, pszPreviewFile, type);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_AddItemPreviewVideo(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	const char * pszVideoID;
+	bool result;
+	FuncPtr_049 ISteamUGC_AddItemPreviewVideo;
+
+	handle = require_str_to_uint64_t(0);
+	pszVideoID = (char*)jsal_require_string(1);
+
+	ISteamUGC_AddItemPreviewVideo = (FuncPtr_049)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_AddItemPreviewVideo");
+	result = ISteamUGC_AddItemPreviewVideo(ISteamUGC, handle, pszVideoID);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_UpdateItemPreviewFile(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	const char * pszPreviewFile;
+	bool result;
+	FuncPtr_142 ISteamUGC_UpdateItemPreviewFile;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+	pszPreviewFile = (char*)jsal_require_string(2);
+
+	ISteamUGC_UpdateItemPreviewFile = (FuncPtr_142)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_UpdateItemPreviewFile");
+	result = ISteamUGC_UpdateItemPreviewFile(ISteamUGC, handle, index, pszPreviewFile);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_UpdateItemPreviewVideo(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	const char * pszVideoID;
+	bool result;
+	FuncPtr_142 ISteamUGC_UpdateItemPreviewVideo;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+	pszVideoID = (char*)jsal_require_string(2);
+
+	ISteamUGC_UpdateItemPreviewVideo = (FuncPtr_142)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_UpdateItemPreviewVideo");
+	result = ISteamUGC_UpdateItemPreviewVideo(ISteamUGC, handle, index, pszVideoID);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_RemoveItemPreview(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	bool result;
+	FuncPtr_054 ISteamUGC_RemoveItemPreview;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+
+	ISteamUGC_RemoveItemPreview = (FuncPtr_054)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_RemoveItemPreview");
+	result = ISteamUGC_RemoveItemPreview(ISteamUGC, handle, index);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_AddContentDescriptor(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t descid;
+	bool result;
+	FuncPtr_054 ISteamUGC_AddContentDescriptor;
+
+	handle = require_str_to_uint64_t(0);
+	descid = jsal_require_uint(1);
+
+	ISteamUGC_AddContentDescriptor = (FuncPtr_054)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_AddContentDescriptor");
+	result = ISteamUGC_AddContentDescriptor(ISteamUGC, handle, descid);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_RemoveContentDescriptor(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t descid;
+	bool result;
+	FuncPtr_054 ISteamUGC_RemoveContentDescriptor;
+
+	handle = require_str_to_uint64_t(0);
+	descid = jsal_require_uint(1);
+
+	ISteamUGC_RemoveContentDescriptor = (FuncPtr_054)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_RemoveContentDescriptor");
+	result = ISteamUGC_RemoveContentDescriptor(ISteamUGC, handle, descid);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetItemInstallInfo(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nPublishedFileID;
+	uint64_t punSizeOnDisk;
+	char * pchFolder;
+	uint32_t cchFolderSize;
+	uint32_t punTimeStamp;
+	bool result;
+	FuncPtr_147 ISteamUGC_GetItemInstallInfo;
+
+	nPublishedFileID = require_str_to_uint64_t(0);
+	cchFolderSize = jsal_require_uint(1);
+
+	if (!(pchFolder = (char *)calloc(cchFolderSize, sizeof(char))))
+		return false;
+
+	ISteamUGC_GetItemInstallInfo = (FuncPtr_147)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetItemInstallInfo");
+	result = ISteamUGC_GetItemInstallInfo(ISteamUGC, nPublishedFileID, &punSizeOnDisk, pchFolder, cchFolderSize, &punTimeStamp);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	push_uint64_t_to_str(punSizeOnDisk);
+	jsal_put_prop_string(-2, "punSizeOnDisk");
+	int pchFolderIndex;
+	jsal_push_new_array();
+	for (pchFolderIndex = 0; pchFolderIndex < (int)cchFolderSize; ++pchFolderIndex)
+	{
+		jsal_push_int(pchFolder[pchFolderIndex]);
+		jsal_put_prop_index(-2, pchFolderIndex);
+	}
+	jsal_put_prop_string(-2, "pchFolder");
+	jsal_push_uint(punTimeStamp);
+	jsal_put_prop_string(-2, "punTimeStamp");
+
+	free(pchFolder);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetItemDownloadInfo(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nPublishedFileID;
+	uint64_t punBytesDownloaded;
+	uint64_t punBytesTotal;
+	bool result;
+	FuncPtr_148 ISteamUGC_GetItemDownloadInfo;
+
+	nPublishedFileID = require_str_to_uint64_t(0);
+
+	ISteamUGC_GetItemDownloadInfo = (FuncPtr_148)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetItemDownloadInfo");
+	result = ISteamUGC_GetItemDownloadInfo(ISteamUGC, nPublishedFileID, &punBytesDownloaded, &punBytesTotal);
+
+	jsal_push_new_object();
+	jsal_push_boolean(result);
+	jsal_put_prop_string(-2, "result");
+	push_uint64_t_to_str(punBytesDownloaded);
+	jsal_put_prop_string(-2, "punBytesDownloaded");
+	push_uint64_t_to_str(punBytesTotal);
+	jsal_put_prop_string(-2, "punBytesTotal");
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_DownloadItem(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nPublishedFileID;
+	bool bHighPriority;
+	bool result;
+	FuncPtr_045 ISteamUGC_DownloadItem;
+
+	nPublishedFileID = require_str_to_uint64_t(0);
+	bHighPriority = jsal_require_boolean(1);
+
+	ISteamUGC_DownloadItem = (FuncPtr_045)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_DownloadItem");
+	result = ISteamUGC_DownloadItem(ISteamUGC, nPublishedFileID, bHighPriority);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_BInitWorkshopForGameServer(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint32_t unWorkshopDepotID;
+	const char * pszFolder;
+	bool result;
+	FuncPtr_149 ISteamUGC_BInitWorkshopForGameServer;
+
+	unWorkshopDepotID = jsal_require_uint(0);
+	pszFolder = (char*)jsal_require_string(1);
+
+	ISteamUGC_BInitWorkshopForGameServer = (FuncPtr_149)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_BInitWorkshopForGameServer");
+	result = ISteamUGC_BInitWorkshopForGameServer(ISteamUGC, unWorkshopDepotID, pszFolder);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_ShowWorkshopEULA(int num_args, bool is_ctor, intptr_t magic)
+{
+	bool result;
+	FuncPtr_008 ISteamUGC_ShowWorkshopEULA;
+
+	ISteamUGC_ShowWorkshopEULA = (FuncPtr_008)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_ShowWorkshopEULA");
+	result = ISteamUGC_ShowWorkshopEULA(ISteamUGC);
+
+	jsal_push_boolean(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryUGCNumTags(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	uint32_t result;
+	FuncPtr_017 ISteamUGC_GetQueryUGCNumTags;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+
+	ISteamUGC_GetQueryUGCNumTags = (FuncPtr_017)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryUGCNumTags");
+	result = ISteamUGC_GetQueryUGCNumTags(ISteamUGC, handle, index);
+
+	jsal_push_uint(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryUGCNumAdditionalPreviews(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	uint32_t result;
+	FuncPtr_017 ISteamUGC_GetQueryUGCNumAdditionalPreviews;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+
+	ISteamUGC_GetQueryUGCNumAdditionalPreviews = (FuncPtr_017)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryUGCNumAdditionalPreviews");
+	result = ISteamUGC_GetQueryUGCNumAdditionalPreviews(ISteamUGC, handle, index);
+
+	jsal_push_uint(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryUGCNumKeyValueTags(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	uint32_t result;
+	FuncPtr_017 ISteamUGC_GetQueryUGCNumKeyValueTags;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+
+	ISteamUGC_GetQueryUGCNumKeyValueTags = (FuncPtr_017)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryUGCNumKeyValueTags");
+	result = ISteamUGC_GetQueryUGCNumKeyValueTags(ISteamUGC, handle, index);
+
+	jsal_push_uint(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetQueryUGCContentDescriptors(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint32_t index;
+	uint32_t * pvecDescriptors;
+	uint32_t cMaxEntries;
+	uint32_t result;
+	FuncPtr_134 ISteamUGC_GetQueryUGCContentDescriptors;
+
+	handle = require_str_to_uint64_t(0);
+	index = jsal_require_uint(1);
+	cMaxEntries = jsal_require_uint(2);
+
+	if (!(pvecDescriptors = (uint32_t *)calloc(cMaxEntries, sizeof(uint32_t))))
+		return false;
+
+	ISteamUGC_GetQueryUGCContentDescriptors = (FuncPtr_134)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetQueryUGCContentDescriptors");
+	result = ISteamUGC_GetQueryUGCContentDescriptors(ISteamUGC, handle, index, pvecDescriptors, cMaxEntries);
+
+	jsal_push_new_object();
+	jsal_push_uint(result);
+	jsal_put_prop_string(-2, "result");
+	int pvecDescriptorsIndex;
+	jsal_push_new_array();
+	for (pvecDescriptorsIndex = 0; pvecDescriptorsIndex < (int)cMaxEntries; ++pvecDescriptorsIndex)
+	{
+		jsal_push_uint(pvecDescriptors[pvecDescriptorsIndex]);
+		jsal_put_prop_index(-2, pvecDescriptorsIndex);
+	}
+	jsal_put_prop_string(-2, "pvecDescriptors");
+
+	free(pvecDescriptors);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetItemUpdateProgress(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t handle;
+	uint64_t punBytesProcessed;
+	uint64_t punBytesTotal;
+	uint32_t result;
+	FuncPtr_144 ISteamUGC_GetItemUpdateProgress;
+
+	handle = require_str_to_uint64_t(0);
+
+	ISteamUGC_GetItemUpdateProgress = (FuncPtr_144)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetItemUpdateProgress");
+	result = ISteamUGC_GetItemUpdateProgress(ISteamUGC, handle, &punBytesProcessed, &punBytesTotal);
+
+	jsal_push_new_object();
+	jsal_push_uint(result);
+	jsal_put_prop_string(-2, "result");
+	push_uint64_t_to_str(punBytesProcessed);
+	jsal_put_prop_string(-2, "punBytesProcessed");
+	push_uint64_t_to_str(punBytesTotal);
+	jsal_put_prop_string(-2, "punBytesTotal");
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetNumSubscribedItems(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint32_t result;
+	FuncPtr_013 ISteamUGC_GetNumSubscribedItems;
+
+	ISteamUGC_GetNumSubscribedItems = (FuncPtr_013)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetNumSubscribedItems");
+	result = ISteamUGC_GetNumSubscribedItems(ISteamUGC);
+
+	jsal_push_uint(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetSubscribedItems(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t * pvecPublishedFileID;
+	uint32_t cMaxEntries;
+	uint32_t result;
+	FuncPtr_146 ISteamUGC_GetSubscribedItems;
+
+	cMaxEntries = jsal_require_uint(0);
+
+	if (!(pvecPublishedFileID = (uint64_t *)calloc(cMaxEntries, sizeof(uint64_t))))
+		return false;
+
+	ISteamUGC_GetSubscribedItems = (FuncPtr_146)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetSubscribedItems");
+	result = ISteamUGC_GetSubscribedItems(ISteamUGC, pvecPublishedFileID, cMaxEntries);
+
+	jsal_push_new_object();
+	jsal_push_uint(result);
+	jsal_put_prop_string(-2, "result");
+	int pvecPublishedFileIDIndex;
+	jsal_push_new_array();
+	for (pvecPublishedFileIDIndex = 0; pvecPublishedFileIDIndex < (int)cMaxEntries; ++pvecPublishedFileIDIndex)
+	{
+		push_uint64_t_to_str(pvecPublishedFileID[pvecPublishedFileIDIndex]);
+		jsal_put_prop_index(-2, pvecPublishedFileIDIndex);
+	}
+	jsal_put_prop_string(-2, "pvecPublishedFileID");
+
+	free(pvecPublishedFileID);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetItemState(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t nPublishedFileID;
+	uint32_t result;
+	FuncPtr_025 ISteamUGC_GetItemState;
+
+	nPublishedFileID = require_str_to_uint64_t(0);
+
+	ISteamUGC_GetItemState = (FuncPtr_025)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetItemState");
+	result = ISteamUGC_GetItemState(ISteamUGC, nPublishedFileID);
+
+	jsal_push_uint(result);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_GetUserContentDescriptorPreferences(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint32_t * pvecDescriptors;
+	uint32_t cMaxEntries;
+	uint32_t result;
+	FuncPtr_151 ISteamUGC_GetUserContentDescriptorPreferences;
+
+	cMaxEntries = jsal_require_uint(0);
+
+	if (!(pvecDescriptors = (uint32_t *)calloc(cMaxEntries, sizeof(uint32_t))))
+		return false;
+
+	ISteamUGC_GetUserContentDescriptorPreferences = (FuncPtr_151)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_GetUserContentDescriptorPreferences");
+	result = ISteamUGC_GetUserContentDescriptorPreferences(ISteamUGC, pvecDescriptors, cMaxEntries);
+
+	jsal_push_new_object();
+	jsal_push_uint(result);
+	jsal_put_prop_string(-2, "result");
+	int pvecDescriptorsIndex;
+	jsal_push_new_array();
+	for (pvecDescriptorsIndex = 0; pvecDescriptorsIndex < (int)cMaxEntries; ++pvecDescriptorsIndex)
+	{
+		jsal_push_uint(pvecDescriptors[pvecDescriptorsIndex]);
+		jsal_put_prop_index(-2, pvecDescriptorsIndex);
+	}
+	jsal_put_prop_string(-2, "pvecDescriptors");
+
+	free(pvecDescriptors);
+
+	return true;
+}
+
+static bool
+js_ISteamUGC_SuspendDownloads(int num_args, bool is_ctor, intptr_t magic)
+{
+	bool bSuspend;
+	FuncPtr_064 ISteamUGC_SuspendDownloads;
+
+	bSuspend = jsal_require_boolean(0);
+
+	ISteamUGC_SuspendDownloads = (FuncPtr_064)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SuspendDownloads");
+	ISteamUGC_SuspendDownloads(ISteamUGC, bSuspend);
+
+	return false;
 }
 

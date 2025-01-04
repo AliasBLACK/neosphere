@@ -1751,3 +1751,706 @@ Recurring Callbacks
 		Get a bitmask of the Steam Input Configuration types opted in for the current session. Returns ESteamInputConfigurationEnableType values.
 		Note: user can override the settings from the Steamworks Partner site so the returned values may not exactly match your default configuration
 
+
+`ISteamUGC` Interface
+---------------------
+
+	ISteamUGC.CreateQueryUserUGCRequest(int unAccountID, int eListType, int eMatchingUGCType, int eSortOrder, int nCreatorAppID, int nConsumerAppID, int unPage)
+
+		Returns var of type `int_string`.
+		Query UGC associated with a user. Creator app id or consumer app id must be valid and be set to the current running app. unPage should start at 1.
+
+		eListType is an enum with the following members:
+
+			EUserUGCList.k_EUserUGCList_Published
+			EUserUGCList.k_EUserUGCList_VotedOn
+			EUserUGCList.k_EUserUGCList_VotedUp
+			EUserUGCList.k_EUserUGCList_VotedDown
+			EUserUGCList.k_EUserUGCList_WillVoteLater
+			EUserUGCList.k_EUserUGCList_Favorited
+			EUserUGCList.k_EUserUGCList_Subscribed
+			EUserUGCList.k_EUserUGCList_UsedOrPlayed
+			EUserUGCList.k_EUserUGCList_Followed
+
+		eMatchingUGCType is an enum with the following members:
+
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items_Mtx
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items_ReadyToUse
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Collections
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Artwork
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Videos
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Screenshots
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_AllGuides
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_WebGuides
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_IntegratedGuides
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_UsableInGame
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_ControllerBindings
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_GameManagedItems
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_All
+
+		eSortOrder is an enum with the following members:
+
+			EUserUGCListSortOrder.k_EUserUGCListSortOrder_CreationOrderDesc
+			EUserUGCListSortOrder.k_EUserUGCListSortOrder_CreationOrderAsc
+			EUserUGCListSortOrder.k_EUserUGCListSortOrder_TitleAsc
+			EUserUGCListSortOrder.k_EUserUGCListSortOrder_LastUpdatedDesc
+			EUserUGCListSortOrder.k_EUserUGCListSortOrder_SubscriptionDateDesc
+			EUserUGCListSortOrder.k_EUserUGCListSortOrder_VoteScoreDesc
+			EUserUGCListSortOrder.k_EUserUGCListSortOrder_ForModeration
+
+	ISteamUGC.CreateQueryAllUGCRequestPage(int eQueryType, int eMatchingeMatchingUGCTypeFileType, int nCreatorAppID, int nConsumerAppID, int unPage)
+
+		Returns var of type `int_string`.
+
+		eQueryType is an enum type named EUGCQuery.
+		Due to the length of the enum, refer to Steamworks documentation for details.
+
+		eMatchingeMatchingUGCTypeFileType is an enum with the following members:
+
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items_Mtx
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items_ReadyToUse
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Collections
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Artwork
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Videos
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Screenshots
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_AllGuides
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_WebGuides
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_IntegratedGuides
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_UsableInGame
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_ControllerBindings
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_GameManagedItems
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_All
+
+	ISteamUGC.CreateQueryAllUGCRequestCursor(int eQueryType, int eMatchingeMatchingUGCTypeFileType, int nCreatorAppID, int nConsumerAppID, string pchCursor)
+
+		Returns var of type `int_string`.
+
+		eQueryType is an enum type named EUGCQuery.
+		Due to the length of the enum, refer to Steamworks documentation for details.
+
+		eMatchingeMatchingUGCTypeFileType is an enum with the following members:
+
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items_Mtx
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Items_ReadyToUse
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Collections
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Artwork
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Videos
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_Screenshots
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_AllGuides
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_WebGuides
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_IntegratedGuides
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_UsableInGame
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_ControllerBindings
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_GameManagedItems
+			EUGCMatchingUGCType.k_EUGCMatchingUGCType_All
+
+	ISteamUGC.CreateQueryUGCDetailsRequest(int unNumPublishedFileIDs)
+
+		Returns a javascript object with the following members:
+
+			value.result (int_string)
+			value.pvecPublishedFileID (int_string[unNumPublishedFileIDs])
+
+	ISteamUGC.SendQueryUGCRequest(int_string handle)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_handle (int_string)
+			result.m_eResult (int)
+			result.m_unNumResultsReturned (int)
+			result.m_unTotalMatchingResults (int)
+			result.m_bCachedData (bool)
+			result.m_rgchNextCursor [256] (int)
+
+	ISteamUGC.CreateItem(int nConsumerAppId, int eFileType)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_nPublishedFileId (int_string)
+			result.m_bUserNeedsToAcceptWorkshopLegalAgreement (bool)
+
+		eFileType is an enum with the following members:
+
+			EWorkshopFileType.k_EWorkshopFileTypeFirst
+			EWorkshopFileType.k_EWorkshopFileTypeCommunity
+			EWorkshopFileType.k_EWorkshopFileTypeMicrotransaction
+			EWorkshopFileType.k_EWorkshopFileTypeCollection
+			EWorkshopFileType.k_EWorkshopFileTypeArt
+			EWorkshopFileType.k_EWorkshopFileTypeVideo
+			EWorkshopFileType.k_EWorkshopFileTypeScreenshot
+			EWorkshopFileType.k_EWorkshopFileTypeGame
+			EWorkshopFileType.k_EWorkshopFileTypeSoftware
+			EWorkshopFileType.k_EWorkshopFileTypeConcept
+			EWorkshopFileType.k_EWorkshopFileTypeWebGuide
+			EWorkshopFileType.k_EWorkshopFileTypeIntegratedGuide
+			EWorkshopFileType.k_EWorkshopFileTypeMerch
+			EWorkshopFileType.k_EWorkshopFileTypeControllerBinding
+			EWorkshopFileType.k_EWorkshopFileTypeSteamworksAccessInvite
+			EWorkshopFileType.k_EWorkshopFileTypeSteamVideo
+			EWorkshopFileType.k_EWorkshopFileTypeGameManagedItem
+			EWorkshopFileType.k_EWorkshopFileTypeMax
+
+	ISteamUGC.StartItemUpdate(int nConsumerAppId, int_string nPublishedFileID)
+
+		Returns var of type `int_string`.
+
+	ISteamUGC.SubmitItemUpdate(int_string handle, string pchChangeNote)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_bUserNeedsToAcceptWorkshopLegalAgreement (bool)
+			result.m_nPublishedFileId (int_string)
+
+	ISteamUGC.SetUserItemVote(int_string nPublishedFileID, bool bVoteUp)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_nPublishedFileId (int_string)
+			result.m_eResult (int)
+			result.m_bVoteUp (bool)
+
+	ISteamUGC.GetUserItemVote(int_string nPublishedFileID)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_nPublishedFileId (int_string)
+			result.m_eResult (int)
+			result.m_bVotedUp (bool)
+			result.m_bVotedDown (bool)
+			result.m_bVoteSkipped (bool)
+
+	ISteamUGC.AddItemToFavorites(int nAppId, int_string nPublishedFileID)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_nPublishedFileId (int_string)
+			result.m_eResult (int)
+			result.m_bWasAddRequest (bool)
+
+	ISteamUGC.RemoveItemFromFavorites(int nAppId, int_string nPublishedFileID)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_nPublishedFileId (int_string)
+			result.m_eResult (int)
+			result.m_bWasAddRequest (bool)
+
+	ISteamUGC.SubscribeItem(int_string nPublishedFileID)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_nPublishedFileId (int_string)
+
+	ISteamUGC.UnsubscribeItem(int_string nPublishedFileID)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_nPublishedFileId (int_string)
+
+	ISteamUGC.StartPlaytimeTracking(int_string[] pvecPublishedFileID)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+
+	ISteamUGC.StopPlaytimeTracking(int_string[] pvecPublishedFileID)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+
+	ISteamUGC.StopPlaytimeTrackingForAllItems()
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+
+	ISteamUGC.AddDependency(int_string nParentPublishedFileID, int_string nChildPublishedFileID)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_nPublishedFileId (int_string)
+			result.m_nChildPublishedFileId (int_string)
+
+	ISteamUGC.RemoveDependency(int_string nParentPublishedFileID, int_string nChildPublishedFileID)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_nPublishedFileId (int_string)
+			result.m_nChildPublishedFileId (int_string)
+
+	ISteamUGC.AddAppDependency(int_string nPublishedFileID, int nAppID)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_nPublishedFileId (int_string)
+			result.m_nAppID (int)
+
+	ISteamUGC.RemoveAppDependency(int_string nPublishedFileID, int nAppID)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_nPublishedFileId (int_string)
+			result.m_nAppID (int)
+
+	ISteamUGC.GetAppDependencies(int_string nPublishedFileID)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_nPublishedFileId (int_string)
+			result.m_rgAppIDs [32] (int)
+			result.m_nNumAppDependencies (int)
+			result.m_nTotalNumAppDependencies (int)
+
+	ISteamUGC.DeleteItem(int_string nPublishedFileID)
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_nPublishedFileId (int_string)
+
+	ISteamUGC.GetWorkshopEULAStatus()
+
+		Returns var of type `int_string`.
+		Returns a callback ID that eventually returns a Javascript object with the following members:
+
+			result.m_eResult (int)
+			result.m_nAppID (int)
+			result.m_unVersion (int)
+			result.m_rtAction (int)
+			result.m_bAccepted (bool)
+			result.m_bNeedsAction (bool)
+
+	ISteamUGC.GetQueryUGCResult(int_string handle, int index)
+
+		Retrieve an individual result after receiving the callback for querying UGC
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pDetails.m_nPublishedFileId (int_string)
+			value.pDetails.m_eResult (int)
+			value.pDetails.m_eFileType (int)
+			value.pDetails.m_nCreatorAppID (int)
+			value.pDetails.m_nConsumerAppID (int)
+			value.pDetails.m_rgchTitle [129] (int)
+			value.pDetails.m_rgchDescription [8000] (int)
+			value.pDetails.m_ulSteamIDOwner (int_string)
+			value.pDetails.m_rtimeCreated (int)
+			value.pDetails.m_rtimeUpdated (int)
+			value.pDetails.m_rtimeAddedToUserList (int)
+			value.pDetails.m_eVisibility (int)
+			value.pDetails.m_bBanned (bool)
+			value.pDetails.m_bAcceptedForUse (bool)
+			value.pDetails.m_bTagsTruncated (bool)
+			value.pDetails.m_rgchTags [1025] (int)
+			value.pDetails.m_hFile (int_string)
+			value.pDetails.m_hPreviewFile (int_string)
+			value.pDetails.m_pchFileName [260] (int)
+			value.pDetails.m_nFileSize (int)
+			value.pDetails.m_nPreviewFileSize (int)
+			value.pDetails.m_rgchURL [256] (int)
+			value.pDetails.m_unVotesUp (int)
+			value.pDetails.m_unVotesDown (int)
+			value.pDetails.m_flScore (float)
+			value.pDetails.m_unNumChildren (int)
+
+	ISteamUGC.GetQueryUGCTag(int_string handle, int index, int indexTag, int cchValueSize)
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pchValue (string[cchValueSize])
+
+	ISteamUGC.GetQueryUGCTagDisplayName(int_string handle, int index, int indexTag, int cchValueSize)
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pchValue (string[cchValueSize])
+
+	ISteamUGC.GetQueryUGCPreviewURL(int_string handle, int index, int cchURLSize)
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pchURL (string[cchURLSize])
+
+	ISteamUGC.GetQueryUGCMetadata(int_string handle, int index, int cchMetadatasize)
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pchMetadata (string[cchMetadatasize])
+
+	ISteamUGC.GetQueryUGCChildren(int_string handle, int index, int cMaxEntries)
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pvecPublishedFileID (int_string[cMaxEntries])
+
+	ISteamUGC.GetQueryUGCStatistic(int_string handle, int index, int eStatType)
+
+		eStatType is an enum with the following members:
+
+			EItemStatistic.k_EItemStatistic_NumSubscriptions
+			EItemStatistic.k_EItemStatistic_NumFavorites
+			EItemStatistic.k_EItemStatistic_NumFollowers
+			EItemStatistic.k_EItemStatistic_NumUniqueSubscriptions
+			EItemStatistic.k_EItemStatistic_NumUniqueFavorites
+			EItemStatistic.k_EItemStatistic_NumUniqueFollowers
+			EItemStatistic.k_EItemStatistic_NumUniqueWebsiteViews
+			EItemStatistic.k_EItemStatistic_ReportScore
+			EItemStatistic.k_EItemStatistic_NumSecondsPlayed
+			EItemStatistic.k_EItemStatistic_NumPlaytimeSessions
+			EItemStatistic.k_EItemStatistic_NumComments
+			EItemStatistic.k_EItemStatistic_NumSecondsPlayedDuringTimePeriod
+			EItemStatistic.k_EItemStatistic_NumPlaytimeSessionsDuringTimePeriod
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pStatValue (int_string)
+
+	ISteamUGC.GetQueryUGCAdditionalPreview(int_string handle, int index, int previewIndex, int cchURLSize, int cchOriginalFileNameSize)
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pchURLOrVideoID (string[cchURLSize])
+			value.pchOriginalFileName (string[cchURLSize])
+			value.pPreviewType (int)
+
+	ISteamUGC.GetQueryUGCKeyValueTag(int_string handle, int index, int keyValueTagIndex, int cchKeySize, int cchValueSize)
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pchKey (string[cchKeySize])
+			value.pchValue (string[cchValueSize])
+
+	ISteamUGC.GetQueryFirstUGCKeyValueTag(int_string handle, int index, string pchKey, int cchValueSize)
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.pchValue (string[cchValueSize])
+
+	ISteamUGC.ReleaseQueryUGCRequest(int_string handle)
+
+		Returns var of type `bool`.
+		Release the request to free up memory, after retrieving results
+
+	ISteamUGC.AddRequiredTag(int_string handle, string pTagName)
+
+		Returns var of type `bool`.
+		Options to set for querying UGC
+
+	ISteamUGC.AddRequiredTagGroup(int_string handle, string[] pTagGroups)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.AddExcludedTag(int_string handle, string pTagName)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetReturnOnlyIDs(int_string handle, bool bReturnOnlyIDs)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetReturnKeyValueTags(int_string handle, bool bReturnKeyValueTags)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetReturnLongDescription(int_string handle, bool bReturnLongDescription)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetReturnMetadata(int_string handle, bool bReturnMetadata)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetReturnChildren(int_string handle, bool bReturnChildren)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetReturnAdditionalPreviews(int_string handle, bool bReturnAdditionalPreviews)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetReturnTotalOnly(int_string handle, bool bReturnTotalOnly)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetReturnPlaytimeStats(int_string handle, int unDays)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetLanguage(int_string handle, string pchLanguage)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetAllowCachedResponse(int_string handle, int unMaxAgeSeconds)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetCloudFileNameFilter(int_string handle, string pMatchCloudFileName)
+
+		Returns var of type `bool`.
+		Options only for querying user UGC
+
+	ISteamUGC.SetMatchAnyTag(int_string handle, bool bMatchAnyTag)
+
+		Returns var of type `bool`.
+		Options only for querying all UGC
+
+	ISteamUGC.SetSearchText(int_string handle, string pSearchText)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetRankedByTrendDays(int_string handle, int unDays)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetTimeCreatedDateRange(int_string handle, int rtStart, int rtEnd)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetTimeUpdatedDateRange(int_string handle, int rtStart, int rtEnd)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.AddRequiredKeyValueTag(int_string handle, string pKey, string pValue)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetItemTitle(int_string handle, string pchTitle)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetItemDescription(int_string handle, string pchDescription)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetItemUpdateLanguage(int_string handle, string pchLanguage)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetItemMetadata(int_string handle, string pchMetaData)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetItemVisibility(int_string handle, int eVisibility)
+
+		Returns var of type `bool`.
+
+		eVisibility is an enum with the following members:
+
+			ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPublic
+			ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityFriendsOnly
+			ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPrivate
+			ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityUnlisted
+
+	ISteamUGC.SetItemTags(int_string updateHandle, string[] pTags, bool bAllowAdminTags)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetItemContent(int_string handle, string pszContentFolder)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetItemPreview(int_string handle, string pszPreviewFile)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.SetAllowLegacyUpload(int_string handle, bool bAllowLegacyUpload)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.RemoveAllItemKeyValueTags(int_string handle)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.RemoveItemKeyValueTags(int_string handle, string pchKey)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.AddItemKeyValueTag(int_string handle, string pchKey, string pchValue)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.AddItemPreviewFile(int_string handle, string pszPreviewFile, int type)
+
+		Returns var of type `bool`.
+
+		type is an enum with the following members:
+
+			EItemPreviewType.k_EItemPreviewType_Image
+			EItemPreviewType.k_EItemPreviewType_YouTubeVideo
+			EItemPreviewType.k_EItemPreviewType_Sketchfab
+			EItemPreviewType.k_EItemPreviewType_EnvironmentMap_HorizontalCross
+			EItemPreviewType.k_EItemPreviewType_EnvironmentMap_LatLong
+			EItemPreviewType.k_EItemPreviewType_ReservedMax
+
+	ISteamUGC.AddItemPreviewVideo(int_string handle, string pszVideoID)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.UpdateItemPreviewFile(int_string handle, int index, string pszPreviewFile)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.UpdateItemPreviewVideo(int_string handle, int index, string pszVideoID)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.RemoveItemPreview(int_string handle, int index)
+
+		Returns var of type `bool`.
+
+	ISteamUGC.AddContentDescriptor(int_string handle, int descid)
+
+		Returns var of type `bool`.
+
+		descid is an enum with the following members:
+
+			EUGCContentDescriptorID.k_EUGCContentDescriptor_NudityOrSexualContent
+			EUGCContentDescriptorID.k_EUGCContentDescriptor_FrequentViolenceOrGore
+			EUGCContentDescriptorID.k_EUGCContentDescriptor_AdultOnlySexualContent
+			EUGCContentDescriptorID.k_EUGCContentDescriptor_GratuitousSexualContent
+			EUGCContentDescriptorID.k_EUGCContentDescriptor_AnyMatureContent
+
+	ISteamUGC.RemoveContentDescriptor(int_string handle, int descid)
+
+		Returns var of type `bool`.
+
+		descid is an enum with the following members:
+
+			EUGCContentDescriptorID.k_EUGCContentDescriptor_NudityOrSexualContent
+			EUGCContentDescriptorID.k_EUGCContentDescriptor_FrequentViolenceOrGore
+			EUGCContentDescriptorID.k_EUGCContentDescriptor_AdultOnlySexualContent
+			EUGCContentDescriptorID.k_EUGCContentDescriptor_GratuitousSexualContent
+			EUGCContentDescriptorID.k_EUGCContentDescriptor_AnyMatureContent
+
+	ISteamUGC.GetItemInstallInfo(int_string nPublishedFileID, int cchFolderSize)
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.punSizeOnDisk (int_string)
+			value.pchFolder (string[cchFolderSize])
+			value.punTimeStamp (int)
+
+	ISteamUGC.GetItemDownloadInfo(int_string nPublishedFileID)
+
+		get info about pending update for items that have k_EItemStateNeedsUpdate set. punBytesTotal will be valid after download started once
+
+		Returns a javascript object with the following members:
+
+			value.result (bool)
+			value.punBytesDownloaded (int_string)
+			value.punBytesTotal (int_string)
+
+	ISteamUGC.DownloadItem(int_string nPublishedFileID, bool bHighPriority)
+
+		Returns var of type `bool`.
+		download new or update already installed item. If function returns true, wait for DownloadItemResult_t. If the item is already installed,
+		then files on disk should not be used until callback received. If item is not subscribed to, it will be cached for some time.
+		If bHighPriority is set, any other item download will be suspended and this item downloaded ASAP.
+
+	ISteamUGC.BInitWorkshopForGameServer(int unWorkshopDepotID, string pszFolder)
+
+		Returns var of type `bool`.
+		game servers can set a specific workshop folder before issuing any UGC commands.
+		This is helpful if you want to support multiple game servers running out of the same install folder
+
+	ISteamUGC.ShowWorkshopEULA()
+
+		Returns var of type `bool`.
+		Show the app's latest Workshop EULA to the user in an overlay window, where they can accept it or not
+
+	ISteamUGC.GetQueryUGCNumTags(int_string handle, int index)
+
+		Returns var of type `int`.
+
+	ISteamUGC.GetQueryUGCNumAdditionalPreviews(int_string handle, int index)
+
+		Returns var of type `int`.
+
+	ISteamUGC.GetQueryUGCNumKeyValueTags(int_string handle, int index)
+
+		Returns var of type `int`.
+
+	ISteamUGC.GetQueryUGCContentDescriptors(int_string handle, int index, int cMaxEntries)
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pvecDescriptors (int[cMaxEntries])
+
+	ISteamUGC.GetItemUpdateProgress(int_string handle)
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.punBytesProcessed (int_string)
+			value.punBytesTotal (int_string)
+
+	ISteamUGC.GetNumSubscribedItems()
+
+		Returns var of type `int`.
+
+	ISteamUGC.GetSubscribedItems(int cMaxEntries)
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pvecPublishedFileID (int_string[cMaxEntries])
+
+	ISteamUGC.GetItemState(int_string nPublishedFileID)
+
+		Returns var of type `int`.
+		get EItemState flags about item on this client
+
+	ISteamUGC.GetUserContentDescriptorPreferences(int cMaxEntries)
+
+		Return the user's community content descriptor preferences
+
+		Returns a javascript object with the following members:
+
+			value.result (int)
+			value.pvecDescriptors (int[cMaxEntries])
+
+	ISteamUGC.SuspendDownloads(bool bSuspend)
+
