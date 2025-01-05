@@ -50,6 +50,10 @@ structs_to_bind = [
 	"GameOverlayActivated_t",
 	"SteamAPICallCompleted_t"
 ]
+
+def is_string_type(type):
+    return type == "char *" or type == "const char *"
+
 def convert_type(type):
 
 	# Check if type is pointer and/or const.
@@ -1044,6 +1048,7 @@ for category in methods:
 					array_alloc_trailing_newline = "\n"
 					source += "	if (!(" + param['paramname'] + " = (" + param['paramtype'] + ")calloc(" + param['array_size'] + ", sizeof(" + param['rawtype'] + "))))\n"
 					source += "		return false;\n"
+					free_params.append(param['paramname'])
 
 			source += array_alloc_trailing_newline
 
@@ -1052,19 +1057,15 @@ for category in methods:
 			source += "	" + ("result = " if returntype != "void" else "") + internal_name + "(" + ", ".join(param_arg_array) + ");\n"
 			source += "\n"
 
-			for free_param in free_params:
-				source += '	free(' + free_param + ');\n'
-
-			if len(free_params) > 0:
-				source += '\n'
 
 			# Push returns.
+			return_value = "true"
 			match len(out_params):
 
 				# Nothing returned.
 				case 0:
 					if returntype == "void":
-						source += "	return false;\n"
+						return_value = "false"
 
 				# Single var returned.
 				case 1:
@@ -1091,7 +1092,7 @@ for category in methods:
 						if param['paramname'] in out_params:
 
 							# If array.
-							if "array_size" in param:
+							if "array_size" in param and not is_string_type(param['paramtype']):
 								doc_resulttype = "		Returns an array of type `" + js_type_convert(param['paramtype']) + "` and size " + param['array_size'] + ".\n"
 								source += jsal_push_array(param, initialized_i)
 								source += "\n"
@@ -1103,7 +1104,6 @@ for category in methods:
 								source += "	" + jsal_push_function(param['rawtype']) + param['paramname'] + ");\n"
 
 					source += "\n"
-					source += "	return true;\n"
 
 				# Multiple vars returned.
 				case _:
@@ -1117,15 +1117,13 @@ for category in methods:
 						source += '	jsal_put_prop_string(-2, "result");\n'
 
 					# Push rest of returned params.
-					free_array_pointers_string = ""
 					for param in method['params']:
 						if param['paramname'] in out_params:
 
 							# If array.
-							if "array_size" in param:
+							if "array_size" in param and not is_string_type(param['paramtype']):
 								source += jsal_push_array(param, initialized_i)
 								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype']) + "[" + param['array_size'] + "])\n")
-								free_array_pointers_string += "	free(" + param['paramname'] + ");\n"
 							
 							elif param['rawtype'] in structs:
 								source += jsal_push_object(param['rawtype'], param['paramname'], 1)
@@ -1134,21 +1132,24 @@ for category in methods:
 
 							# Else, return normally based on type.
 							else:
-								source += "	" + jsal_push_function(param['rawtype']) + param['paramname'] + ");\n"
+								type = param['rawtype'] if not is_string_type(param['paramtype']) else param['paramtype']
+								source += "	" + jsal_push_function(type) + param['paramname'] + ");\n"
 								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype']) + ")\n")
 							
 							# Next param please.
 							source += '	jsal_put_prop_string(-2, "' + param['paramname'] + '");\n'
-					
-					# Free array pointers.
-					if len(free_array_pointers_string) > 0:
-						source += "\n"
-						source += free_array_pointers_string
 
-					# Close out return portion of function defintion.
 					source += "\n"
-					source += "	return true;\n"
 			
+
+			# Close out return portion of function defintion.
+			for free_param in free_params:
+				source += '	free(' + free_param + ');\n'
+			if len(free_params) > 0:
+				source += "\n"
+
+			source += "	return " + return_value + ";\n"
+
 			# Close function definition.
 			source += "}\n\n"
 

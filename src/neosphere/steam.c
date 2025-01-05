@@ -2717,13 +2717,7 @@ js_ISteamUser_GetUserDataFolder(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int pchBufferIndex;
-	jsal_push_new_array();
-	for (pchBufferIndex = 0; pchBufferIndex < (int)cubBuffer; ++pchBufferIndex)
-	{
-		jsal_push_int(pchBuffer[pchBufferIndex]);
-		jsal_put_prop_index(-2, pchBufferIndex);
-	}
+	jsal_push_string(pchBuffer);
 	jsal_put_prop_string(-2, "pchBuffer");
 
 	free(pchBuffer);
@@ -3263,9 +3257,9 @@ js_ISteamFriends_DownloadClanActivityCounts(int num_args, bool is_ctor, intptr_t
 	ISteamFriends_DownloadClanActivityCounts = (FuncPtr_037)GETADDRESS(steam_api, "SteamAPI_ISteamFriends_DownloadClanActivityCounts");
 	result = ISteamFriends_DownloadClanActivityCounts(ISteamFriends, psteamIDClans, cClansToRequest);
 
-	free(psteamIDClans);
-
 	push_uint64_t_to_str(result);
+
+	free(psteamIDClans);
 
 	return true;
 }
@@ -4217,6 +4211,8 @@ js_ISteamFriends_GetFriendsGroupMembersList(int num_args, bool is_ctor, intptr_t
 
 	free (pOutSteamIDMembers);
 
+	free(pOutSteamIDMembers);
+
 	return true;
 }
 
@@ -4693,13 +4689,7 @@ js_ISteamUtils_GetEnteredGamepadTextInput(int num_args, bool is_ctor, intptr_t m
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int pchTextIndex;
-	jsal_push_new_array();
-	for (pchTextIndex = 0; pchTextIndex < (int)cchText; ++pchTextIndex)
-	{
-		jsal_push_int(pchText[pchTextIndex]);
-		jsal_put_prop_index(-2, pchTextIndex);
-	}
+	jsal_push_string(pchText);
 	jsal_put_prop_string(-2, "pchText");
 
 	free(pchText);
@@ -4958,13 +4948,7 @@ js_ISteamUtils_FilterText(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int pchOutFilteredTextIndex;
-	jsal_push_new_array();
-	for (pchOutFilteredTextIndex = 0; pchOutFilteredTextIndex < (int)nByteSizeOutFilteredText; ++pchOutFilteredTextIndex)
-	{
-		jsal_push_int(pchOutFilteredText[pchOutFilteredTextIndex]);
-		jsal_put_prop_index(-2, pchOutFilteredTextIndex);
-	}
+	jsal_push_string(pchOutFilteredText);
 	jsal_put_prop_string(-2, "pchOutFilteredText");
 
 	free(pchOutFilteredText);
@@ -5542,13 +5526,7 @@ js_ISteamUserStats_GetMostAchievedAchievementInfo(int num_args, bool is_ctor, in
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int pchNameIndex;
-	jsal_push_new_array();
-	for (pchNameIndex = 0; pchNameIndex < (int)unNameBufLen; ++pchNameIndex)
-	{
-		jsal_push_int(pchName[pchNameIndex]);
-		jsal_put_prop_index(-2, pchNameIndex);
-	}
+	jsal_push_string(pchName);
 	jsal_put_prop_string(-2, "pchName");
 	jsal_push_number(pflPercent);
 	jsal_put_prop_string(-2, "pflPercent");
@@ -5583,13 +5561,7 @@ js_ISteamUserStats_GetNextMostAchievedAchievementInfo(int num_args, bool is_ctor
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int pchNameIndex;
-	jsal_push_new_array();
-	for (pchNameIndex = 0; pchNameIndex < (int)unNameBufLen; ++pchNameIndex)
-	{
-		jsal_push_int(pchName[pchNameIndex]);
-		jsal_put_prop_index(-2, pchNameIndex);
-	}
+	jsal_push_string(pchName);
 	jsal_put_prop_string(-2, "pchName");
 	jsal_push_number(pflPercent);
 	jsal_put_prop_string(-2, "pflPercent");
@@ -5872,9 +5844,9 @@ js_ISteamUserStats_DownloadLeaderboardEntriesForUsers(int num_args, bool is_ctor
 	ISteamUserStats_DownloadLeaderboardEntriesForUsers = (FuncPtr_085)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_DownloadLeaderboardEntriesForUsers");
 	result = ISteamUserStats_DownloadLeaderboardEntriesForUsers(ISteamUserStats, hSteamLeaderboard, prgUsers, cUsers);
 
-	free(prgUsers);
-
 	push_uint64_t_to_str(result);
+
+	free(prgUsers);
 
 	return true;
 }
@@ -5905,9 +5877,9 @@ js_ISteamUserStats_UploadLeaderboardScore(int num_args, bool is_ctor, intptr_t m
 	ISteamUserStats_UploadLeaderboardScore = (FuncPtr_087)GETADDRESS(steam_api, "SteamAPI_ISteamUserStats_UploadLeaderboardScore");
 	result = ISteamUserStats_UploadLeaderboardScore(ISteamUserStats, hSteamLeaderboard, eLeaderboardUploadScoreMethod, nScore, pScoreDetails, cScoreDetailsCount);
 
-	free(pScoreDetails);
-
 	push_uint64_t_to_str(result);
+
+	free(pScoreDetails);
 
 	return true;
 }
@@ -6107,13 +6079,7 @@ js_ISteamApps_BGetDLCDataByIndex(int num_args, bool is_ctor, intptr_t magic)
 	jsal_put_prop_string(-2, "pAppID");
 	jsal_push_boolean(pbAvailable);
 	jsal_put_prop_string(-2, "pbAvailable");
-	int pchNameIndex;
-	jsal_push_new_array();
-	for (pchNameIndex = 0; pchNameIndex < (int)cchNameBufferSize; ++pchNameIndex)
-	{
-		jsal_push_int(pchName[pchNameIndex]);
-		jsal_put_prop_index(-2, pchNameIndex);
-	}
+	jsal_push_string(pchName);
 	jsal_put_prop_string(-2, "pchName");
 
 	free(pchName);
@@ -6140,13 +6106,7 @@ js_ISteamApps_GetCurrentBetaName(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int pchNameIndex;
-	jsal_push_new_array();
-	for (pchNameIndex = 0; pchNameIndex < (int)cchNameBufferSize; ++pchNameIndex)
-	{
-		jsal_push_int(pchName[pchNameIndex]);
-		jsal_put_prop_index(-2, pchNameIndex);
-	}
+	jsal_push_string(pchName);
 	jsal_put_prop_string(-2, "pchName");
 
 	free(pchName);
@@ -6384,13 +6344,7 @@ js_ISteamApps_GetAppInstallDir(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_uint(result);
 	jsal_put_prop_string(-2, "result");
-	int pchFolderIndex;
-	jsal_push_new_array();
-	for (pchFolderIndex = 0; pchFolderIndex < (int)cchFolderBufferSize; ++pchFolderIndex)
-	{
-		jsal_push_int(pchFolder[pchFolderIndex]);
-		jsal_put_prop_index(-2, pchFolderIndex);
-	}
+	jsal_push_string(pchFolder);
 	jsal_put_prop_string(-2, "pchFolder");
 
 	free(pchFolder);
@@ -6445,13 +6399,7 @@ js_ISteamApps_GetLaunchCommandLine(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_int(result);
 	jsal_put_prop_string(-2, "result");
-	int pszCommandLineIndex;
-	jsal_push_new_array();
-	for (pszCommandLineIndex = 0; pszCommandLineIndex < (int)cubCommandLine; ++pszCommandLineIndex)
-	{
-		jsal_push_int(pszCommandLine[pszCommandLineIndex]);
-		jsal_put_prop_index(-2, pszCommandLineIndex);
-	}
+	jsal_push_string(pszCommandLine);
 	jsal_put_prop_string(-2, "pszCommandLine");
 
 	free(pszCommandLine);
@@ -7765,9 +7713,9 @@ js_ISteamUGC_StartPlaytimeTracking(int num_args, bool is_ctor, intptr_t magic)
 	ISteamUGC_StartPlaytimeTracking = (FuncPtr_125)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_StartPlaytimeTracking");
 	result = ISteamUGC_StartPlaytimeTracking(ISteamUGC, pvecPublishedFileID, unNumPublishedFileIDs);
 
-	free(pvecPublishedFileID);
-
 	push_uint64_t_to_str(result);
+
+	free(pvecPublishedFileID);
 
 	return true;
 }
@@ -7792,9 +7740,9 @@ js_ISteamUGC_StopPlaytimeTracking(int num_args, bool is_ctor, intptr_t magic)
 	ISteamUGC_StopPlaytimeTracking = (FuncPtr_125)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_StopPlaytimeTracking");
 	result = ISteamUGC_StopPlaytimeTracking(ISteamUGC, pvecPublishedFileID, unNumPublishedFileIDs);
 
-	free(pvecPublishedFileID);
-
 	push_uint64_t_to_str(result);
+
+	free(pvecPublishedFileID);
 
 	return true;
 }
@@ -8038,13 +7986,7 @@ js_ISteamUGC_GetQueryUGCTag(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int pchValueIndex;
-	jsal_push_new_array();
-	for (pchValueIndex = 0; pchValueIndex < (int)cchValueSize; ++pchValueIndex)
-	{
-		jsal_push_int(pchValue[pchValueIndex]);
-		jsal_put_prop_index(-2, pchValueIndex);
-	}
+	jsal_push_string(pchValue);
 	jsal_put_prop_string(-2, "pchValue");
 
 	free(pchValue);
@@ -8077,13 +8019,7 @@ js_ISteamUGC_GetQueryUGCTagDisplayName(int num_args, bool is_ctor, intptr_t magi
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int pchValueIndex;
-	jsal_push_new_array();
-	for (pchValueIndex = 0; pchValueIndex < (int)cchValueSize; ++pchValueIndex)
-	{
-		jsal_push_int(pchValue[pchValueIndex]);
-		jsal_put_prop_index(-2, pchValueIndex);
-	}
+	jsal_push_string(pchValue);
 	jsal_put_prop_string(-2, "pchValue");
 
 	free(pchValue);
@@ -8114,13 +8050,7 @@ js_ISteamUGC_GetQueryUGCPreviewURL(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int pchURLIndex;
-	jsal_push_new_array();
-	for (pchURLIndex = 0; pchURLIndex < (int)cchURLSize; ++pchURLIndex)
-	{
-		jsal_push_int(pchURL[pchURLIndex]);
-		jsal_put_prop_index(-2, pchURLIndex);
-	}
+	jsal_push_string(pchURL);
 	jsal_put_prop_string(-2, "pchURL");
 
 	free(pchURL);
@@ -8151,13 +8081,7 @@ js_ISteamUGC_GetQueryUGCMetadata(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int pchMetadataIndex;
-	jsal_push_new_array();
-	for (pchMetadataIndex = 0; pchMetadataIndex < (int)cchMetadatasize; ++pchMetadataIndex)
-	{
-		jsal_push_int(pchMetadata[pchMetadataIndex]);
-		jsal_put_prop_index(-2, pchMetadataIndex);
-	}
+	jsal_push_string(pchMetadata);
 	jsal_put_prop_string(-2, "pchMetadata");
 
 	free(pchMetadata);
@@ -8259,21 +8183,9 @@ js_ISteamUGC_GetQueryUGCAdditionalPreview(int num_args, bool is_ctor, intptr_t m
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int pchURLOrVideoIDIndex;
-	jsal_push_new_array();
-	for (pchURLOrVideoIDIndex = 0; pchURLOrVideoIDIndex < (int)cchURLSize; ++pchURLOrVideoIDIndex)
-	{
-		jsal_push_int(pchURLOrVideoID[pchURLOrVideoIDIndex]);
-		jsal_put_prop_index(-2, pchURLOrVideoIDIndex);
-	}
+	jsal_push_string(pchURLOrVideoID);
 	jsal_put_prop_string(-2, "pchURLOrVideoID");
-	int pchOriginalFileNameIndex;
-	jsal_push_new_array();
-	for (pchOriginalFileNameIndex = 0; pchOriginalFileNameIndex < (int)cchURLSize; ++pchOriginalFileNameIndex)
-	{
-		jsal_push_int(pchOriginalFileName[pchOriginalFileNameIndex]);
-		jsal_put_prop_index(-2, pchOriginalFileNameIndex);
-	}
+	jsal_push_string(pchOriginalFileName);
 	jsal_put_prop_string(-2, "pchOriginalFileName");
 	jsal_push_uint(pPreviewType);
 	jsal_put_prop_string(-2, "pPreviewType");
@@ -8314,21 +8226,9 @@ js_ISteamUGC_GetQueryUGCKeyValueTag(int num_args, bool is_ctor, intptr_t magic)
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int pchKeyIndex;
-	jsal_push_new_array();
-	for (pchKeyIndex = 0; pchKeyIndex < (int)cchKeySize; ++pchKeyIndex)
-	{
-		jsal_push_int(pchKey[pchKeyIndex]);
-		jsal_put_prop_index(-2, pchKeyIndex);
-	}
+	jsal_push_string(pchKey);
 	jsal_put_prop_string(-2, "pchKey");
-	int pchValueIndex;
-	jsal_push_new_array();
-	for (pchValueIndex = 0; pchValueIndex < (int)cchValueSize; ++pchValueIndex)
-	{
-		jsal_push_int(pchValue[pchValueIndex]);
-		jsal_put_prop_index(-2, pchValueIndex);
-	}
+	jsal_push_string(pchValue);
 	jsal_put_prop_string(-2, "pchValue");
 
 	free(pchKey);
@@ -8362,13 +8262,7 @@ js_ISteamUGC_GetQueryFirstUGCKeyValueTag(int num_args, bool is_ctor, intptr_t ma
 	jsal_push_new_object();
 	jsal_push_boolean(result);
 	jsal_put_prop_string(-2, "result");
-	int pchValueIndex;
-	jsal_push_new_array();
-	for (pchValueIndex = 0; pchValueIndex < (int)cchValueSize; ++pchValueIndex)
-	{
-		jsal_push_int(pchValue[pchValueIndex]);
-		jsal_put_prop_index(-2, pchValueIndex);
-	}
+	jsal_push_string(pchValue);
 	jsal_put_prop_string(-2, "pchValue");
 
 	free(pchValue);
@@ -8434,9 +8328,9 @@ js_ISteamUGC_AddRequiredTagGroup(int num_args, bool is_ctor, intptr_t magic)
 	ISteamUGC_AddRequiredTagGroup = (FuncPtr_135)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_AddRequiredTagGroup");
 	result = ISteamUGC_AddRequiredTagGroup(ISteamUGC, handle, &pTagGroups);
 
-	free(pTagGroups.m_ppStrings);
-
 	jsal_push_boolean(result);
+
+	free(pTagGroups.m_ppStrings);
 
 	return true;
 }
@@ -8908,9 +8802,9 @@ js_ISteamUGC_SetItemTags(int num_args, bool is_ctor, intptr_t magic)
 	ISteamUGC_SetItemTags = (FuncPtr_140)GETADDRESS(steam_api, "SteamAPI_ISteamUGC_SetItemTags");
 	result = ISteamUGC_SetItemTags(ISteamUGC, updateHandle, &pTags, bAllowAdminTags);
 
-	free(pTags.m_ppStrings);
-
 	jsal_push_boolean(result);
+
+	free(pTags.m_ppStrings);
 
 	return true;
 }
@@ -9193,13 +9087,7 @@ js_ISteamUGC_GetItemInstallInfo(int num_args, bool is_ctor, intptr_t magic)
 	jsal_put_prop_string(-2, "result");
 	push_uint64_t_to_str(punSizeOnDisk);
 	jsal_put_prop_string(-2, "punSizeOnDisk");
-	int pchFolderIndex;
-	jsal_push_new_array();
-	for (pchFolderIndex = 0; pchFolderIndex < (int)cchFolderSize; ++pchFolderIndex)
-	{
-		jsal_push_int(pchFolder[pchFolderIndex]);
-		jsal_put_prop_index(-2, pchFolderIndex);
-	}
+	jsal_push_string(pchFolder);
 	jsal_put_prop_string(-2, "pchFolder");
 	jsal_push_uint(punTimeStamp);
 	jsal_put_prop_string(-2, "punTimeStamp");

@@ -43,7 +43,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pchBuffer (string[cubBuffer])
+			value.pchBuffer (string)
 
 	ISteamUser.BIsBehindNAT()
 
@@ -769,7 +769,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pchText (string[cchText])
+			value.pchText (string)
 
 	ISteamUtils.IsSteamRunningInVR()
 
@@ -877,7 +877,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.pchOutFilteredText (string[nByteSizeOutFilteredText])
+			value.pchOutFilteredText (string)
 
 
 `ISteamUserStats` Interface
@@ -1057,7 +1057,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.pchName (string[unNameBufLen])
+			value.pchName (string)
 			value.pflPercent (float)
 			value.pbAchieved (bool)
 
@@ -1066,7 +1066,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.pchName (string[unNameBufLen])
+			value.pchName (string)
 			value.pflPercent (float)
 			value.pbAchieved (bool)
 
@@ -1269,14 +1269,14 @@ Recurring Callbacks
 			value.result (bool)
 			value.pAppID (int)
 			value.pbAvailable (bool)
-			value.pchName (string[cchNameBufferSize])
+			value.pchName (string)
 
 	ISteamApps.GetCurrentBetaName(int cchNameBufferSize)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pchName (string[cchNameBufferSize])
+			value.pchName (string)
 
 	ISteamApps.MarkContentCorrupt(bool bMissingFilesOnly)
 
@@ -1345,7 +1345,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.pchFolder (string[cchFolderBufferSize])
+			value.pchFolder (string)
 
 	ISteamApps.GetDLCCount()
 
@@ -1374,7 +1374,7 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (int)
-			value.pszCommandLine (string[cubCommandLine])
+			value.pszCommandLine (string)
 
 	ISteamApps.InstallDLC(int nAppID)
 
@@ -2090,28 +2090,28 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pchValue (string[cchValueSize])
+			value.pchValue (string)
 
 	ISteamUGC.GetQueryUGCTagDisplayName(int_string handle, int index, int indexTag, int cchValueSize)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pchValue (string[cchValueSize])
+			value.pchValue (string)
 
 	ISteamUGC.GetQueryUGCPreviewURL(int_string handle, int index, int cchURLSize)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pchURL (string[cchURLSize])
+			value.pchURL (string)
 
 	ISteamUGC.GetQueryUGCMetadata(int_string handle, int index, int cchMetadatasize)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pchMetadata (string[cchMetadatasize])
+			value.pchMetadata (string)
 
 	ISteamUGC.GetQueryUGCChildren(int_string handle, int index, int cMaxEntries)
 
@@ -2148,8 +2148,8 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pchURLOrVideoID (string[cchURLSize])
-			value.pchOriginalFileName (string[cchURLSize])
+			value.pchURLOrVideoID (string)
+			value.pchOriginalFileName (string)
 			value.pPreviewType (int)
 
 	ISteamUGC.GetQueryUGCKeyValueTag(int_string handle, int index, int keyValueTagIndex, int cchKeySize, int cchValueSize)
@@ -2157,15 +2157,15 @@ Recurring Callbacks
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pchKey (string[cchKeySize])
-			value.pchValue (string[cchValueSize])
+			value.pchKey (string)
+			value.pchValue (string)
 
 	ISteamUGC.GetQueryFirstUGCKeyValueTag(int_string handle, int index, string pchKey, int cchValueSize)
 
 		Returns a javascript object with the following members:
 
 			value.result (bool)
-			value.pchValue (string[cchValueSize])
+			value.pchValue (string)
 
 	ISteamUGC.ReleaseQueryUGCRequest(int_string handle)
 
@@ -2369,7 +2369,7 @@ Recurring Callbacks
 
 			value.result (bool)
 			value.punSizeOnDisk (int_string)
-			value.pchFolder (string[cchFolderSize])
+			value.pchFolder (string)
 			value.punTimeStamp (int)
 
 	ISteamUGC.GetItemDownloadInfo(int_string nPublishedFileID)
