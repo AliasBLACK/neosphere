@@ -323,6 +323,7 @@ static bool js_FS_directoryOf                (int num_args, bool is_ctor, intptr
 static bool js_FS_extensionOf                (int num_args, bool is_ctor, intptr_t magic);
 static bool js_FS_fileNameOf                 (int num_args, bool is_ctor, intptr_t magic);
 static bool js_FS_fullPath                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_FS_getSaveDirectory           (int num_args, bool is_ctor, intptr_t magic);
 static bool js_FS_match                      (int num_args, bool is_ctor, intptr_t magic);
 static bool js_FS_relativePath               (int num_args, bool is_ctor, intptr_t magic);
 static bool js_FS_removeDirectory            (int num_args, bool is_ctor, intptr_t magic);
@@ -682,6 +683,7 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_func("FS", "evaluateScript", js_File_run, 0);
 	api_define_func("FS", "fileExists", js_File_exists, 0);
 	api_define_func("FS", "fullPath", js_FS_fullPath, 0);
+	api_define_func("FS", "getSaveDirectory", js_FS_getSaveDirectory, 0);
 	api_define_func("FS", "readFile", js_File_load, 0);
 	api_define_func("FS", "relativePath", js_FS_relativePath, 0);
 	api_define_func("FS", "removeDirectory", js_FS_removeDirectory, 0);
@@ -2162,6 +2164,27 @@ js_FS_fullPath(int num_args, bool is_ctor, intptr_t magic)
 	pathname = jsal_require_pathname(0, base_pathname, false, false);
 
 	jsal_push_string(pathname);
+	return true;
+}
+
+static bool
+js_FS_getSaveDirectory(int num_args, bool is_ctor, intptr_t magic)
+{
+	path_t* path;
+	const char* sphereSaves;
+	const char* saveId;
+
+	path = path_dup(home_path());
+	sphereSaves = "Sphere Saves/";
+	saveId = game_save_id(g_game);
+
+	path_append_dir(path, sphereSaves);
+	path_append_dir(path, saveId);
+
+	jsal_push_string(path_cstr(path));
+
+	path_free(path);
+
 	return true;
 }
 
