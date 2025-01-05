@@ -563,8 +563,10 @@ resolve(const fs_t* fs, const char* filename)
 	path_t* path;
 
 	path = path_new(filename);
-	if (path_rooted(path))
-		goto on_error;
+
+	// TODO [emil]: Remove sandbox check until needed for full modding
+	//if (path_rooted(path))
+	//	goto on_error;
 
 	if (path_num_hops(path) == 0)
 		path_rebase(path, fs->root_path);
