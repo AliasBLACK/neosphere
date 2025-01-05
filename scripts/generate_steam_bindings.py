@@ -139,7 +139,7 @@ def parse_struct(struct):
 		for enum in struct['enums']:
 			enums[enum['enumname']] = []
 			for value in enum['values']:
-				enums[enum['enumname']].append(value['name'])
+				enums[enum['enumname']].append([value['name'], value['value']])
 	
 	# Check if there are methods.
 	if 'methods' in i:
@@ -485,7 +485,7 @@ enums = {}
 for enum in data['enums']:
 	enums[enum['enumname']] = []
 	for entry in enum['values']:
-		enums[enum['enumname']].append(entry['name'])
+		enums[enum['enumname']].append([entry['name'], entry['value']])
 
 # Scrape header files for required info.
 defines = {}
@@ -601,7 +601,7 @@ for interface in data['interfaces']:
 		for enum in interface['enums']:
 			enums[enum['enumname']] = []
 			for value in enum['values']:
-				enums[enum['enumname']].append(value['name'])
+				enums[enum['enumname']].append([value['name'], value['value']])
 	
 	# Get methods.
 	for method in interface['methods']:
@@ -784,8 +784,8 @@ for type in const:
 # Write enums to source file.
 for enum in enums_to_bind:
 	source += "\n	// Enum " + enum + "\n"
-	for entry in enumerate(enums[enum]):
-		source += '	api_define_const("' + enum + '", "' + entry[1] + '", ' + str(entry[0]) + ');\n'
+	for entry in enums[enum]:
+		source += '	api_define_const("' + enum + '", "' + entry[0] + '", ' + str(entry[1]) + ');\n'
 
 # Write sphere api function defines to source file.
 source += "\n"
@@ -994,7 +994,7 @@ for category in methods:
 						if len(enums[param['enumtype']]) < 20:
 							doc_enum += "		" + param['paramname'] + " is an enum with the following members:\n\n"
 							for member in enums[param['enumtype']]:
-								doc_enum += "			" + param['enumtype'] + "." + member + "\n"
+								doc_enum += "			" + param['enumtype'] + "." + member[0] + "\n"
 							doc_enum += "\n"
 						
 						# If enum list is too long, skip documentation.
