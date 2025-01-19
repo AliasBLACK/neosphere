@@ -385,7 +385,10 @@ export class Text extends NodeAbstract
         let contentHeight = this.font.height * this.multiLine.length
         contentHeight += this.getComputedPadding(Yoga.EDGE_TOP)
         contentHeight += this.getComputedPadding(Yoga.EDGE_BOTTOM)
-        this.setMinHeight(contentHeight)
+
+		// Change min height if different from before.
+		if (contentHeight != this.getMinHeight().value)
+        	this.setMinHeight(contentHeight)
 	}
 
 	eastAsianWordWrap(font, text, width)
