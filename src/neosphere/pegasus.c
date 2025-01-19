@@ -531,6 +531,8 @@ static bool js_SSj_instrument (int num_args, bool is_ctor, intptr_t magic);
 static bool js_SSj_log        (int num_args, bool is_ctor, intptr_t magic);
 static bool js_SSj_now        (int num_args, bool is_ctor, intptr_t magic);
 static bool js_SSj_profile    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_SSj_profiler_print (int num_args, bool is_ctor, intptr_t magic);
+static bool js_SSj_profiler_reset (int num_args, bool is_ctor, intptr_t magic);
 #endif
 
 static void js_BlendOp_finalize         (void* host_ptr);
@@ -839,6 +841,8 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_func("SSj", "log", js_SSj_log, KI_LOG_NORMAL);
 	api_define_func("SSj", "now", js_SSj_now, 0);
 	api_define_func("SSj", "profile", js_SSj_profile, 0);
+	api_define_func("SSj", "profiler_print", js_SSj_profiler_print, 0);
+	api_define_func("SSj", "profiler_reset", js_SSj_profiler_reset, 0);
 	api_define_func("SSj", "trace", js_SSj_log, KI_LOG_TRACE);
 #else
 	// the do-nothing versions are implemented in JavaScript.  doing so allows the JIT to compile them
@@ -3790,6 +3794,28 @@ js_SSj_profile(int num_args, bool is_ctor, intptr_t magic)
 
 	jsal_unref(shim_ref);
 	free(record_name);
+	return false;
+}
+
+static bool
+js_SSj_profiler_print(int num_args, bool is_ctor, intptr_t magic)
+{
+	if (!profiler_enabled())
+		return false;
+
+	profiler_print();
+
+	return false;
+}
+
+static bool
+js_SSj_profiler_reset(int num_args, bool is_ctor, intptr_t magic)
+{
+	if (!profiler_enabled())
+		return false;
+
+	profiler_reset();
+
 	return false;
 }
 #endif
