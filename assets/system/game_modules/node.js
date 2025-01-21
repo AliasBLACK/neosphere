@@ -124,8 +124,12 @@ class NodeAbstract extends Yoga.Node
 	{
 		for (let i = 0; i < this.getChildCount(); i++)
 		{
-			this.getChild(i).update()
-			this.getChild(i).updateChildren()
+			let child = this.getChild(i)
+			if (!child.hidden)
+			{
+				child.update()
+				child.updateChildren()
+			}
 		}
 	}
 
