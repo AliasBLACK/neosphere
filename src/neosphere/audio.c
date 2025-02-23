@@ -111,6 +111,10 @@ audio_init(void)
 
 	console_log(1, "initializing audio subsystem");
 
+	s_active_samples = vector_new(sizeof(struct sample_instance));
+	s_active_sounds = vector_new(sizeof(sound_t*));
+	s_active_streams = vector_new(sizeof(stream_t*));
+
 	s_have_sound = true;
 	if (!al_install_audio()) {
 		s_have_sound = false;
@@ -118,9 +122,6 @@ audio_init(void)
 		return;
 	}
 	al_init_acodec_addon();
-	s_active_samples = vector_new(sizeof(struct sample_instance));
-	s_active_sounds = vector_new(sizeof(sound_t*));
-	s_active_streams = vector_new(sizeof(stream_t*));
 }
 
 void
@@ -216,15 +217,24 @@ audio_update(void)
 	}
 }
 
+// If sound fails to init, returns false
+bool audio_enabled()
+{
+	return s_have_sound;
+}
+
 mixer_t*
 mixer_new(int frequency, int bits, int channels)
 {
 	ALLEGRO_CHANNEL_CONF conf;
 	ALLEGRO_AUDIO_DEPTH  depth;
-	mixer_t*             mixer;
+	mixer_t*             mixer = NULL;
 
 	console_log(2, "creating new mixer #%u at %d kHz", s_next_mixer_id, frequency / 1000);
 	console_log(3, "    format: %dch %d Hz, %d-bit", channels, frequency, bits);
+
+	if (!s_have_sound)
+		goto on_error;
 
 	conf = channels == 2 ? ALLEGRO_CHANNEL_CONF_2
 		: channels == 3 ? ALLEGRO_CHANNEL_CONF_3

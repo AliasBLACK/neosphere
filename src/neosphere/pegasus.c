@@ -283,6 +283,7 @@ static bool js_Sphere_setResolution          (int num_args, bool is_ctor, intptr
 static bool js_Sphere_shutDown               (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Sphere_sleep                  (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Sphere_openURL                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_Sphere_audio_enabled         (int num_args, bool is_ctor, intptr_t magic);
 static bool js_BlendOp_get_Default           (int num_args, bool is_ctor, intptr_t magic);
 static bool js_new_BlendOp                   (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Color_get_Default             (int num_args, bool is_ctor, intptr_t magic);
@@ -634,6 +635,7 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_static_prop("Sphere", "desktopResolution", js_Sphere_get_desktopResolution, NULL, 0);
 	api_define_static_prop("Sphere", "main", js_Sphere_get_main, NULL, 0);
 	api_define_func("Sphere", "openURL", js_Sphere_openURL, 0);
+	api_define_func("Sphere", "audioEnabled", js_Sphere_audio_enabled, 0);
 	api_define_func("Sphere", "abort", js_Sphere_abort, 0);
 	api_define_func("Sphere", "now", js_Sphere_now, 0);
 	api_define_func("Sphere", "restart", js_Sphere_restart, 0);
@@ -1435,6 +1437,14 @@ js_Sphere_openURL(int num_args, bool is_ctor, intptr_t magic)
 #endif
 	system(cmd);
 	return false;
+}
+
+static bool
+js_Sphere_audio_enabled(int num_args, bool is_ctor, intptr_t magic)
+{
+	bool v = audio_enabled();
+	jsal_push_boolean(v);
+	return true;
 }
 
 static bool

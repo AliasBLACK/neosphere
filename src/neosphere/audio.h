@@ -43,6 +43,7 @@ void        audio_uninit      (void);
 void        audio_resume      (void);
 void        audio_suspend     (void);
 void        audio_update      (void);
+bool        audio_enabled    (void);
 mixer_t*    mixer_new         (int frequency, int bits, int channels);
 mixer_t*    mixer_ref         (mixer_t* mixer);
 void        mixer_unref       (mixer_t* mixer);
