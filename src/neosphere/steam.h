@@ -22,6 +22,7 @@ void * ISteamUtils;
 void * ISteamUserStats;
 void * ISteamApps;
 void * ISteamInput;
+void * ISteamUGC;
 
 typedef struct {
 	int32_t m_steamUser;
@@ -218,6 +219,145 @@ typedef struct {
 	float rotVelZ;
 } InputMotionData_t;
 
+typedef struct {
+	uint64_t m_handle;
+	uint32_t m_eResult;
+	uint32_t m_unNumResultsReturned;
+	uint32_t m_unTotalMatchingResults;
+	bool m_bCachedData;
+	char m_rgchNextCursor [256];
+} SteamUGCQueryCompleted_t;
+
+typedef struct {
+	uint64_t m_nPublishedFileId;
+	uint32_t m_eResult;
+	uint32_t m_eFileType;
+	uint32_t m_nCreatorAppID;
+	uint32_t m_nConsumerAppID;
+	char m_rgchTitle [129];
+	char m_rgchDescription [8000];
+	uint64_t m_ulSteamIDOwner;
+	uint32_t m_rtimeCreated;
+	uint32_t m_rtimeUpdated;
+	uint32_t m_rtimeAddedToUserList;
+	uint32_t m_eVisibility;
+	bool m_bBanned;
+	bool m_bAcceptedForUse;
+	bool m_bTagsTruncated;
+	char m_rgchTags [1025];
+	uint64_t m_hFile;
+	uint64_t m_hPreviewFile;
+	char m_pchFileName [260];
+	int32_t m_nFileSize;
+	int32_t m_nPreviewFileSize;
+	char m_rgchURL [256];
+	uint32_t m_unVotesUp;
+	uint32_t m_unVotesDown;
+	float m_flScore;
+	uint32_t m_unNumChildren;
+} SteamUGCDetails_t;
+
+typedef struct {
+	const char ** m_ppStrings;
+	int32_t m_nNumStrings;
+} SteamParamStringArray_t;
+
+typedef struct {
+	uint32_t m_eResult;
+	uint64_t m_nPublishedFileId;
+	bool m_bUserNeedsToAcceptWorkshopLegalAgreement;
+} CreateItemResult_t;
+
+typedef struct {
+	uint32_t m_eResult;
+	bool m_bUserNeedsToAcceptWorkshopLegalAgreement;
+	uint64_t m_nPublishedFileId;
+} SubmitItemUpdateResult_t;
+
+typedef struct {
+	uint64_t m_nPublishedFileId;
+	uint32_t m_eResult;
+	bool m_bVoteUp;
+} SetUserItemVoteResult_t;
+
+typedef struct {
+	uint64_t m_nPublishedFileId;
+	uint32_t m_eResult;
+	bool m_bVotedUp;
+	bool m_bVotedDown;
+	bool m_bVoteSkipped;
+} GetUserItemVoteResult_t;
+
+typedef struct {
+	uint64_t m_nPublishedFileId;
+	uint32_t m_eResult;
+	bool m_bWasAddRequest;
+} UserFavoriteItemsListChanged_t;
+
+typedef struct {
+	uint32_t m_eResult;
+	uint64_t m_nPublishedFileId;
+} RemoteStorageSubscribePublishedFileResult_t;
+
+typedef struct {
+	uint32_t m_eResult;
+	uint64_t m_nPublishedFileId;
+} RemoteStorageUnsubscribePublishedFileResult_t;
+
+typedef struct {
+	uint32_t m_eResult;
+} StartPlaytimeTrackingResult_t;
+
+typedef struct {
+	uint32_t m_eResult;
+} StopPlaytimeTrackingResult_t;
+
+typedef struct {
+	uint32_t m_eResult;
+	uint64_t m_nPublishedFileId;
+	uint64_t m_nChildPublishedFileId;
+} AddUGCDependencyResult_t;
+
+typedef struct {
+	uint32_t m_eResult;
+	uint64_t m_nPublishedFileId;
+	uint64_t m_nChildPublishedFileId;
+} RemoveUGCDependencyResult_t;
+
+typedef struct {
+	uint32_t m_eResult;
+	uint64_t m_nPublishedFileId;
+	uint32_t m_nAppID;
+} AddAppDependencyResult_t;
+
+typedef struct {
+	uint32_t m_eResult;
+	uint64_t m_nPublishedFileId;
+	uint32_t m_nAppID;
+} RemoveAppDependencyResult_t;
+
+typedef struct {
+	uint32_t m_eResult;
+	uint64_t m_nPublishedFileId;
+	uint32_t m_rgAppIDs [32];
+	uint32_t m_nNumAppDependencies;
+	uint32_t m_nTotalNumAppDependencies;
+} GetAppDependenciesResult_t;
+
+typedef struct {
+	uint32_t m_eResult;
+	uint64_t m_nPublishedFileId;
+} DeleteItemResult_t;
+
+typedef struct {
+	uint32_t m_eResult;
+	uint32_t m_nAppID;
+	uint32_t m_unVersion;
+	uint32_t m_rtAction;
+	bool m_bAccepted;
+	bool m_bNeedsAction;
+} WorkshopEULAStatus_t;
+
 typedef void * (*FuncPtr_001) ();
 typedef void (*FuncPtr_002) ();
 typedef void (*FuncPtr_004) (int32_t);
@@ -254,6 +394,15 @@ typedef uint64_t (*FuncPtr_084) (void *, uint64_t, uint32_t, int32_t, int32_t);
 typedef uint64_t (*FuncPtr_085) (void *, uint64_t, uint64_t *, int32_t);
 typedef uint64_t (*FuncPtr_087) (void *, uint64_t, uint32_t, int32_t, const int32_t *, int32_t);
 typedef uint64_t (*FuncPtr_088) (void *, uint64_t, uint64_t);
+typedef uint64_t (*FuncPtr_122) (void *, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t);
+typedef uint64_t (*FuncPtr_123) (void *, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t);
+typedef uint64_t (*FuncPtr_124) (void *, uint32_t, uint32_t, uint32_t, uint32_t, const char *);
+typedef uint64_t (*FuncPtr_125) (void *, uint64_t *, uint32_t);
+typedef uint64_t (*FuncPtr_138) (void *, uint32_t, uint32_t);
+typedef uint64_t (*FuncPtr_139) (void *, uint32_t, uint64_t);
+typedef uint64_t (*FuncPtr_143) (void *, uint64_t, const char *);
+typedef uint64_t (*FuncPtr_145) (void *, uint64_t, bool);
+typedef uint64_t (*FuncPtr_150) (void *, uint64_t, uint32_t);
 typedef uint32_t (*FuncPtr_013) (void *);
 typedef uint32_t (*FuncPtr_014) (void *, const char *);
 typedef uint32_t (*FuncPtr_017) (void *, uint64_t, uint32_t);
@@ -263,6 +412,10 @@ typedef uint32_t (*FuncPtr_066) (void *, uint32_t);
 typedef uint32_t (*FuncPtr_098) (void *, uint32_t, uint32_t *, uint32_t);
 typedef uint32_t (*FuncPtr_099) (void *, uint32_t, char *, uint32_t);
 typedef uint32_t (*FuncPtr_119) (void *, uint32_t, uint32_t);
+typedef uint32_t (*FuncPtr_134) (void *, uint64_t, uint32_t, uint32_t *, uint32_t);
+typedef uint32_t (*FuncPtr_144) (void *, uint64_t, uint64_t *, uint64_t *);
+typedef uint32_t (*FuncPtr_146) (void *, uint64_t *, uint32_t);
+typedef uint32_t (*FuncPtr_151) (void *, uint32_t *, uint32_t);
 typedef uint16_t (*FuncPtr_121) (void *);
 typedef int32_t (*FuncPtr_000) (const char *, char *);
 typedef int32_t (*FuncPtr_003) ();
@@ -337,6 +490,23 @@ typedef bool (*FuncPtr_101) (void *, uint32_t, uint64_t *, uint64_t *);
 typedef bool (*FuncPtr_103) (void *, uint32_t *, uint32_t *);
 typedef bool (*FuncPtr_104) (void *, bool, uint32_t);
 typedef bool (*FuncPtr_120) (void *, uint64_t, int32_t *, int32_t *);
+typedef bool (*FuncPtr_126) (void *, uint64_t, uint32_t, SteamUGCDetails_t *);
+typedef bool (*FuncPtr_127) (void *, uint64_t, uint32_t, uint32_t, char *, uint32_t);
+typedef bool (*FuncPtr_128) (void *, uint64_t, uint32_t, char *, uint32_t);
+typedef bool (*FuncPtr_129) (void *, uint64_t, uint32_t, uint64_t *, uint32_t);
+typedef bool (*FuncPtr_130) (void *, uint64_t, uint32_t, uint32_t, uint64_t *);
+typedef bool (*FuncPtr_131) (void *, uint64_t, uint32_t, uint32_t, char *, uint32_t, char *, uint32_t, uint32_t *);
+typedef bool (*FuncPtr_132) (void *, uint64_t, uint32_t, uint32_t, char *, uint32_t, char *, uint32_t);
+typedef bool (*FuncPtr_133) (void *, uint64_t, uint32_t, const char *, char *, uint32_t);
+typedef bool (*FuncPtr_135) (void *, uint64_t, const SteamParamStringArray_t *);
+typedef bool (*FuncPtr_136) (void *, uint64_t, uint32_t, uint32_t);
+typedef bool (*FuncPtr_137) (void *, uint64_t, const char *, const char *);
+typedef bool (*FuncPtr_140) (void *, uint64_t, const SteamParamStringArray_t *, bool);
+typedef bool (*FuncPtr_141) (void *, uint64_t, const char *, uint32_t);
+typedef bool (*FuncPtr_142) (void *, uint64_t, uint32_t, const char *);
+typedef bool (*FuncPtr_147) (void *, uint64_t, uint64_t *, char *, uint32_t, uint32_t *);
+typedef bool (*FuncPtr_148) (void *, uint64_t, uint64_t *, uint64_t *);
+typedef bool (*FuncPtr_149) (void *, uint32_t, const char *);
 typedef InputMotionData_t (*FuncPtr_113) (void *, uint64_t);
 typedef InputDigitalActionData_t (*FuncPtr_108) (void *, uint64_t, uint64_t);
 typedef InputAnalogActionData_t (*FuncPtr_110) (void *, uint64_t, uint64_t);
@@ -357,278 +527,6 @@ typedef InputAnalogActionData_t (*FuncPtr_110) (void *, uint64_t, uint64_t);
 //	- SteamAPI_ISteamUtils_SetWarningMessageHook (callback pointer argument required)
 //	- SteamAPI_ISteamInput_EnableActionEventCallbacks (callback pointer argument required)
 //	- SteamAPI_ISteamInput_SetDualSenseTriggerEffect (callback pointer argument required)
+//	- SteamAPI_ISteamUGC_RequestUGCDetails (listed in methods_to_ignore)
 
 void steamapi_init (void);
-static bool js_SteamAPI_Init                                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_SteamAPI_Shutdown                                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_SteamAPI_RunCallbacks                                           (int num_args, bool is_ctor, intptr_t magic);
-
-// ISteamUser
-static bool js_ISteamUser_GetHSteamUser                                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_GetGameBadgeLevel                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_GetPlayerSteamLevel                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_BLoggedOn                                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_GetUserDataFolder                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_BIsBehindNAT                                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_BIsPhoneVerified                                     (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_BIsTwoFactorEnabled                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_BIsPhoneIdentifying                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_BIsPhoneRequiringVerification                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_BSetDurationControlOnlineState                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_GetSteamID                                           (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_RequestStoreAuthURL                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_GetMarketEligibility                                 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_GetDurationControl                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_TrackAppUsageEvent                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_StartVoiceRecording                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_StopVoiceRecording                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_EndAuthSession                                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_CancelAuthTicket                                     (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_AdvertiseGame                                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_GetVoiceOptimalSampleRate                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_GetAuthTicketForWebApi                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUser_UserHasLicenseForApp                                 (int num_args, bool is_ctor, intptr_t magic);
-
-// ISteamFriends
-static bool js_ISteamFriends_GetPersonaName                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendPersonaName                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendPersonaNameHistory                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetPlayerNickname                                 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendsGroupName                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetClanName                                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetClanTag                                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendRichPresence                             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendRichPresenceKeyByIndex                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetProfileItemPropertyString                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_SetPersonaName                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendByIndex                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetClanByIndex                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_DownloadClanActivityCounts                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendFromSourceByIndex                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_RequestClanOfficerList                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetClanOwner                                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetClanOfficerByIndex                             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetCoplayFriend                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_JoinClanChatRoom                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetChatMemberByIndex                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFollowerCount                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_IsFollowing                                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_EnumerateFollowingList                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_RequestEquippedProfileItems                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetPersonaState                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendRelationship                             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendPersonaState                             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetUserRestrictions                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendCoplayGame                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetProfileItemPropertyUint                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendCount                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendSteamLevel                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendsGroupCount                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendsGroupMembersCount                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetClanCount                                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendCountFromSource                          (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetSmallFriendAvatar                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetMediumFriendAvatar                             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetLargeFriendAvatar                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetClanOfficerCount                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendRichPresenceKeyCount                     (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetCoplayFriendCount                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendCoplayTime                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetClanChatMemberCount                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetNumChatsWithUnreadPriorityMessages             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendGamePlayed                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_HasFriend                                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetClanActivityCounts                             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_IsUserInSource                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_RequestUserInformation                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_SetRichPresence                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_InviteUserToGame                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_LeaveClanChatRoom                                 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_SendClanChatMessage                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_IsClanChatAdmin                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_IsClanChatWindowOpenInSteam                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_OpenClanChatWindowInSteam                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_CloseClanChatWindowInSteam                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_SetListenForFriendsMessages                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ReplyToFriendMessage                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_IsClanPublic                                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_IsClanOfficialGameGroup                           (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_RegisterProtocolInOverlayBrowser                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_BHasEquippedProfileItem                           (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendsGroupIDByIndex                          (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_GetFriendsGroupMembersList                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_SetInGameVoiceSpeaking                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlay                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlayToUser                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlayToWebPage                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlayToStore                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_SetPlayedWith                                     (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlayInviteDialog                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ClearRichPresence                                 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_RequestFriendRichPresence                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlayRemotePlayTogetherInviteDialog (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamFriends_ActivateGameOverlayInviteDialogConnectString      (int num_args, bool is_ctor, intptr_t magic);
-
-// ISteamUtils
-static bool js_ISteamUtils_GetSecondsSinceAppActive                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetSecondsSinceComputerActive                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetConnectedUniverse                                (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetServerRealTime                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetAppID                                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetAPICallFailureReason                             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetIPCCallCount                                     (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetEnteredGamepadTextLength                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetIPv6ConnectivityState                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetIPCountry                                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetSteamUILanguage                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetImageSize                                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetImageRGBA                                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_IsAPICallCompleted                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_IsOverlayEnabled                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_BOverlayNeedsPresent                                (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_ShowGamepadTextInput                                (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetEnteredGamepadTextInput                          (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_IsSteamRunningInVR                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_IsSteamInBigPictureMode                             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_IsVRHeadsetStreamingEnabled                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_IsSteamChinaLauncher                                (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_InitFilterText                                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_IsSteamRunningOnSteamDeck                           (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_ShowFloatingGamepadTextInput                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_DismissFloatingGamepadTextInput                     (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_GetCurrentBatteryPower                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_SetOverlayNotificationPosition                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_SetOverlayNotificationInset                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_StartVRDashboard                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_SetVRHeadsetStreamingEnabled                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_SetGameLauncherMode                                 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_CheckFileSignature                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUtils_FilterText                                          (int num_args, bool is_ctor, intptr_t magic);
-
-// ISteamUserStats
-static bool js_ISteamUserStats_RequestCurrentStats                             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetStatInt32                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetStatFloat                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_SetStatInt32                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_SetStatFloat                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_UpdateAvgRateStat                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetAchievement                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_SetAchievement                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_ClearAchievement                                (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetAchievementAndUnlockTime                     (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_StoreStats                                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_IndicateAchievementProgress                     (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetUserStatInt32                                (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetUserStatFloat                                (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetUserAchievement                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetUserAchievementAndUnlockTime                 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_ResetAllStats                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetDownloadedLeaderboardEntry                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetAchievementAchievedPercent                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetGlobalStatInt64                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetGlobalStatDouble                             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetAchievementProgressLimitsInt32               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetAchievementProgressLimitsFloat               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetAchievementIcon                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetLeaderboardEntryCount                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetMostAchievedAchievementInfo                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetNextMostAchievedAchievementInfo              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetGlobalStatHistoryInt64                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetGlobalStatHistoryDouble                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetAchievementDisplayAttribute                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetAchievementName                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetLeaderboardName                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetNumAchievements                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetLeaderboardSortMethod                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetLeaderboardDisplayType                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_RequestUserStats                                (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_FindOrCreateLeaderboard                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_FindLeaderboard                                 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_DownloadLeaderboardEntries                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_DownloadLeaderboardEntriesForUsers              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_UploadLeaderboardScore                          (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_AttachLeaderboardUGC                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_GetNumberOfCurrentPlayers                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_RequestGlobalAchievementPercentages             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamUserStats_RequestGlobalStats                              (int num_args, bool is_ctor, intptr_t magic);
-
-// ISteamApps
-static bool js_ISteamApps_BIsSubscribed                                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_BIsLowViolence                                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_BIsCybercafe                                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_BIsVACBanned                                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_BIsSubscribedApp                                     (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_BIsDlcInstalled                                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_BIsSubscribedFromFreeWeekend                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_BGetDLCDataByIndex                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_GetCurrentBetaName                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_MarkContentCorrupt                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_BIsAppInstalled                                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_GetDlcDownloadProgress                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_BIsSubscribedFromFamilySharing                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_BIsTimedTrial                                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_SetDlcContext                                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_GetCurrentGameLanguage                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_GetAvailableGameLanguages                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_GetLaunchQueryParam                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_GetEarliestPurchaseUnixTime                          (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_GetInstalledDepots                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_GetAppInstallDir                                     (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_GetDLCCount                                          (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_GetAppBuildId                                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_GetLaunchCommandLine                                 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_InstallDLC                                           (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_UninstallDLC                                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_RequestAppProofOfPurchaseKey                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_RequestAllProofOfPurchaseKeys                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_GetAppOwner                                          (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamApps_GetFileDetails                                       (int num_args, bool is_ctor, intptr_t magic);
-
-// ISteamInput
-static bool js_ISteamInput_Init                                                (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_Shutdown                                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_SetInputActionManifestFilePath                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_BWaitForData                                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_BNewDataAvailable                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_ShowBindingPanel                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetDeviceBindingRevision                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_RunFrame                                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_EnableDeviceCallbacks                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_ActivateActionSet                                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_ActivateActionSetLayer                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_DeactivateActionSetLayer                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_DeactivateAllActionSetLayers                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_StopAnalogActionMomentum                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_TriggerVibration                                    (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_TriggerVibrationExtended                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_TriggerSimpleHapticEvent                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_SetLEDColor                                         (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_Legacy_TriggerHapticPulse                           (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_Legacy_TriggerRepeatedHapticPulse                   (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetConnectedControllers                             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetActiveActionSetLayers                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetDigitalActionOrigins                             (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetAnalogActionOrigins                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetGamepadIndexForController                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetActionSetHandle                                  (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetCurrentActionSet                                 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetDigitalActionHandle                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetAnalogActionHandle                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetControllerForGamepadIndex                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetDigitalActionData                                (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetStringForDigitalActionName                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetGlyphPNGForActionOrigin                          (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetGlyphSVGForActionOrigin                          (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetGlyphForActionOrigin_Legacy                      (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetStringForActionOrigin                            (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetStringForAnalogActionName                        (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetStringForXboxOrigin                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetGlyphForXboxOrigin                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetAnalogActionData                                 (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetMotionData                                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetInputTypeForHandle                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetActionOriginFromXboxOrigin                       (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_TranslateActionOrigin                               (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetRemotePlaySessionID                              (int num_args, bool is_ctor, intptr_t magic);
-static bool js_ISteamInput_GetSessionInputConfigurationSettings                (int num_args, bool is_ctor, intptr_t magic);
-

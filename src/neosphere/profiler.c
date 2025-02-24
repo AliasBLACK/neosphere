@@ -56,6 +56,7 @@ static void print_results (double running_time);
 bool      s_initialized = false;
 vector_t* s_records;
 double    s_startup_time;
+uint32_t  s_tick_offset = 0;
 
 void
 profiler_init(void)
@@ -78,7 +79,7 @@ profiler_uninit(void)
 	runtime = al_get_time() - s_startup_time;
 
 	record_obj.name = strdup("[Sphere event loop]");
-	record_obj.num_hits = g_tick_count;
+	record_obj.num_hits = g_tick_count - s_tick_offset;
 	record_obj.total_cost = g_idle_time;
 	record_obj.function = NULL;
 	vector_push(s_records, &record_obj);
@@ -91,6 +92,43 @@ profiler_uninit(void)
 		free(record->name);
 	}
 	vector_free(s_records);
+}
+
+void
+profiler_print(void)
+{
+	struct record  record_obj;
+	double         runtime;
+
+	record_obj.name = strdup("[Sphere event loop]");
+	record_obj.num_hits = g_tick_count - s_tick_offset;
+	record_obj.total_cost = g_idle_time;
+	record_obj.function = NULL;
+	vector_push(s_records, &record_obj);
+
+	runtime = al_get_time() - s_startup_time;
+	print_results(runtime);
+
+	vector_pop(s_records, 1);
+	free(record_obj.name);
+}
+
+void
+profiler_reset(void)
+{
+	struct record* record;
+	iter_t iter;
+
+	iter = vector_enum(s_records);
+	while ((record = iter_next(&iter))) {
+		record->num_hits = 0;
+		record->total_cost = 0;
+		record->average_cost = 0;
+	}
+
+	s_tick_offset = g_tick_count;
+	g_idle_time = 0;
+	s_startup_time = al_get_time();
 }
 
 bool
@@ -143,8 +181,9 @@ print_results(double running_time)
 
 	iter_t iter;
 
-	vector_sort(s_records, order_records);
-	iter = vector_enum(s_records);
+	vector_t* dup_records = vector_dup(s_records);
+	vector_sort(dup_records, order_records);
+	iter = vector_enum(dup_records);
 	while ((record = iter_next(&iter))) {
 		if (record->num_hits <= 0)
 			continue;
@@ -166,7 +205,7 @@ print_results(double running_time)
 	table_add_column(table, "avg (%s)", UNIT_NAME);
 	table_add_column(table, "%% avg");
 	table_add_column(table, "ops/f");
-	iter = vector_enum(s_records);
+	iter = vector_enum(dup_records);
 	while ((record = iter_next(&iter))) {
 		if (record->num_hits <= 0)
 			continue;
@@ -188,6 +227,7 @@ print_results(double running_time)
 	table_print(table);
 	table_free(table);
 	free(heading);
+	vector_free(dup_records);
 }
 
 static bool

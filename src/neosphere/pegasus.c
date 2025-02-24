@@ -283,6 +283,7 @@ static bool js_Sphere_setResolution          (int num_args, bool is_ctor, intptr
 static bool js_Sphere_shutDown               (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Sphere_sleep                  (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Sphere_openURL                (int num_args, bool is_ctor, intptr_t magic);
+static bool js_Sphere_audio_enabled         (int num_args, bool is_ctor, intptr_t magic);
 static bool js_BlendOp_get_Default           (int num_args, bool is_ctor, intptr_t magic);
 static bool js_new_BlendOp                   (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Color_get_Default             (int num_args, bool is_ctor, intptr_t magic);
@@ -323,6 +324,7 @@ static bool js_FS_directoryOf                (int num_args, bool is_ctor, intptr
 static bool js_FS_extensionOf                (int num_args, bool is_ctor, intptr_t magic);
 static bool js_FS_fileNameOf                 (int num_args, bool is_ctor, intptr_t magic);
 static bool js_FS_fullPath                   (int num_args, bool is_ctor, intptr_t magic);
+static bool js_FS_getSaveDirectory           (int num_args, bool is_ctor, intptr_t magic);
 static bool js_FS_match                      (int num_args, bool is_ctor, intptr_t magic);
 static bool js_FS_relativePath               (int num_args, bool is_ctor, intptr_t magic);
 static bool js_FS_removeDirectory            (int num_args, bool is_ctor, intptr_t magic);
@@ -530,6 +532,8 @@ static bool js_SSj_instrument (int num_args, bool is_ctor, intptr_t magic);
 static bool js_SSj_log        (int num_args, bool is_ctor, intptr_t magic);
 static bool js_SSj_now        (int num_args, bool is_ctor, intptr_t magic);
 static bool js_SSj_profile    (int num_args, bool is_ctor, intptr_t magic);
+static bool js_SSj_profiler_print (int num_args, bool is_ctor, intptr_t magic);
+static bool js_SSj_profiler_reset (int num_args, bool is_ctor, intptr_t magic);
 #endif
 
 static void js_BlendOp_finalize         (void* host_ptr);
@@ -631,6 +635,7 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_static_prop("Sphere", "desktopResolution", js_Sphere_get_desktopResolution, NULL, 0);
 	api_define_static_prop("Sphere", "main", js_Sphere_get_main, NULL, 0);
 	api_define_func("Sphere", "openURL", js_Sphere_openURL, 0);
+	api_define_func("Sphere", "audioEnabled", js_Sphere_audio_enabled, 0);
 	api_define_func("Sphere", "abort", js_Sphere_abort, 0);
 	api_define_func("Sphere", "now", js_Sphere_now, 0);
 	api_define_func("Sphere", "restart", js_Sphere_restart, 0);
@@ -682,6 +687,7 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_func("FS", "evaluateScript", js_File_run, 0);
 	api_define_func("FS", "fileExists", js_File_exists, 0);
 	api_define_func("FS", "fullPath", js_FS_fullPath, 0);
+	api_define_func("FS", "getSaveDirectory", js_FS_getSaveDirectory, 0);
 	api_define_func("FS", "readFile", js_File_load, 0);
 	api_define_func("FS", "relativePath", js_FS_relativePath, 0);
 	api_define_func("FS", "removeDirectory", js_FS_removeDirectory, 0);
@@ -837,6 +843,8 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_func("SSj", "log", js_SSj_log, KI_LOG_NORMAL);
 	api_define_func("SSj", "now", js_SSj_now, 0);
 	api_define_func("SSj", "profile", js_SSj_profile, 0);
+	api_define_func("SSj", "profiler_print", js_SSj_profiler_print, 0);
+	api_define_func("SSj", "profiler_reset", js_SSj_profiler_reset, 0);
 	api_define_func("SSj", "trace", js_SSj_log, KI_LOG_TRACE);
 #else
 	// the do-nothing versions are implemented in JavaScript.  doing so allows the JIT to compile them
@@ -1429,6 +1437,14 @@ js_Sphere_openURL(int num_args, bool is_ctor, intptr_t magic)
 #endif
 	system(cmd);
 	return false;
+}
+
+static bool
+js_Sphere_audio_enabled(int num_args, bool is_ctor, intptr_t magic)
+{
+	bool v = audio_enabled();
+	jsal_push_boolean(v);
+	return true;
 }
 
 static bool
@@ -2162,6 +2178,27 @@ js_FS_fullPath(int num_args, bool is_ctor, intptr_t magic)
 	pathname = jsal_require_pathname(0, base_pathname, false, false);
 
 	jsal_push_string(pathname);
+	return true;
+}
+
+static bool
+js_FS_getSaveDirectory(int num_args, bool is_ctor, intptr_t magic)
+{
+	path_t* path;
+	const char* sphereSaves;
+	const char* saveId;
+
+	path = path_dup(home_path());
+	sphereSaves = "Sphere Saves/";
+	saveId = game_save_id(g_game);
+
+	path_append_dir(path, sphereSaves);
+	path_append_dir(path, saveId);
+
+	jsal_push_string(path_cstr(path));
+
+	path_free(path);
+
 	return true;
 }
 
@@ -3767,6 +3804,28 @@ js_SSj_profile(int num_args, bool is_ctor, intptr_t magic)
 
 	jsal_unref(shim_ref);
 	free(record_name);
+	return false;
+}
+
+static bool
+js_SSj_profiler_print(int num_args, bool is_ctor, intptr_t magic)
+{
+	if (!profiler_enabled())
+		return false;
+
+	profiler_print();
+
+	return false;
+}
+
+static bool
+js_SSj_profiler_reset(int num_args, bool is_ctor, intptr_t magic)
+{
+	if (!profiler_enabled())
+		return false;
+
+	profiler_reset();
+
 	return false;
 }
 #endif

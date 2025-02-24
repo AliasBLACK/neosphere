@@ -10,6 +10,9 @@ solution_dir = os.path.join(os.path.dirname(__file__), "../")
 # Max array size to reserve for dynamic arrays.
 max_array_size_reserved = 64
 
+# Special types
+string_array_param = "SteamParamStringArray_t"
+
 # Interfaces to bind
 interfaces_to_bind = [
 	"ISteamApps",
@@ -17,13 +20,15 @@ interfaces_to_bind = [
 	"ISteamInput",
 	"ISteamFriends",
 	"ISteamUserStats",
-	"ISteamUtils"
+	"ISteamUtils",
+	"ISteamUGC"
 ]
 
 # Methods to ignore due to deprecation.
 methods_to_ignore = [
 	"SteamAPI_ISteamUser_GetAvailableVoice",
-	"SteamAPI_ISteamUser_TerminateGameConnection_DEPRECATED"
+	"SteamAPI_ISteamUser_TerminateGameConnection_DEPRECATED",
+	"SteamAPI_ISteamUGC_RequestUGCDetails"
 ]
 
 # Typedef dictionary.
@@ -44,8 +49,11 @@ enums_to_bind = []
 structs_to_bind = [
 	"GameOverlayActivated_t",
 	"SteamAPICallCompleted_t"
-
 ]
+
+def is_string_type(type):
+    return type == "char *" or type == "const char *"
+
 def convert_type(type):
 
 	# Check if type is pointer and/or const.
@@ -135,7 +143,7 @@ def parse_struct(struct):
 		for enum in struct['enums']:
 			enums[enum['enumname']] = []
 			for value in enum['values']:
-				enums[enum['enumname']].append(value['name'])
+				enums[enum['enumname']].append([value['name'], value['value']])
 	
 	# Check if there are methods.
 	if 'methods' in i:
@@ -242,7 +250,8 @@ def parse_method(method, category, type):
 
 		# Skip if struct is required in param.
 		# TODO: Add this later.
-		if (not param['out'] == True) and param['paramtype'].replace("*", "").replace("const", "").strip() in structs:
+		base_name = param['paramtype'].replace("*", "").replace("const", "").strip()
+		if (not param['out'] == True) and base_name != string_array_param and base_name in structs:
 			skipped_methods.append(method['methodname_flat'] + " (struct argument required)")
 			print("Skipping " + method['methodname_flat'] + " (struct argument required)")
 			return
@@ -387,15 +396,16 @@ def jsal_push_function(type):
 			return ""
 
 def jsal_push_array(param, initialized_i):
+	iterator_index = param['paramname'] + "Index"
 	result = ""
 	if not initialized_i:
 		initialized_i = True
-		result += "	int i;\n"
+		result += "	int " + iterator_index + ";\n"
 	result += "	jsal_push_new_array();\n"
-	result += "	for (i = 0; i < (int)" + param['array_size'] + "; ++i)\n"
+	result += "	for (" + iterator_index + " = 0; " + iterator_index + " < (int)" + param['array_size'] + "; ++" + iterator_index + ")\n"
 	result += "	{\n"
-	result += "		" + jsal_push_function(param['rawtype']) + param['paramname'] + "[i]);\n"
-	result += "		jsal_put_prop_index(-2, i);\n"
+	result += "		" + jsal_push_function(param['rawtype']) + param['paramname'] + "[" + iterator_index + "]);\n"
+	result += "		jsal_put_prop_index(-2, " + iterator_index + ");\n"
 	result += "	}\n"
 	return result
 	
@@ -415,6 +425,8 @@ def jsal_push_object(type, name, indents = 0):
 # Return js friendly type for documentation.
 def js_type_convert(type):
 	if type == "char *" or type == "const char *":
+		return "string"
+	elif type == string_array_param:
 		return "string"
 
 	rawType = type.replace("*", "").replace("const", "").strip()
@@ -477,7 +489,7 @@ enums = {}
 for enum in data['enums']:
 	enums[enum['enumname']] = []
 	for entry in enum['values']:
-		enums[enum['enumname']].append(entry['name'])
+		enums[enum['enumname']].append([entry['name'], entry['value']])
 
 # Scrape header files for required info.
 defines = {}
@@ -593,7 +605,7 @@ for interface in data['interfaces']:
 		for enum in interface['enums']:
 			enums[enum['enumname']] = []
 			for value in enum['values']:
-				enums[enum['enumname']].append(value['name'])
+				enums[enum['enumname']].append([value['name'], value['value']])
 	
 	# Get methods.
 	for method in interface['methods']:
@@ -709,21 +721,24 @@ for func in skipped_methods:
 	header += "//	- " + func + "\n"
 header += "\n"
 header += "void steamapi_init (void);\n"
-header += "static bool " + calc_spaces_for_alignment("js_SteamAPI_Init") + "(int num_args, bool is_ctor, intptr_t magic);\n"
-header += "static bool " + calc_spaces_for_alignment("js_SteamAPI_Shutdown") + "(int num_args, bool is_ctor, intptr_t magic);\n"
-header += "static bool " + calc_spaces_for_alignment("js_SteamAPI_RunCallbacks") + "(int num_args, bool is_ctor, intptr_t magic);\n\n"
+# ---------------------
+# SOURCE FILE (steam.c)
+# ---------------------
+
+# Predeclare functions in source file.
+source += "static bool " + calc_spaces_for_alignment("js_SteamAPI_Init") + "(int num_args, bool is_ctor, intptr_t magic);\n"
+source += "static bool " + calc_spaces_for_alignment("js_SteamAPI_Shutdown") + "(int num_args, bool is_ctor, intptr_t magic);\n"
+source += "static bool " + calc_spaces_for_alignment("js_SteamAPI_RunCallbacks") + "(int num_args, bool is_ctor, intptr_t magic);\n\n"
 for category in methods:
-	header += "// " + category + "\n"
+	source += "// " + category + "\n"
 	for returntype in methods[category]:
 		for method in methods[category][returntype]:
 			if method['type'] == "accessor":
 				continue
-			header += "static bool " + calc_spaces_for_alignment(method["js_name"]) + "(int num_args, bool is_ctor, intptr_t magic);\n"
-	header += "\n"
+			source += "static bool " + calc_spaces_for_alignment(method["js_name"]) + "(int num_args, bool is_ctor, intptr_t magic);\n"
+	source += "\n"
 
-# ---------------------
-# SOURCE FILE (steam.c)
-# ---------------------
+source += "\n"
 
 # require and push helpers1
 
@@ -773,8 +788,8 @@ for type in const:
 # Write enums to source file.
 for enum in enums_to_bind:
 	source += "\n	// Enum " + enum + "\n"
-	for entry in enumerate(enums[enum]):
-		source += '	api_define_const("' + enum + '", "' + entry[1] + '", ' + str(entry[0]) + ');\n'
+	for entry in enums[enum]:
+		source += '	api_define_const("' + enum + '", "' + entry[0] + '", ' + str(entry[1]) + ');\n'
 
 # Write sphere api function defines to source file.
 source += "\n"
@@ -928,6 +943,7 @@ for category in methods:
 			out_params = ["result"] if not returntype == "void" else []
 			arg_index = 0
 			array_param = None
+			free_params = []
 
 			# Declare documentation vars.
 			doc_params = []
@@ -937,6 +953,7 @@ for category in methods:
 
 			# Print params.
 			for param in method['params']:
+
 				if param['out']:
 					out_params.append(param['paramname'])
 
@@ -955,6 +972,23 @@ for category in methods:
 				elif "*" in param['paramtype'] and not "char *" in param['paramtype']:
 					source += "	" + param['rawtype'] + " " + param['paramname'] + ";\n"
 					param_arg_array.append("&" + param['paramname'])
+					if param['rawtype'] == string_array_param:
+						doc_params.append(f"{js_type_convert(param['rawtype'])}[] {param['paramname']}")
+
+						array_size_var = f'{param["paramname"]}.m_nNumStrings'
+						array_param = f'{param["paramname"]}.m_ppStrings'
+						requires_source += f'	jsal_require_array({arg_index});\n'
+						requires_source += f'	{array_size_var} = jsal_get_length({arg_index});\n'
+						requires_source += f"	if (!({array_param} = (char **)malloc({array_size_var} * sizeof(char *))))\n"
+						requires_source += f"		return false;\n"
+						requires_source += f'	for (int i = 0; i < {array_size_var}; ++i)' + "{\n"
+						requires_source += f'		jsal_get_prop_index({arg_index}, i);\n'
+						requires_source += f'		{jsal_require_function("char *", -1, array_param + "[i]")}'
+						requires_source += f'		jsal_pop(1);\n'
+						requires_source += '	}\n'
+						free_params.append(array_param)
+						array_param = None
+						arg_index += 1
 
 				# Else, print param as normal.
 				else:
@@ -964,7 +998,7 @@ for category in methods:
 						if len(enums[param['enumtype']]) < 20:
 							doc_enum += "		" + param['paramname'] + " is an enum with the following members:\n\n"
 							for member in enums[param['enumtype']]:
-								doc_enum += "			" + param['enumtype'] + "." + member + "\n"
+								doc_enum += "			" + param['enumtype'] + "." + member[0] + "\n"
 							doc_enum += "\n"
 						
 						# If enum list is too long, skip documentation.
@@ -982,14 +1016,16 @@ for category in methods:
 						array_size_var = f'{array_param["array_size"]}'
 						requires_source += f'	jsal_require_array({arg_index});\n'
 						requires_source += f'	int {array_size_var} = jsal_get_length({arg_index});\n'
-						requires_source += f"	if (!({array_param['paramname']} = ({array_param['paramtype']})malloc({array_param['array_size']} * sizeof({array_param['rawtype']}))))\n"
+						requires_source += f"	if (!({array_param['paramname']} = ({array_param['paramtype'].replace('const', '').strip()})malloc({array_param['array_size']} * sizeof({array_param['rawtype']}))))\n"
 						requires_source += f"		return false;\n"
 						requires_source += f'	for (int i = 0; i < {array_size_var}; ++i)' + "{\n"
 						requires_source += f'		jsal_get_prop_index({arg_index}, i);\n'
 						requires_source += f'		{jsal_require_function(array_param["rawtype"], -1, array_param["paramname"] + "[i]")}'
 						requires_source += f'		jsal_pop(1);\n'
 						requires_source += '	}\n'
+						free_params.append(array_param['paramname'])
 						array_param = None
+
 
 					param_arg_array.append(param['paramname'])
 					arg_index += 1
@@ -1012,6 +1048,7 @@ for category in methods:
 					array_alloc_trailing_newline = "\n"
 					source += "	if (!(" + param['paramname'] + " = (" + param['paramtype'] + ")calloc(" + param['array_size'] + ", sizeof(" + param['rawtype'] + "))))\n"
 					source += "		return false;\n"
+					free_params.append(param['paramname'])
 
 			source += array_alloc_trailing_newline
 
@@ -1020,14 +1057,16 @@ for category in methods:
 			source += "	" + ("result = " if returntype != "void" else "") + internal_name + "(" + ", ".join(param_arg_array) + ");\n"
 			source += "\n"
 
+
 			# Push returns.
+			return_value = "true"
 			match len(out_params):
 
 				# Nothing returned.
 				case 0:
 					if returntype == "void":
-						source += "	return false;\n"
-			
+						return_value = "false"
+
 				# Single var returned.
 				case 1:
 					
@@ -1053,7 +1092,7 @@ for category in methods:
 						if param['paramname'] in out_params:
 
 							# If array.
-							if "array_size" in param:
+							if "array_size" in param and not is_string_type(param['paramtype']):
 								doc_resulttype = "		Returns an array of type `" + js_type_convert(param['paramtype']) + "` and size " + param['array_size'] + ".\n"
 								source += jsal_push_array(param, initialized_i)
 								source += "\n"
@@ -1063,10 +1102,9 @@ for category in methods:
 							else:
 								doc_resulttype = "		Returns var of type `" + js_type_convert(param['paramtype']) + ".\n"
 								source += "	" + jsal_push_function(param['rawtype']) + param['paramname'] + ");\n"
-					
+
 					source += "\n"
-					source += "	return true;\n"
-				
+
 				# Multiple vars returned.
 				case _:
 
@@ -1079,15 +1117,13 @@ for category in methods:
 						source += '	jsal_put_prop_string(-2, "result");\n'
 
 					# Push rest of returned params.
-					free_array_pointers_string = ""
 					for param in method['params']:
 						if param['paramname'] in out_params:
 
 							# If array.
-							if "array_size" in param:
+							if "array_size" in param and not is_string_type(param['paramtype']):
 								source += jsal_push_array(param, initialized_i)
 								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype']) + "[" + param['array_size'] + "])\n")
-								free_array_pointers_string += "	free(" + param['paramname'] + ");\n"
 							
 							elif param['rawtype'] in structs:
 								source += jsal_push_object(param['rawtype'], param['paramname'], 1)
@@ -1096,21 +1132,24 @@ for category in methods:
 
 							# Else, return normally based on type.
 							else:
-								source += "	" + jsal_push_function(param['rawtype']) + param['paramname'] + ");\n"
+								type = param['rawtype'] if not is_string_type(param['paramtype']) else param['paramtype']
+								source += "	" + jsal_push_function(type) + param['paramname'] + ");\n"
 								doc_returntypes += ("			" + "value." + param['paramname'] + " (" + js_type_convert(param['paramtype']) + ")\n")
 							
 							# Next param please.
 							source += '	jsal_put_prop_string(-2, "' + param['paramname'] + '");\n'
-					
-					# Free array pointers.
-					if len(free_array_pointers_string) > 0:
-						source += "\n"
-						source += free_array_pointers_string
 
-					# Close out return portion of function defintion.
 					source += "\n"
-					source += "	return true;\n"
 			
+
+			# Close out return portion of function defintion.
+			for free_param in free_params:
+				source += '	free(' + free_param + ');\n'
+			if len(free_params) > 0:
+				source += "\n"
+
+			source += "	return " + return_value + ";\n"
+
 			# Close function definition.
 			source += "}\n\n"
 

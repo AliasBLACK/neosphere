@@ -318,7 +318,7 @@ jsal_require_pathname(int index, const char* origin_name, bool v1_mode, bool nee
 	prefix = path_hop(path, 0);  // safe, prefix is always present
 	if (path_num_hops(path) > 1)
 		first_hop = path_hop(path, 1);
-	if (strcmp(first_hop, "..") == 0 || path_rooted(path))
+	if (strcmp(first_hop, "..") == 0) // TODO [emil]: Remove sandbox check until needed for full modding || path_rooted(path))
 		jsal_error(JS_URI_ERROR, "SphereFS sandbox violation '%s'", path_cstr(path));
 	if (strcmp(prefix, "%") == 0)
 		jsal_error(JS_REF_ERROR, "SphereFS prefix '%%/' is reserved for future use");
