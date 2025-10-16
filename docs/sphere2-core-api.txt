@@ -480,6 +480,11 @@ Color.fromRGBA(r, g, b[, alpha]); [experimental]
     outside this range.  If `alpha` (opacity) is not provided, it defaults to
     255.
 
+Color.fromHex(hex);
+
+    Constructs a Color from a hexadecimal color value. Accepts a string input
+    with or without hex symbol at the beginning (e.g. "#FF0000" or "FF0000").
+
 Color.is(color1, color2); [API 1]
 
     Returns true if `color1` refers to the same physical color as `color2`
