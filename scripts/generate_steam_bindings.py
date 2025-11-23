@@ -769,7 +769,8 @@ for category in methods:
 
 source += "\n"
 
-# require and push helpers1
+
+# require and push helpers
 
 source += """uint64_t
 require_str_to_uint64_t(int index)
@@ -801,6 +802,39 @@ push_int64_t_to_str(int64_t v)
 	snprintf(push_buffer, sizeof(push_buffer), "%" PRId64, v);
 	jsal_push_string(push_buffer);
 }
+"""
+
+# custom functions
+source += """// From Steam headers
+typedef struct SteamIDComponentCopy
+{
+#ifdef BIG_ENDIAN
+	unsigned int		m_EUniverse : 8;	// universe this account belongs to
+	unsigned int		m_EAccountType : 4;			// type of account - can't show as EAccountType, due to signed / unsigned difference
+	unsigned int		m_unAccountInstance : 20;	// dynamic instance ID
+	uint32_t			m_unAccountID : 32;			// unique account identifier
+#else
+	uint32_t			m_unAccountID : 32;			// unique account identifier
+	unsigned int		m_unAccountInstance : 20;	// dynamic instance ID
+	unsigned int		m_EAccountType : 4;			// type of account - can't show as EAccountType, due to signed / unsigned difference
+	unsigned int		m_EUniverse : 8;	// universe this account belongs to
+#endif
+} SteamIDComponentCopy;
+
+static bool js_SteamExtras_GetAccountID(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamID;
+	FuncPtr_009 ISteamUser_GetSteamID;
+
+	steamID = require_str_to_uint64_t(0);
+
+	SteamIDComponentCopy component;
+	memcpy(&component, &steamID, sizeof(steamID));
+
+	jsal_push_number(component.m_unAccountID);
+	return true;
+}
+
 """
 
 # Write init function in source file.
@@ -835,6 +869,8 @@ for category in methods:
 				continue
 			source += '	api_define_func("' + category + '", "' + method['name'] + '", ' + method['js_name'] + ", 0);\n"
 
+# Write Custom functions to source file.
+source += '	api_define_func("SteamExtras", "GetAccountID", js_SteamExtras_GetAccountID, 0);\n'
 # End init function in source file.
 source += "}\n\n"
 
