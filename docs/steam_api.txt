@@ -93,7 +93,7 @@ Recurring Callbacks
 		Returns var of type `int_string`.
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
-			result.m_szURL [512] (int)
+			result.m_szURL (string)
 
 	ISteamUser.GetMarketEligibility()
 
@@ -320,7 +320,7 @@ Recurring Callbacks
 		Returns a callback ID that eventually returns a Javascript object with the following members:
 
 			result.m_eResult (int)
-			result.m_rgSteamID [50] (int_string)
+			result.m_rgSteamID (int_string [50])
 			result.m_nResultsReturned (int)
 			result.m_nTotalResultCount (int)
 
@@ -1399,7 +1399,7 @@ Recurring Callbacks
 
 			result.m_eResult (int)
 			result.m_ulFileSize (int_string)
-			result.m_FileSHA [20] (int)
+			result.m_FileSHA (int [20])
 			result.m_unFlags (int)
 
 
@@ -1864,7 +1864,7 @@ Recurring Callbacks
 			result.m_unNumResultsReturned (int)
 			result.m_unTotalMatchingResults (int)
 			result.m_bCachedData (bool)
-			result.m_rgchNextCursor [256] (int)
+			result.m_rgchNextCursor (string)
 
 	ISteamUGC.CreateItem(int nConsumerAppId, int eFileType)
 
@@ -2027,7 +2027,7 @@ Recurring Callbacks
 
 			result.m_eResult (int)
 			result.m_nPublishedFileId (int_string)
-			result.m_rgAppIDs [32] (int)
+			result.m_rgAppIDs (int [32])
 			result.m_nNumAppDependencies (int)
 			result.m_nTotalNumAppDependencies (int)
 
@@ -2063,8 +2063,8 @@ Recurring Callbacks
 			value.pDetails.m_eFileType (int)
 			value.pDetails.m_nCreatorAppID (int)
 			value.pDetails.m_nConsumerAppID (int)
-			value.pDetails.m_rgchTitle [129] (int)
-			value.pDetails.m_rgchDescription [8000] (int)
+			value.pDetails.m_rgchTitle (string)
+			value.pDetails.m_rgchDescription (string)
 			value.pDetails.m_ulSteamIDOwner (int_string)
 			value.pDetails.m_rtimeCreated (int)
 			value.pDetails.m_rtimeUpdated (int)
@@ -2073,13 +2073,13 @@ Recurring Callbacks
 			value.pDetails.m_bBanned (bool)
 			value.pDetails.m_bAcceptedForUse (bool)
 			value.pDetails.m_bTagsTruncated (bool)
-			value.pDetails.m_rgchTags [1025] (int)
+			value.pDetails.m_rgchTags (string)
 			value.pDetails.m_hFile (int_string)
 			value.pDetails.m_hPreviewFile (int_string)
-			value.pDetails.m_pchFileName [260] (int)
+			value.pDetails.m_pchFileName (string)
 			value.pDetails.m_nFileSize (int)
 			value.pDetails.m_nPreviewFileSize (int)
-			value.pDetails.m_rgchURL [256] (int)
+			value.pDetails.m_rgchURL (string)
 			value.pDetails.m_unVotesUp (int)
 			value.pDetails.m_unVotesDown (int)
 			value.pDetails.m_flScore (float)

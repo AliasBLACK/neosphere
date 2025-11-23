@@ -156,10 +156,14 @@ def parse_struct(struct):
 	for prop in struct['fields']:
 
 		# Check if array.
-		array_size = re.search(r"\[([0-9]*?)\]", prop['fieldtype'])
-		if not array_size is None:
-			prop['fieldtype'] = prop['fieldtype'].replace("[" + array_size.group(1) + "]", "").strip()
-			prop["fieldname"] += " [" + array_size.group(1) + "]"
+		array_size_match = re.search(r"\[([0-9]*?)\]", prop['fieldtype'])
+		if not array_size_match is None:
+			array_size = array_size_match.group(1)
+			prop['array_size'] = array_size
+			prop['fieldtype'] = prop['fieldtype'].replace("[" + array_size + "]", "").strip()
+			prop["indicies"] = " [" + array_size + "]"
+		else:
+			prop["indicies"] = ""
 		
 		# Check if function pointer.
 		result = prop['fieldtype'].find("(*)")
@@ -176,8 +180,16 @@ def parse_struct(struct):
 		# Convert type.
 		prop['fieldtype'] = convert_type(prop['fieldtype'])
 
+		# Determine if it's a string type, i.e. either array of chars or char pointer
+		prop['is_string'] = ('array_size' in prop and prop['fieldtype'] == "char") or is_string_type(prop['fieldtype'])
+
+		if not prop['fieldtype'] == 'const char *':
+			prop['rawtype'] = remove_one_pointer_indirection(prop['fieldtype']).replace("const", "").strip()
+		else:
+			prop['rawtype'] = prop['fieldtype']
+
 		# Append to output.
-		struct_string += "	" + prop['fieldtype'] + " " + prop['fieldname'] + ";\n"
+		struct_string += "	" + prop['fieldtype'] + " " + prop['fieldname'] + prop['indicies'] + ";\n"
 	struct_string += "} " + struct['struct'] + ";\n\n"
 
 # Create/Find existing function pointers.
@@ -416,7 +428,20 @@ def jsal_push_object(type, name, indents = 0):
 	if type in structs:
 		result = "	" * indents + "jsal_push_new_object();\n"
 		for field in structs[type]['fields']:
-			result += "	" * indents + jsal_push_function(field['fieldtype']) + name + "." + field['fieldname'] + ");\n"
+			if "array_size" in field and not field['is_string']:
+				initialized_i = False
+				result += jsal_push_array(field, initialized_i)
+			elif "array_size" in field and field['is_string']:
+				# Ensure string is null terminated.
+				result += f"{'	' * indents}{name}.{field['fieldname']}[{field['array_size']} - 1] = '\\0';\n"
+				result += f"{'	' * indents}{jsal_push_function('const char *')}{name}.{field['fieldname']});\n"
+			elif field['rawtype'] in structs:
+				result += jsal_push_object(field['rawtype'], field['fieldname'], 1)
+			# Else, return normally based on type.
+			else:
+				type = field['rawtype'] if not field['is_string'] else field['fieldtype']
+				result += "	" * indents + jsal_push_function(type) + name + "." + field['fieldname'] + ");\n"
+
 			result += "	" * indents + 'jsal_put_prop_string(-2, "' + field['fieldname']  +'");\n'
 		return result
 	else:
@@ -442,6 +467,11 @@ def js_type_convert(type):
 		case _:
 			print("Javascript type " + type + " not recognized!")
 			return ""
+
+def field_js_type_convert(field):
+	indicies = "" if field['is_string'] else field['indicies']
+	type = 'string' if field['is_string'] else js_type_convert(field['fieldtype'])
+	return type + indicies
 
 # ==========
 # PARSE DATA
@@ -637,17 +667,16 @@ for struct in structs_to_bind:
 			api_callback_switch_string += '							jsal_put_prop_string(-2, "callID");\n'
 			
 			for prop in structs[struct]['fields']:
-				if (re.search(r'\[\d+\]', prop['fieldname'])): # If array...
-					sanitizedName = re.sub(r'\[\d+\]', '', prop['fieldname']).strip()
+				if (prop['indicies'] != ""): # If array...
 					api_callback_switch_string += "							int k;\n"
-					api_callback_switch_string += "							size_t n = sizeof(callbackStruct->" + sanitizedName + ")/sizeof(" + prop['fieldtype'] + ");\n"
+					api_callback_switch_string += "							size_t n = sizeof(callbackStruct->" + prop['fieldname'] + ")/sizeof(" + prop['fieldtype'] + ");\n"
 					api_callback_switch_string += "							jsal_push_new_array();\n"
 					api_callback_switch_string += "							for (k = 0; k < n; k++)\n"
 					api_callback_switch_string += "							{\n"
-					api_callback_switch_string += "								" + jsal_push_function(prop['fieldtype']) + "callbackStruct->" + sanitizedName + "[k]);\n"
+					api_callback_switch_string += "								" + jsal_push_function(prop['fieldtype']) + "callbackStruct->" + prop['fieldname'] + "[k]);\n"
 					api_callback_switch_string += "								jsal_put_prop_index(-2, k);\n"
 					api_callback_switch_string += "							}\n"
-					api_callback_switch_string += '							jsal_put_prop_string(-2, "' + sanitizedName + '");\n'
+					api_callback_switch_string += '							jsal_put_prop_string(-2, "' + prop['fieldname'] + '");\n'
 				else:
 					api_callback_switch_string += "							" + jsal_push_function(prop['fieldtype']) + "callbackStruct->" + prop['fieldname'] + ");\n"
 					api_callback_switch_string += '							jsal_put_prop_string(-2, "' + prop['fieldname'] + '");\n'
@@ -681,7 +710,7 @@ for struct in structs_to_bind:
 			# Create documentation.
 			callback_documentation += '	' + struct.replace("_t", "") + '\n\n'
 			for prop in structs[struct]['fields']:
-				callback_documentation += '		' + js_type_convert(prop['fieldtype']) + ' ' + prop['fieldname'] + '\n'
+				callback_documentation += '		' + js_type_convert(prop['fieldtype']) + ' ' + prop['fieldname'] + prop['indicies'] + '\n'
 			callback_documentation += '\n'
 
 # Sort function pointers by returntype.
@@ -1082,7 +1111,7 @@ for category in methods:
 									doc_resulttype = "		Returns var of type `int_string`.\n"
 									doc_resulttype += "		Returns a callback ID that eventually returns a Javascript object with the following members:\n\n"
 									for field in structs[callbackStruct]['fields']:
-										doc_resulttype += "			result." + field['fieldname'] + " (" + js_type_convert(field['fieldtype']) + ")\n"
+										doc_resulttype += "			result." + field['fieldname'] + " (" + field_js_type_convert(field) + ")\n"
 							else:
 								doc_resulttype = "		Returns var of type `" + js_type_convert(returntype) + "`.\n"
 							source += "	" + jsal_push_function(returntype) + "result);\n"
@@ -1128,7 +1157,7 @@ for category in methods:
 							elif param['rawtype'] in structs:
 								source += jsal_push_object(param['rawtype'], param['paramname'], 1)
 								for field in structs[param['rawtype']]['fields']:
-									doc_returntypes += f"			value.{param['paramname']}.{field['fieldname']} ({js_type_convert(field['fieldtype'])})\n"
+									doc_returntypes += f"			value.{param['paramname']}.{field['fieldname']} ({field_js_type_convert(field) })\n"
 
 							# Else, return normally based on type.
 							else:
@@ -1187,7 +1216,7 @@ for category in methods:
 					else:
 						documentation += "			value.result\n"
 						for field in structs[returntype]['fields']:
-							documentation += "				result." + field['fieldname'] + " (" + js_type_convert(field['fieldtype']) + ")\n"
+							documentation += "				result." + field['fieldname'] + " (" + field_js_type_convert(field) + ")\n"
 				
 				# Print documentation for remaining vars in object.
 				documentation += doc_returntypes
@@ -1197,7 +1226,7 @@ for category in methods:
 			elif returntype in structs:
 				documentation += "		Returns a javascript object with the following members:\n\n"
 				for field in structs[returntype]['fields']:
-					documentation += "			value." + field['fieldname'] + " (" + js_type_convert(field['fieldtype']) + ")\n"
+					documentation += "			value." + field['fieldname'] + " (" + field_js_type_convert(field) + ")\n"
 				documentation += "\n"
 
 # Write header file.
