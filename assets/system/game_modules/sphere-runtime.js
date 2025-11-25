@@ -52,13 +52,22 @@ export { default as from, Query } from 'from';
 export { default as Logger } from 'logger';
 export { default as Random } from 'random';
 
-// 3rd party libraries.
-import { decomp } from 'decomp';
-global.decomp = decomp;
-export { Matter } from 'matter';
+// Matter.js and Vector classes.
+import { decomp } from 'decomp'; global.decomp = decomp;
+import { Matter } from 'matter';
+global.Vector = Matter.Vector;
+Vector.distance = function(v1, v2) { return Math.sqrt(Math.pow(v2.x - v1.x, 2) + Math.pow(v2.y - v1.y, 2)) }
+export { Matter };
+
+// Yoga layout engine.
 export { Yoga } from 'yoga';
 
-DirectoryStream.fromURL = function(url)
-{
+// Extensions to built-in types
+import hexRGB from 'hexRGB';
+Color.fromHex = function(hex) {
+	const rgb = Object.values(hexRGB(hex)).map(num => Math.round(num / 255 * 100) / 100)
+	return new Color(rgb[0], rgb[1], rgb[2])
+}
+DirectoryStream.fromURL = function(url) {
 	return Promise.resolve(new DirectoryStream(url))
 }

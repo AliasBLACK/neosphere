@@ -4051,6 +4051,7 @@ js_new_Shader(int num_args, bool is_ctor, intptr_t magic)
 	const char* fragment_pathname;
 	shader_t*   shader;
 	const char* vertex_pathname;
+	char*       error_message = NULL;
 
 	jsal_require_object_coercible(0);
 	jsal_get_prop_string(0, "fragmentFile");
@@ -4063,8 +4064,10 @@ js_new_Shader(int num_args, bool is_ctor, intptr_t magic)
 
 	fragment_pathname = jsal_require_pathname(-2, NULL, false, false);
 	vertex_pathname = jsal_require_pathname(-1, NULL, false, false);
-	if (!(shader = shader_new(vertex_pathname, fragment_pathname)))
-		jsal_error(JS_ERROR, "Couldn't build shader program");
+	if (!(shader = shader_new(vertex_pathname, fragment_pathname, &error_message))) {
+		jsal_error(JS_ERROR, error_message != NULL ? error_message : "Couldn't build shader program");
+		free(error_message);
+	}
 	jsal_push_class_obj(PEGASUS_SHADER, shader, is_ctor);
 	return true;
 }

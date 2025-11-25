@@ -144,7 +144,8 @@ galileo_shader(void)
 		console_log(3, "compiling Galileo default shaders");
 		s_def_shader = shader_new(
 			"#/shaders/default.vert.glsl",
-			"#/shaders/default.frag.glsl");
+			"#/shaders/default.frag.glsl",
+			NULL);
 	}
 	return s_def_shader;
 }
@@ -345,33 +346,52 @@ model_draw(const model_t* it, image_t* surface)
 }
 
 shader_t*
-shader_new(const char* vert_filename, const char* frag_filename)
+shader_new(const char* vert_filename, const char* frag_filename, char** out_error_message)
 {
 	char*      frag_source = NULL;
 	char*      vert_source = NULL;
 	shader_t*  shader;
+	const char* shader_log;
 
 	if (!(shader = calloc(1, sizeof(shader_t))))
 		goto on_error;
 
 	console_log(2, "compiling new shader program #%u", s_next_shader_id);
 
-	if (!(vert_source = game_read_file(g_game, vert_filename, NULL)))
+	if (!(vert_source = game_read_file(g_game, vert_filename, NULL))) {
+		if (out_error_message != NULL)
+			*out_error_message = strnewf("Failed to load vertex shader file:\n%s", vert_filename);
 		goto on_error;
-	if (!(frag_source = game_read_file(g_game, frag_filename, NULL)))
+	}
+	if (!(frag_source = game_read_file(g_game, frag_filename, NULL))) {
+		if (out_error_message != NULL)
+			*out_error_message = strnewf("Failed to load fragment shader file:\n%s", frag_filename);
 		goto on_error;
-	if (!(shader->program = al_create_shader(ALLEGRO_SHADER_GLSL)))
+	}
+	if (!(shader->program = al_create_shader(ALLEGRO_SHADER_GLSL))) {
+		if (out_error_message != NULL)
+			*out_error_message = strnewf("Failed to create shader program");
 		goto on_error;
+	}
 	if (!al_attach_shader_source(shader->program, ALLEGRO_VERTEX_SHADER, vert_source)) {
-		fprintf(stderr, "\nvertex shader compile log:\n%s\n", al_get_shader_log(shader->program));
+		shader_log = al_get_shader_log(shader->program);
+		fprintf(stderr, "\nvertex shader compile log:\n%s\n", shader_log);
+		if (out_error_message != NULL)
+			*out_error_message = strnewf("Vertex shader compile error:\n%s\n\nShader file: %s", shader_log, vert_filename);
 		goto on_error;
 	}
 	if (!al_attach_shader_source(shader->program, ALLEGRO_PIXEL_SHADER, frag_source)) {
-		fprintf(stderr, "\nfragment shader compile log:\n%s\n", al_get_shader_log(shader->program));
+		shader_log = al_get_shader_log(shader->program);
+		fprintf(stderr, "\nfragment shader compile log:\n%s\n", shader_log);
+		if (out_error_message != NULL)
+			*out_error_message = strnewf("Fragment shader compile error:\n%s\n\nShader file: %s", shader_log, frag_filename);
 		goto on_error;
 	}
 	if (!al_build_shader(shader->program)) {
-		fprintf(stderr, "\nerror building shader program:\n%s\n", al_get_shader_log(shader->program));
+		shader_log = al_get_shader_log(shader->program);
+		fprintf(stderr, "\nerror building shader program:\n%s\n", shader_log);
+		if (out_error_message != NULL)
+			*out_error_message = strnewf("Shader program link error:\n%s\n\nVertex: %s\nFragment: %s", shader_log, vert_filename, frag_filename);
 		goto on_error;
 	}
 	free(vert_source);
@@ -399,7 +419,7 @@ shader_dup(const shader_t* it)
 {
 	shader_t* dolly;
 
-	dolly = shader_new(it->vertex_path, it->fragment_path);
+	dolly = shader_new(it->vertex_path, it->fragment_path, NULL);
 	return dolly;
 }
 

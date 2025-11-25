@@ -901,6 +901,91 @@ Random.uniform(mean, variance);
     `variance`.
 
 
+`Vector` Namespace
+-------------------
+
+The `Vector` namespace (based on Matter.Vector) provides functions for creating
+and manipulating 2D vectors of the form `{ x: number, y: number }`. Vectors are
+the basis of most geometry-related operations.
+
+Vector.add(a, b[, out]);
+
+    Adds two vectors and returns the result. If `out` is provided, writes the
+    result into it.
+
+Vector.angle(a, b);
+
+    Returns the angle in radians between the vector `b - a` and the x-axis.
+
+Vector.clone(v);
+
+    Returns a new vector with `x` and `y` copied from `v`.
+
+Vector.distance(a, b);
+
+    Returns the Euclidean distance between points `a` and `b`.
+
+Vector.create(x, y);
+
+    Creates a new vector `{ x, y }`.
+
+Vector.cross(a, b);
+
+    Returns the 2D cross product (scalar z-component) of `a` and `b`.
+
+Vector.cross3(a, b, c);
+
+    Returns the 2D scalar triple product for `a`, `b`, and `c`.
+
+Vector.div(v, s);
+
+    Divides vector `v` by scalar `s` and returns the result.
+
+Vector.dot(a, b);
+
+    Returns the dot product of `a` and `b`.
+
+Vector.magnitude(v);
+
+    Returns the magnitude (length) of `v`.
+
+Vector.magnitudeSquared(v);
+
+    Returns the squared magnitude of `v` (avoids a square root).
+
+Vector.mult(v, s);
+
+    Multiplies vector `v` by scalar `s` and returns the result.
+
+Vector.neg(v);
+
+    Returns the negation of `v` (points in the opposite direction).
+
+Vector.normalise(v);
+
+    Returns a unit-length vector in the direction of `v`.
+
+Vector.perp(v[, negate=false]);
+
+    Returns a vector perpendicular to `v`. If `negate` is true, returns the
+    opposite perpendicular.
+
+Vector.rotate(v, angle[, out]);
+
+    Returns `v` rotated about (0, 0) by `angle` radians. If `out` is provided,
+    writes the result into it.
+
+Vector.rotateAbout(v, angle, point[, out]);
+
+    Returns `v` rotated by `angle` radians about `point`. If `out` is provided,
+    writes the result into it.
+
+Vector.sub(a, b[, out]);
+
+    Subtracts `b` from `a` and returns the result. If `out` is provided, writes
+    the result into it.
+
+
 `Scene` Object
 --------------
 

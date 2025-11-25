@@ -88,7 +88,7 @@ void                   model_set_shader        (model_t* it, shader_t* shader);
 void                   model_set_transform     (model_t* it, transform_t* transform);
 bool                   model_add_shape         (model_t* it, shape_t* shape);
 void                   model_draw              (const model_t* it, image_t* surface);
-shader_t*              shader_new              (const char* vert_filename, const char* frag_filename);
+shader_t*              shader_new              (const char* vert_filename, const char* frag_filename, char** out_error_message);
 shader_t*              shader_dup              (const shader_t* it);
 shader_t*              shader_ref              (shader_t* shader);
 void                   shader_unref            (shader_t* shader);

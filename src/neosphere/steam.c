@@ -402,6 +402,36 @@ push_int64_t_to_str(int64_t v)
 	snprintf(push_buffer, sizeof(push_buffer), "%" PRId64, v);
 	jsal_push_string(push_buffer);
 }
+// From Steam headers
+typedef struct SteamIDComponentCopy
+{
+#ifdef BIG_ENDIAN
+	unsigned int		m_EUniverse : 8;	// universe this account belongs to
+	unsigned int		m_EAccountType : 4;			// type of account - can't show as EAccountType, due to signed / unsigned difference
+	unsigned int		m_unAccountInstance : 20;	// dynamic instance ID
+	uint32_t			m_unAccountID : 32;			// unique account identifier
+#else
+	uint32_t			m_unAccountID : 32;			// unique account identifier
+	unsigned int		m_unAccountInstance : 20;	// dynamic instance ID
+	unsigned int		m_EAccountType : 4;			// type of account - can't show as EAccountType, due to signed / unsigned difference
+	unsigned int		m_EUniverse : 8;	// universe this account belongs to
+#endif
+} SteamIDComponentCopy;
+
+static bool js_SteamExtras_GetAccountID(int num_args, bool is_ctor, intptr_t magic)
+{
+	uint64_t steamID;
+	FuncPtr_009 ISteamUser_GetSteamID;
+
+	steamID = require_str_to_uint64_t(0);
+
+	SteamIDComponentCopy component;
+	memcpy(&component, &steamID, sizeof(steamID));
+
+	jsal_push_number(component.m_unAccountID);
+	return true;
+}
+
 void
 steamapi_init(void)
 {
@@ -1802,6 +1832,7 @@ steamapi_init(void)
 	api_define_func("ISteamUGC", "GetItemState", js_ISteamUGC_GetItemState, 0);
 	api_define_func("ISteamUGC", "GetUserContentDescriptorPreferences", js_ISteamUGC_GetUserContentDescriptorPreferences, 0);
 	api_define_func("ISteamUGC", "SuspendDownloads", js_ISteamUGC_SuspendDownloads, 0);
+	api_define_func("SteamExtras", "GetAccountID", js_SteamExtras_GetAccountID, 0);
 }
 
 static bool
@@ -7914,10 +7945,12 @@ js_ISteamUGC_GetQueryUGCResult(int num_args, bool is_ctor, intptr_t magic)
 	jsal_put_prop_string(-2, "m_nCreatorAppID");
 	jsal_push_uint(pDetails.m_nConsumerAppID);
 	jsal_put_prop_string(-2, "m_nConsumerAppID");
-	jsal_push_int(pDetails.m_rgchTitle [129]);
-	jsal_put_prop_string(-2, "m_rgchTitle [129]");
-	jsal_push_int(pDetails.m_rgchDescription [8000]);
-	jsal_put_prop_string(-2, "m_rgchDescription [8000]");
+	pDetails.m_rgchTitle[129 - 1] = '\0';
+	jsal_push_string(pDetails.m_rgchTitle);
+	jsal_put_prop_string(-2, "m_rgchTitle");
+	pDetails.m_rgchDescription[8000 - 1] = '\0';
+	jsal_push_string(pDetails.m_rgchDescription);
+	jsal_put_prop_string(-2, "m_rgchDescription");
 	push_uint64_t_to_str(pDetails.m_ulSteamIDOwner);
 	jsal_put_prop_string(-2, "m_ulSteamIDOwner");
 	jsal_push_uint(pDetails.m_rtimeCreated);
@@ -7934,20 +7967,23 @@ js_ISteamUGC_GetQueryUGCResult(int num_args, bool is_ctor, intptr_t magic)
 	jsal_put_prop_string(-2, "m_bAcceptedForUse");
 	jsal_push_boolean(pDetails.m_bTagsTruncated);
 	jsal_put_prop_string(-2, "m_bTagsTruncated");
-	jsal_push_int(pDetails.m_rgchTags [1025]);
-	jsal_put_prop_string(-2, "m_rgchTags [1025]");
+	pDetails.m_rgchTags[1025 - 1] = '\0';
+	jsal_push_string(pDetails.m_rgchTags);
+	jsal_put_prop_string(-2, "m_rgchTags");
 	push_uint64_t_to_str(pDetails.m_hFile);
 	jsal_put_prop_string(-2, "m_hFile");
 	push_uint64_t_to_str(pDetails.m_hPreviewFile);
 	jsal_put_prop_string(-2, "m_hPreviewFile");
-	jsal_push_int(pDetails.m_pchFileName [260]);
-	jsal_put_prop_string(-2, "m_pchFileName [260]");
+	pDetails.m_pchFileName[260 - 1] = '\0';
+	jsal_push_string(pDetails.m_pchFileName);
+	jsal_put_prop_string(-2, "m_pchFileName");
 	jsal_push_int(pDetails.m_nFileSize);
 	jsal_put_prop_string(-2, "m_nFileSize");
 	jsal_push_int(pDetails.m_nPreviewFileSize);
 	jsal_put_prop_string(-2, "m_nPreviewFileSize");
-	jsal_push_int(pDetails.m_rgchURL [256]);
-	jsal_put_prop_string(-2, "m_rgchURL [256]");
+	pDetails.m_rgchURL[256 - 1] = '\0';
+	jsal_push_string(pDetails.m_rgchURL);
+	jsal_put_prop_string(-2, "m_rgchURL");
 	jsal_push_uint(pDetails.m_unVotesUp);
 	jsal_put_prop_string(-2, "m_unVotesUp");
 	jsal_push_uint(pDetails.m_unVotesDown);

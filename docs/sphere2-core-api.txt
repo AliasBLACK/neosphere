@@ -480,6 +480,11 @@ Color.fromRGBA(r, g, b[, alpha]); [experimental]
     outside this range.  If `alpha` (opacity) is not provided, it defaults to
     255.
 
+Color.fromHex(hex);
+
+    Constructs a Color from a hexadecimal color value. Accepts a string input
+    with or without hex symbol at the beginning (e.g. "#FF0000" or "FF0000").
+
 Color.is(color1, color2); [API 1]
 
     Returns true if `color1` refers to the same physical color as `color2`
@@ -2548,6 +2553,80 @@ new VertexList(vertices); [API 1]
     Note: The list of vertices stored on the GPU can't be modified later.  If
           you want to upload a new set of vertices, you must construct a new
           `VertexList`.
+
+
+`PrimNative` Namespace
+----------------------
+
+Low-level drawing helpers which render simple primitives directly to a target
+`Surface`. These are thin wrappers over the underlying graphics backend and are
+primarily intended for internal use or specialized cases. Prefer the higher-
+level `Shape`/`Model` APIs when possible.
+
+Note: Coordinates are specified in pixels in the coordinate space of the target
+      surface. Angles are in radians. Behavior and availability are subject to
+      change; these APIs are experimental.
+
+PrimNative.drawLine(surface, x1, y1, x2, y2, thickness, color); [experimental]
+
+    Draws a line segment from (x1, y1) to (x2, y2) on `surface` with the given
+    `thickness` (in pixels) and `color` (`Color`).
+
+PrimNative.drawTriangle(surface, x1, y1, x2, y2, x3, y3, thickness, color); [experimental]
+
+    Draws the outline of a triangle defined by the three vertices with the
+    given `thickness` and `color`.
+
+PrimNative.drawFilledTriangle(surface, x1, y1, x2, y2, x3, y3, color); [experimental]
+
+    Draws a filled triangle defined by the three vertices using `color`.
+
+PrimNative.drawRectangle(surface, x1, y1, x2, y2, thickness, color); [experimental]
+
+    Draws the outline of an axis-aligned rectangle whose opposite corners are
+    (x1, y1) and (x2, y2), with the given `thickness` and `color`.
+
+PrimNative.drawFilledRectangle(surface, x1, y1, x2, y2, color); [experimental]
+
+    Draws a filled, axis-aligned rectangle whose opposite corners are (x1, y1)
+    and (x2, y2), using `color`.
+
+PrimNative.drawRoundedRectangle(surface, x1, y1, x2, y2, rx, ry, thickness, color); [experimental]
+
+    Draws the outline of an axis-aligned rectangle with rounded corners. `rx`
+    and `ry` are the x- and y- radii of the corner arcs, respectively. The
+    border is drawn with `thickness` and `color`.
+
+PrimNative.drawFilledRoundedRectangle(surface, x1, y1, x2, y2, rx, ry, color); [experimental]
+
+    Draws a filled, axis-aligned rectangle with rounded corners. `rx` and `ry`
+    are the x- and y- radii of the corner arcs.
+
+PrimNative.drawEllipse(surface, cx, cy, rx, ry, thickness, color); [experimental]
+
+    Draws the outline of an ellipse centered at (`cx`, `cy`) with radii `rx`
+    and `ry`, using the specified `thickness` and `color`.
+
+PrimNative.drawFilledEllipse(surface, cx, cy, rx, ry, color); [experimental]
+
+    Draws a filled ellipse centered at (`cx`, `cy`) with radii `rx` and `ry`,
+    using `color`.
+
+PrimNative.drawCircle(surface, cx, cy, r, thickness, color); [experimental]
+
+    Draws the outline of a circle centered at (`cx`, `cy`) with radius `r`,
+    using `thickness` and `color`.
+
+PrimNative.drawFilledCircle(surface, cx, cy, r, color); [experimental]
+
+    Draws a filled circle centered at (`cx`, `cy`) with radius `r`, using
+    `color`.
+
+PrimNative.drawArc(surface, cx, cy, r, start, delta, thickness, color); [experimental]
+
+    Draws an arc of a circle centered at (`cx`, `cy`) with radius `r`.
+    `start` is the starting angle in radians, and `delta` is the sweep angle in
+    radians. The arc is drawn with the specified `thickness` and `color`.
 
 
 `Z` Namespace
