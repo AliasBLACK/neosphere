@@ -107,7 +107,7 @@ screen_new(const char* title, image_t* icon, size2_t resolution, int frameskip, 
 	if (use_ogl_3_1)
 	{
 		al_set_new_display_option(ALLEGRO_OPENGL_MAJOR_VERSION, 3, ALLEGRO_REQUIRE);
-		al_set_new_display_option(ALLEGRO_OPENGL_MINOR_VERSION, 1, ALLEGRO_REQUIRE);
+		al_set_new_display_option(ALLEGRO_OPENGL_MINOR_VERSION, 2, ALLEGRO_REQUIRE);
 	}
 
 	display = al_create_display(resolution.width * x_scale, resolution.height * y_scale);
