@@ -413,7 +413,7 @@ export class Text extends NodeAbstract
 				if (isNumeric(char))
 					while(i + 1 < line.length && isNumeric(line[i + 1]))
 						char += line[++i]
-				else if (i + 1 < line.length && isAsianPunctuation(line[i + 1]))
+				if (i + 1 < line.length && isAsianPunctuation(line[i + 1]))
 					char += line[++i]
 
 				let charWidth = font.widthOf(char)
