@@ -14,6 +14,24 @@ globalThis.textAlign = {
 	center: 2
 }
 
+// Modify Yoga.Node for builder pattern.
+{
+	const listOfSetFunctions = Object.getOwnPropertyNames(Yoga.Node.prototype)
+		.filter (
+			propertyName => {
+				return typeof Yoga.Node.prototype[propertyName] == 'function'
+					&& propertyName.includes("set")
+			})
+	for (const methodName of listOfSetFunctions)
+	{
+		const original = Yoga.Node.prototype[methodName]
+		Yoga.Node.prototype[methodName] = function(...args) {
+			original.apply(this, args);
+			return this
+		}
+	}
+}
+
 // Some shared functionality between layout nodes.
 class NodeAbstract extends Yoga.Node
 {
@@ -28,15 +46,6 @@ class NodeAbstract extends Yoga.Node
 		this.animYOffset = 0
 		this.animating = false
 		this.originalPositionType = Yoga.POSITION_TYPE_ABSOLUTE
-
-        // Redefine setters for builder pattern.
-		for (const property of Object.getOwnPropertyNames(Yoga.Node.prototype))
-        if (property.includes("set"))
-            this[property] = function(...args)
-            {
-                Yoga.Node.prototype[property].call(this, ...args)
-                return this
-            }
     }
 
 	setChildOf(parent)
