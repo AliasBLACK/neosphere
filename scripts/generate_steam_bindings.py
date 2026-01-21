@@ -48,6 +48,7 @@ forbidden_types = [
 enums_to_bind = []
 structs_to_bind = [
 	"GameOverlayActivated_t",
+	"ItemInstalled_t",
 	"SteamAPICallCompleted_t"
 ]
 
