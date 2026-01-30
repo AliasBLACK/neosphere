@@ -44,6 +44,7 @@
 #include "dyad.h"
 #include "event_loop.h"
 #include "galileo.h"
+#include "ime.h"
 #include "input.h"
 #include "jsal.h"
 #include "module.h"
@@ -321,6 +322,9 @@ main(int argc, char* argv[])
 	if (api_version >= 2)
 		pegasus_init(api_level, target_api_level);
 
+	// install IME window callback for Windows message handling
+	ime_install_callback(screen_display(g_screen));
+
 	// switch to fullscreen if necessary and initialize clipping
 	if (fullscreen_mode == FULLSCREEN_ON || (fullscreen_mode == FULLSCREEN_AUTO && game_fullscreen(g_game)))
 		screen_toggle_fullscreen(g_screen);
@@ -487,6 +491,7 @@ sphere_heartbeat(bool in_event_loop, int api_version)
 #endif
 		s_event_loop_version = api_version;
 		jsal_update(true);
+		ime_update();
 	}
 
 	update_input();
@@ -657,6 +662,7 @@ initialize_engine(void)
 	events_init();
 	galileo_init();
 	audio_init();
+	ime_init();
 	initialize_input();
 	sockets_init(on_socket_idle);
 	scripts_init();
@@ -686,6 +692,7 @@ shutdown_engine(void)
 	game_unref(g_game);
 	g_game = NULL;
 
+	ime_uninit();
 	shutdown_input();
 	scripts_uninit();
 	sockets_uninit();

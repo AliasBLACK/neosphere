@@ -39,6 +39,11 @@ typedef struct {
 } GameOverlayActivated_t;
 
 typedef struct {
+	uint32_t m_unAppID;
+	uint64_t m_nPublishedFileId;
+} ItemInstalled_t;
+
+typedef struct {
 	uint64_t m_hAsyncCall;
 	int32_t m_iCallback;
 	uint32_t m_cubParam;

@@ -2648,6 +2648,21 @@ js_SteamAPI_RunCallbacks(int num_args, bool is_ctor, intptr_t magic)
 				i++;
 				break;
 			}
+			case 3405:
+			{
+				ItemInstalled_t* callbackStruct = (ItemInstalled_t *)callback.m_pubParam;
+				jsal_push_new_object();
+				const char* name = "ItemInstalled";
+				jsal_push_string(name);
+				jsal_put_prop_string(-2, "name");
+				jsal_push_uint(callbackStruct->m_unAppID);
+				jsal_put_prop_string(-2, "m_unAppID");
+				push_uint64_t_to_str(callbackStruct->m_nPublishedFileId);
+				jsal_put_prop_string(-2, "m_nPublishedFileId");
+				jsal_put_prop_index(-2, i);
+				i++;
+				break;
+			}
 		}
 
 		FuncPtr_004 SteamAPI_ManualDispatch_FreeLastCallback;

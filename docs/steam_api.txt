@@ -8,6 +8,11 @@ Recurring Callbacks
 		int m_nAppID
 		int m_dwOverlayPID
 
+	ItemInstalled
+
+		int m_unAppID
+		int_string m_nPublishedFileId
+
 
 `ISteamUser` Interface
 ----------------------
