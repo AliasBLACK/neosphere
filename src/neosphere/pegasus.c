@@ -46,6 +46,7 @@
 #include "font.h"
 #include "galileo.h"
 #include "image.h"
+#include "ime.h"
 #include "input.h"
 #include "jsal.h"
 #include "module.h"
@@ -283,7 +284,8 @@ static bool js_Sphere_setResolution          (int num_args, bool is_ctor, intptr
 static bool js_Sphere_shutDown               (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Sphere_sleep                  (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Sphere_openURL                (int num_args, bool is_ctor, intptr_t magic);
-static bool js_Sphere_audio_enabled         (int num_args, bool is_ctor, intptr_t magic);
+static bool js_Sphere_audio_enabled          (int num_args, bool is_ctor, intptr_t magic);
+static bool js_Sphere_onIMESetContext        (int num_args, bool is_ctor, intptr_t magic);
 static bool js_BlendOp_get_Default           (int num_args, bool is_ctor, intptr_t magic);
 static bool js_new_BlendOp                   (int num_args, bool is_ctor, intptr_t magic);
 static bool js_Color_get_Default             (int num_args, bool is_ctor, intptr_t magic);
@@ -642,6 +644,7 @@ pegasus_init(int api_level, int target_api_level)
 	api_define_func("Sphere", "setResolution", js_Sphere_setResolution, 0);
 	api_define_func("Sphere", "shutDown", js_Sphere_shutDown, 0);
 	api_define_func("Sphere", "sleep", js_Sphere_sleep, 0);
+	api_define_func("Sphere", "onIMESetContext", js_Sphere_onIMESetContext, 0);
 	api_define_class("Color", PEGASUS_COLOR, js_new_Color, NULL, 0);
 	api_define_func("Color", "is", js_Color_is, 0);
 	api_define_func("Color", "mix", js_Color_mix, 0);
@@ -1445,6 +1448,17 @@ js_Sphere_audio_enabled(int num_args, bool is_ctor, intptr_t magic)
 	bool v = audio_enabled();
 	jsal_push_boolean(v);
 	return true;
+}
+
+static bool
+js_Sphere_onIMESetContext(int num_args, bool is_ctor, intptr_t magic)
+{
+	js_ref_t* callback = NULL;
+
+	if (num_args >= 1 && jsal_is_function(0))
+		callback = jsal_ref(0);
+	ime_set_callback(callback);
+	return false;
 }
 
 static bool
