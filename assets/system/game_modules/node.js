@@ -1,4 +1,5 @@
 import { Yoga } from 'yoga'
+import { tnthai } from '../external_libs/tnthai.js'
 
 // Enums
 globalThis.renderMode = {
@@ -330,6 +331,13 @@ export class Node extends NodeAbstract
 	}
 }
 
+// Thai word segmentation analyzer (lazy initialized)
+let thaiAnalyzer = null
+function getThaiAnalyzer() {
+	if (!thaiAnalyzer) thaiAnalyzer = new tnthai()
+	return thaiAnalyzer
+}
+
 export class Text extends NodeAbstract
 {
 	constructor() {
@@ -341,6 +349,7 @@ export class Text extends NodeAbstract
         this.color = Color.White
         this.cachedWidth = 0
 		this.isEastAsian = false
+		this.isThai = false
         return this
 	}
 
@@ -354,6 +363,12 @@ export class Text extends NodeAbstract
 	setEastAsian(bool)
 	{
 		this.isEastAsian = bool
+		return this
+	}
+
+	setThai(bool)
+	{
+		this.isThai = bool
 		return this
 	}
 
@@ -390,9 +405,12 @@ export class Text extends NodeAbstract
         contentWidth -= this.getComputedPadding(Yoga.EDGE_RIGHT)
 
         // Break text up into array of lines limited by width.
-		this.multiLine = this.isEastAsian ?
-            this.eastAsianWordWrap(this.font, text, contentWidth) :
-            this.font.wordWrap(text, contentWidth)
+		if (this.isThai)
+			this.multiLine = this.thaiWordWrap(this.font, text, contentWidth)
+		else if (this.isEastAsian)
+			this.multiLine = this.eastAsianWordWrap(this.font, text, contentWidth)
+		else
+			this.multiLine = this.font.wordWrap(text, contentWidth)
 
         // Calculate min height based on text and font.
         let contentHeight = this.font.height * this.multiLine.length
@@ -442,6 +460,45 @@ export class Text extends NodeAbstract
 			currentLength = 0
 			currentString = ""
 		}
+		return result
+	}
+
+	thaiWordWrap(font, text, width)
+	{
+		const analyzer = getThaiAnalyzer()
+		const lines = text.split("\n")
+		const result = []
+		
+		for (const line of lines)
+		{
+			// Segment Thai text into words using tnthai
+			const words = analyzer.segmenting(line).solution || []
+			
+			let currentLine = ""
+			let currentWidth = 0
+			
+			for (const word of words)
+			{
+				const wordWidth = font.widthOf(word)
+				
+				// If adding this word exceeds width, push current line and start new one
+				if (currentWidth + wordWidth > width && currentLine.length > 0)
+				{
+					result.push(currentLine)
+					currentLine = word
+					currentWidth = wordWidth
+				}
+				else
+				{
+					currentLine += word
+					currentWidth += wordWidth
+				}
+			}
+			
+			// Push the remaining text for this line
+			result.push(currentLine)
+		}
+		
 		return result
 	}
 	
