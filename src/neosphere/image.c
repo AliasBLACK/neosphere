@@ -254,6 +254,10 @@ image_resize(image_t* image, int width, int height)
 	new_bitmap = al_create_bitmap(width, height);
 	al_restore_state(&old_state);
 
+	// Clear cached render target since we're destroying the bitmap
+	if (s_last_image == image)
+		s_last_image = NULL;
+
 	al_destroy_bitmap(image->bitmap);
 	image->bitmap = new_bitmap;
 	image->width = width;
@@ -279,6 +283,12 @@ image_unref(image_t* it)
 
 	console_log(3, "disposing image #%u no longer in use",
 		it->id);
+	
+	// Clear cached render target if it points to this image being freed.
+	// This prevents stale pointer comparisons if memory is reused.
+	if (s_last_image == it)
+		s_last_image = NULL;
+	
 	uncache_pixels(it);
 	al_destroy_bitmap(it->bitmap);
 	image_unref(it->parent);
@@ -630,6 +640,11 @@ image_flip(image_t* it, bool is_h_flip, bool is_v_flip)
 		draw_flags |= ALLEGRO_FLIP_VERTICAL;
 	al_draw_bitmap(it->bitmap, 0, 0, draw_flags);
 	al_set_target_bitmap(old_target);
+	
+	// Clear cached render target since we're destroying the bitmap
+	if (s_last_image == it)
+		s_last_image = NULL;
+	
 	al_destroy_bitmap(it->bitmap);
 	it->bitmap = new_bitmap;
 	return true;
@@ -769,6 +784,11 @@ image_rescale(image_t* it, int width, int height)
 	al_draw_scaled_bitmap(it->bitmap, 0, 0, it->width, it->height, 0, 0, width, height, 0x0);
 	al_set_target_bitmap(old_target);
 	al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
+	
+	// Clear cached render target since we're destroying the bitmap
+	if (s_last_image == it)
+		s_last_image = NULL;
+	
 	al_destroy_bitmap(it->bitmap);
 	it->bitmap = new_bitmap;
 	it->width = al_get_bitmap_width(it->bitmap);
