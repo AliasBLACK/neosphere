@@ -295,6 +295,7 @@ screen_draw_status(screen_t* it, const char* text, color_t color)
 	ttf_draw_text(it->font, ((bounds.x1 + bounds.x2) - ttf_get_width(it->font, text)) / 2.0f, bounds.y1 + 6, text, mk_color(0, 0, 0, 255));
 	ttf_draw_text(it->font, ((bounds.x2 + bounds.x1) - ttf_get_width(it->font, text)) / 2.0f, bounds.y1 + 5, text, color);
 	al_set_target_bitmap(old_target);
+	image_invalidate_render_cache();
 }
 
 void
@@ -408,6 +409,11 @@ screen_flip(screen_t* it, int framerate, bool need_clear)
 			ttf_draw_text(it->font, x + 50 - ttf_get_width(it->font, fps_text) / 2.0f, y + 1, fps_text, mk_color(255, 255, 255, 255));
 		}
 		al_set_target_bitmap(old_target);
+		
+		// Invalidate render cache since we changed the target bitmap directly.
+		// This ensures the next image_render_to call will properly set the target.
+		image_invalidate_render_cache();
+		
 		al_flip_display();
 		it->last_flip_time = al_get_time();
 		it->num_skips = 0;

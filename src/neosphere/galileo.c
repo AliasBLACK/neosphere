@@ -444,6 +444,11 @@ shader_unref(shader_t* it)
 
 	console_log(3, "disposing shader program #%u no longer in use", it->id);
 
+	// Clear cached shader if it points to this shader being freed.
+	// This prevents stale pointer comparisons if memory is reused.
+	if (s_last_shader == it)
+		s_last_shader = NULL;
+
 	iter = vector_enum(it->uniforms);
 	while ((uniform = iter_next(&iter))) {
 		switch (uniform->type) {
