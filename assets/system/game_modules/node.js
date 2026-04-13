@@ -338,6 +338,27 @@ function getThaiAnalyzer() {
 	return thaiAnalyzer
 }
 
+// Thai upper vowels that require tone marks to be rendered higher
+const thaiUpperVowels = "ิีึืํ็ั"
+// Standard tone marks and their higher alternative glyphs
+const thaiToneMarks = "่้๊๋"
+const thaiToneMarksHigh = "๜๝๞๟"
+
+// Replace tone marks with higher alternatives when they follow upper vowels
+function applyThaiToneMarkSubstitution(text) {
+	let result = ""
+	for (let i = 0; i < text.length; i++) {
+		const char = text[i]
+		const toneIndex = thaiToneMarks.indexOf(char)
+		if (toneIndex !== -1 && i > 0 && thaiUpperVowels.includes(text[i - 1])) {
+			result += thaiToneMarksHigh[toneIndex]
+		} else {
+			result += char
+		}
+	}
+	return result
+}
+
 export class Text extends NodeAbstract
 {
 	constructor() {
@@ -355,7 +376,7 @@ export class Text extends NodeAbstract
 
     setText(text)
     {
-        this.text = text
+        this.text = applyThaiToneMarkSubstitution(text)
         this.updateText(this.text)
         return this
     }
