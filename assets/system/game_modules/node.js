@@ -345,16 +345,21 @@ const thaiToneMarks = "่้๊๋"
 const thaiToneMarksHigh = "๜๝๞๟"
 
 // Replace tone marks with higher alternatives when they follow upper vowels
+// or when they are followed by sara am (ำ) like in น้ำ
 function applyThaiToneMarkSubstitution(text) {
 	let result = ""
 	for (let i = 0; i < text.length; i++) {
 		const char = text[i]
 		const toneIndex = thaiToneMarks.indexOf(char)
-		if (toneIndex !== -1 && i > 0 && thaiUpperVowels.includes(text[i - 1])) {
-			result += thaiToneMarksHigh[toneIndex]
-		} else {
-			result += char
+		if (toneIndex !== -1) {
+			const afterUpperVowel = i > 0 && thaiUpperVowels.includes(text[i - 1])
+			const beforeSaraAm = i + 1 < text.length && text[i + 1] === "ำ"
+			if (afterUpperVowel || beforeSaraAm) {
+				result += thaiToneMarksHigh[toneIndex]
+				continue
+			}
 		}
+		result += char
 	}
 	return result
 }
