@@ -50,6 +50,7 @@ engine_sources=src/neosphere/main.c \
    src/neosphere/game.c \
    src/neosphere/geometry.c \
    src/neosphere/image.c \
+   src/neosphere/ime.c \
    src/neosphere/input.c \
    src/neosphere/kev_file.c \
    src/neosphere/legacy.c \
