@@ -111,6 +111,9 @@ image_new_ms(int width, int height, const color_t* pixels, int samples)
 		al_set_target_bitmap(image->bitmap);
 		al_clear_depth_buffer(1.0f);
 		al_set_target_bitmap(old_target);
+		
+		// Invalidate render cache since we changed the target bitmap directly
+		s_last_image = NULL;
 	}
 
 	al_set_new_bitmap_samples(oldSamples);
@@ -254,6 +257,10 @@ image_resize(image_t* image, int width, int height)
 	new_bitmap = al_create_bitmap(width, height);
 	al_restore_state(&old_state);
 
+	// Clear cached render target since we're destroying the bitmap
+	if (s_last_image == image)
+		s_last_image = NULL;
+
 	al_destroy_bitmap(image->bitmap);
 	image->bitmap = new_bitmap;
 	image->width = width;
@@ -261,6 +268,9 @@ image_resize(image_t* image, int width, int height)
 	image->scissor_box = mk_rect(0, 0, image->width, image->height);
 	al_set_target_bitmap(image->bitmap);
 	al_set_new_bitmap_samples(oldSamples);
+	
+	// Invalidate render cache since we changed the target bitmap directly
+	s_last_image = NULL;
 }
 
 image_t*
@@ -279,6 +289,12 @@ image_unref(image_t* it)
 
 	console_log(3, "disposing image #%u no longer in use",
 		it->id);
+	
+	// Clear cached render target if it points to this image being freed.
+	// This prevents stale pointer comparisons if memory is reused.
+	if (s_last_image == it)
+		s_last_image = NULL;
+	
 	uncache_pixels(it);
 	al_destroy_bitmap(it->bitmap);
 	image_unref(it->parent);
@@ -486,6 +502,9 @@ image_blit(image_t* it, image_t* target_image, int x, int y)
 	al_draw_bitmap(image_bitmap(it), x, y, 0x0);
 	al_set_blender(blend_op, blend_mode_src, blend_mode_dest);
 	al_set_target_bitmap(old_target);
+	
+	// Invalidate render cache since we changed the target bitmap directly
+	s_last_image = NULL;
 }
 
 bool
@@ -608,6 +627,9 @@ image_fill(image_t* it, color_t color, float depth)
 	al_clear_depth_buffer(depth);
 	al_set_target_bitmap(old_target);
 	al_set_clipping_rectangle(clip_x, clip_y, clip_width, clip_height);
+	
+	// Invalidate render cache since we changed the target bitmap directly
+	s_last_image = NULL;
 }
 
 bool
@@ -630,6 +652,10 @@ image_flip(image_t* it, bool is_h_flip, bool is_v_flip)
 		draw_flags |= ALLEGRO_FLIP_VERTICAL;
 	al_draw_bitmap(it->bitmap, 0, 0, draw_flags);
 	al_set_target_bitmap(old_target);
+	
+	// Invalidate render cache since we changed the target bitmap directly
+	s_last_image = NULL;
+	
 	al_destroy_bitmap(it->bitmap);
 	it->bitmap = new_bitmap;
 	return true;
@@ -719,6 +745,16 @@ image_render_to(image_t* it, transform_t* transform)
 	s_last_image = it;
 }
 
+void
+image_invalidate_render_cache(void)
+{
+	// Invalidate the cached render target pointer.
+	// Call this after directly changing Allegro's target bitmap
+	// (e.g., via al_set_target_backbuffer) to ensure the next
+	// image_render_to call properly sets the target.
+	s_last_image = NULL;
+}
+
 bool
 image_replace_color(image_t* it, color_t color, color_t new_color)
 {
@@ -769,6 +805,10 @@ image_rescale(image_t* it, int width, int height)
 	al_draw_scaled_bitmap(it->bitmap, 0, 0, it->width, it->height, 0, 0, width, height, 0x0);
 	al_set_target_bitmap(old_target);
 	al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
+	
+	// Invalidate render cache since we changed the target bitmap directly
+	s_last_image = NULL;
+	
 	al_destroy_bitmap(it->bitmap);
 	it->bitmap = new_bitmap;
 	it->width = al_get_bitmap_width(it->bitmap);
@@ -811,6 +851,9 @@ image_set_pixel(image_t* it, int x, int y, color_t color)
 	al_set_target_bitmap(it->bitmap);
 	al_draw_pixel(x + 0.5, y + 0.5, nativecolor(color));
 	al_set_target_bitmap(old_target);
+	
+	// Invalidate render cache since we changed the target bitmap directly
+	s_last_image = NULL;
 }
 
 void

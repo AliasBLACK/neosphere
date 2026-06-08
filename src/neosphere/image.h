@@ -97,6 +97,7 @@ bool            image_flip               (image_t* it, bool is_h_flip, bool is_v
 color_t         image_get_pixel          (image_t* it, int x, int y);
 image_lock_t*   image_lock               (image_t* it, bool uploading, bool downloading);
 void            image_render_to          (image_t* it, transform_t* transform);
+void            image_invalidate_render_cache(void);
 bool            image_replace_color      (image_t* it, color_t color, color_t new_color);
 bool            image_rescale            (image_t* it, int width, int height);
 bool            image_save               (image_t* it, const char* filename);
