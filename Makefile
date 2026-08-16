@@ -18,7 +18,7 @@ endif
 ifndef CFLAGS
 CFLAGS=-O3
 endif
-CFLAGS += -target x86_64-apple-macos10.12
+CFLAGS += -target x86_64-apple-macos14
 
 engine_sources=src/neosphere/main.c \
    src/shared/api.c \
