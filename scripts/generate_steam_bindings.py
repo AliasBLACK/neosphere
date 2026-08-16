@@ -880,11 +880,14 @@ source += """static bool
 js_SteamAPI_Init(int num_args, bool is_ctor, intptr_t magic)
 {
 #ifdef _WIN32
-	steam_api = LoadLibrary(TEXT("steam_api64.dll"));
+#define LIB_NAME "steam_api64.dll"
+	steam_api = LoadLibrary(TEXT(LIB_NAME));
 #elif defined(__APPLE__)
-	steam_api = dlopen("libsteam_api.dylib", RTLD_LAZY);
+#define LIB_NAME "libsteam_api.dylib"
+	steam_api = dlopen(LIB_NAME, RTLD_LAZY);
 #else
-	steam_api = dlopen("libsteam_api.so", RTLD_LAZY);
+#define LIB_NAME "libsteam_api.so"
+	steam_api = dlopen(LIB_NAME, RTLD_LAZY);
 #endif
 	if (steam_api)
 	{
@@ -912,7 +915,17 @@ source += """		}
 			jsal_error(JS_ERROR, "SteamAPI_Init() failed. Is Steam running or is steam_appid.txt missing from executable folder?");
 	}
 	else
-		jsal_error(JS_ERROR, "Failed to link to 'steam_api64.dll'.");
+	{
+#if !defined( _WIN32 )
+		char* error_string = dlerror();
+		if (error_string)
+		{
+			jsal_error(JS_ERROR, error_string );
+		}
+		else
+#endif
+		jsal_error(JS_ERROR, "Failed to link to '" LIB_NAME "'.");
+	}
 	
 	return false;
 }
