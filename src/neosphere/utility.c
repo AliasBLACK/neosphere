@@ -324,6 +324,8 @@ jsal_require_pathname(int index, const char* origin_name, bool v1_mode, bool nee
 		jsal_error(JS_REF_ERROR, "SphereFS prefix '%%/' is reserved for future use");
 	if (strcmp(prefix, "~") == 0 && game_save_id(g_game) == NULL)
 		jsal_error(JS_REF_ERROR, "SphereFS prefix '~/' requires a save ID");
+	if (strcmp(prefix, "!") == 0 && game_save_id(g_game) == NULL)
+		jsal_error(JS_REF_ERROR, "SphereFS prefix '!/' requires a save ID");
 	if (need_write && !game_is_writable(g_game, path_cstr(path), v1_mode))
 		jsal_error(JS_TYPE_ERROR, "File or directory is not writable '%s'", path_cstr(path));
 	if (s_paths[s_index] != NULL)

@@ -474,7 +474,7 @@ game_full_path(const game_t* it, const char* filename, const char* base_dir_name
 
 	// if the path doesn't contain a SphereFS prefix, it's relative and we need
 	// to rebase it.
-	if (!strpbrk(prefix, "@#~$%") || strlen(prefix) != 1) {
+	if (!strpbrk(prefix, "@#~$%!") || strlen(prefix) != 1) {
 		if (base_path != NULL)
 			path_rebase(path, base_path);
 		else
@@ -571,7 +571,7 @@ game_is_prefix_path(const game_t* it, const char* pathname)
 	// this may look unsafe but it actually isn't: if the `strpbrk()` check passes,
 	// then we know the string is at least one character long, and accessing `pathname[1]`
 	// is thus safe.
-	return strpbrk(pathname, "@#~$%") == pathname
+	return strpbrk(pathname, "@#~$%!") == pathname
 		&& (pathname[1] == '/' || pathname[1] == '\\');
 }
 
@@ -587,6 +587,7 @@ game_is_writable(const game_t* it, const char* pathname, bool v1_mode)
 	path = game_full_path(g_game, pathname, NULL, v1_mode);
 	prefix = path_hop(path, 0);  // safe, prefix is always present
 	return strcmp(prefix, "~") == 0
+		|| strcmp(prefix, "!") == 0
 		|| (strcmp(prefix, "@") == 0 && v1_mode);
 }
 
@@ -1324,6 +1325,18 @@ resolve_pathname(const game_t* game, const char* pathname, path_t* *out_path, en
 			goto on_error;  // no save ID, can't resolve path
 		*out_path = path_new(&pathname[2]);
 		origin = path_rebase(path_new("Sphere Saves/"), home_path());
+		path_append_dir(origin, game_save_id(game));
+		path_rebase(*out_path, origin);
+		path_free(origin);
+		*out_fs_type = FS_LOCAL;
+	}
+	else if (strlen(pathname) >= 2 && memcmp(pathname, "!/", 2) == 0) {
+		// the !/ prefix refers to the game's user data directory (ALLEGRO_USER_DATA_PATH).
+		// like ~/, each game gets its own subdirectory for sandboxing.
+		if (game_save_id(game) == NULL)
+			goto on_error;  // no save ID, can't resolve path
+		*out_path = path_new(&pathname[2]);
+		origin = path_rebase(path_new("Sphere Saves/"), app_data_path());
 		path_append_dir(origin, game_save_id(game));
 		path_rebase(*out_path, origin);
 		path_free(origin);
