@@ -42,6 +42,7 @@ const path_t* app_data_path (void);
 const path_t* assets_path   (void);
 const path_t* engine_path   (void);
 const path_t* home_path     (void);
+const path_t* settings_path (void);
 
 bool        fread_rect16           (file_t* file, rect_t* out_rect);
 bool        fread_rect32           (file_t* file, rect_t* out_rect);
