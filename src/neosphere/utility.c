@@ -113,6 +113,22 @@ home_path(void)
 	return retval;
 }
 
+const path_t*
+settings_path(void)
+{
+	static path_t* retval = NULL;
+
+	ALLEGRO_PATH* al_path;
+
+	if (retval == NULL) {
+		al_path = al_get_standard_path(ALLEGRO_USER_SETTINGS_PATH);
+		retval = path_new_dir(al_path_cstr(al_path, '/'));
+		al_destroy_path(al_path);
+	}
+	path_mkdir(retval);
+	return retval;
+}
+
 const char*
 md5sum(const void* data, size_t size)
 {

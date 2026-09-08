@@ -131,8 +131,8 @@ from a different location, you can use one of the SphereFS prefixes:
     ~/: The current user's save data directory (note: requires a save ID; refer
         to the section on `game.json` above).  This is generally used to store
         save data and such where the user can easily access it.
-    !/: The current user's application data directory (note: requires a save
-        ID, same as `~/`).  This maps to the platform user-data location rather
+    !/: The current user's settings directory (note: requires a save ID, same
+        as `~/`).  This maps to the platform user-settings location rather
         than the documents folder, and is intended for settings and other data
         the user does not need to browse directly.
 
@@ -224,7 +224,7 @@ needed, and their values can be accessed at runtime through `Sphere.Game`.
     game for the purposes of save data management.
 
     Note: While providing a save ID is optional, one must be defined before a
-          game can use its SphereFS save store (`~/`) or user-data store
+          game can use its SphereFS save store (`~/`) or settings store
           (`!/`).  Legacy games using only an SGM manifest therefore can't
           take advantage of these stores.
 
@@ -819,10 +819,10 @@ FS.getSaveDirectory();
     is the documents-folder location used for user-accessible save files and
     requires a save ID.
 
-FS.getUserDataDirectory();
+FS.getUserSettingsDirectory();
 
-    Returns the platform path of the game's user-data directory (`!/`).  This
-    is the application-data location used for settings and other files the
+    Returns the platform path of the game's settings directory (`!/`).  This
+    is the user-settings location used for configuration and other files the
     user does not need to browse directly, and requires a save ID.
 
 FS.match(pathname, pattern); [experimental]

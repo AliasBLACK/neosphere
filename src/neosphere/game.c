@@ -1331,12 +1331,12 @@ resolve_pathname(const game_t* game, const char* pathname, path_t* *out_path, en
 		*out_fs_type = FS_LOCAL;
 	}
 	else if (strlen(pathname) >= 2 && memcmp(pathname, "!/", 2) == 0) {
-		// the !/ prefix refers to the game's user data directory (ALLEGRO_USER_DATA_PATH).
+		// the !/ prefix refers to the game's user settings directory (ALLEGRO_USER_SETTINGS_PATH).
 		// like ~/, each game gets its own subdirectory for sandboxing.
 		if (game_save_id(game) == NULL)
 			goto on_error;  // no save ID, can't resolve path
 		*out_path = path_new(&pathname[2]);
-		origin = path_rebase(path_new("Sphere Saves/"), app_data_path());
+		origin = path_rebase(path_new("Sphere Saves/"), settings_path());
 		path_append_dir(origin, game_save_id(game));
 		path_rebase(*out_path, origin);
 		path_free(origin);
