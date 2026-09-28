@@ -38,6 +38,8 @@
 #include "galileo.h"
 #include "transform.h"
 
+#include <allegro5/allegro_opengl.h>
+
 struct image
 {
 	unsigned int    refcount;
@@ -62,6 +64,7 @@ struct image
 
 static void cache_pixels   (image_t* image);
 static void uncache_pixels (image_t* image);
+static int  clamp_samples  (int samples);
 
 static image_t*     s_last_image = NULL;
 static unsigned int s_next_image_id = 0;
@@ -85,9 +88,7 @@ image_new_ms(int width, int height, const color_t* pixels, int samples)
 	if (!(image = calloc(1, sizeof(image_t))))
 		goto on_error;
 	al_set_new_bitmap_depth(16);
-#if !defined(__APPLE__)
-	al_set_new_bitmap_samples(samples);
-#endif
+	al_set_new_bitmap_samples(clamp_samples(samples));
 	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	if ((image->bitmap = al_create_bitmap(width, height)) == NULL)
 		goto on_error;
@@ -248,9 +249,7 @@ image_resize(image_t* image, int width, int height)
 	oldSamples = al_get_new_bitmap_samples();
 
 	al_set_new_bitmap_depth(16);
-#if !defined(__APPLE__)
-	al_set_new_bitmap_samples(8);
-#endif
+	al_set_new_bitmap_samples(clamp_samples(8));
 	al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	al_store_state(&old_state, ALLEGRO_STATE_NEW_BITMAP_PARAMETERS);
 	al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY_24_NO_ALPHA);
@@ -933,4 +932,24 @@ uncache_pixels(image_t* image)
 	console_log(4, "pixel cache invalidated for image #%u, hits: %u", image->id, image->cache_hits);
 	free(image->pixel_cache);
 	image->pixel_cache = NULL;
+}
+
+static int
+clamp_samples(int samples)
+{
+	// asking for more samples than the GPU supports makes creating the
+	// multisample buffer fail, which corrupts rendering (e.g. Apple M1 GL
+	// caps out at 4x).
+	static GLint max_samples = -1;
+
+	void (*get_integerv)(GLenum, GLint*);
+
+	if (samples <= 0)
+		return 0;
+	if (max_samples < 0 && al_get_current_display() != NULL) {
+		max_samples = 0;
+		if ((get_integerv = al_get_opengl_proc_address("glGetIntegerv")))
+			get_integerv(GL_MAX_SAMPLES, &max_samples);
+	}
+	return max_samples >= 0 && samples > max_samples ? max_samples : samples;
 }
