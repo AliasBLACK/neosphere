@@ -11,8 +11,14 @@
 #
 # Resources (e.g. game.spk, system/) end up in Contents/Resources, which is
 # what ALLEGRO_RESOURCES_PATH (and therefore assets_path()) points at in a
-# bundle.  Set CODESIGN_IDENTITY to sign with a real identity + hardened
-# runtime; otherwise the bundle is ad-hoc signed.
+# bundle.
+#
+# Only the Mach-O files are (ad-hoc) signed; the bundle itself is deliberately
+# NOT sealed.  A sealed bundle hashes every file in Contents/Resources, so any
+# content update would need re-signing on a Mac.  Unsealed, the resources can
+# be swapped from any OS.  The trade-off is that this can't be notarized, which
+# is fine for Steam (no quarantine, so no Gatekeeper check) but not for a plain
+# web download.
 
 set -euo pipefail
 
@@ -44,8 +50,12 @@ echo "bundling $app ($archs)"
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 
-# the engine links against @executable_path/libs/
-cp "$executable" "$app/Contents/MacOS/$exe_name"
+# the engine links against @executable_path/libs/.  sign the executable
+# before it's inside the bundle, or codesign would seal the whole bundle
+cp "$executable" "$app/Contents/MacOS/$exe_name.tmp"
+codesign --force --sign - "$app/Contents/MacOS/$exe_name.tmp"
+codesign --verify --strict "$app/Contents/MacOS/$exe_name.tmp"
+mv "$app/Contents/MacOS/$exe_name.tmp" "$app/Contents/MacOS/$exe_name"
 cp -R "$libs_dir" "$app/Contents/MacOS/libs"
 
 for res in "$@"; do
@@ -91,16 +101,16 @@ for lib in "$app"/Contents/MacOS/libs/*.dylib; do
 	done
 done
 
-# sign inside-out: libs first, then the bundle itself
-if [ -n "${CODESIGN_IDENTITY:-}" ]; then
-	sign_args=(--force --timestamp --options runtime --sign "$CODESIGN_IDENTITY")
-	codesign "${sign_args[@]}" "$app"/Contents/MacOS/libs/*.dylib
-	codesign "${sign_args[@]}" --entitlements "$src_dir/desktop/macos/neosphere.entitlements" "$app"
-else
-	codesign --force --sign - "$app"/Contents/MacOS/libs/*.dylib
-	codesign --force --sign - "$app"
+# ad-hoc sign each binary on its own (install_name_tool/dylibbundler leave
+# them invalid), never the bundle: see above
+codesign --force --sign - "$app"/Contents/MacOS/libs/*.dylib
+for lib in "$app"/Contents/MacOS/libs/*.dylib; do
+	codesign --verify --strict "$lib"
+done
+if [ -e "$app/Contents/_CodeSignature" ]; then
+	echo "error: bundle got sealed, content updates would break it" >&2
+	exit 1
 fi
-codesign --verify --strict --verbose=1 "$app"
 
 case " $archs " in
 	*" arm64 "*) ;;
