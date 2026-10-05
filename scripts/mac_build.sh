@@ -16,7 +16,7 @@ cp libsteam_api.dylib ./libs
 rm -rf mac_dist
 mkdir mac_dist
 ../neosphere/scripts/mac_bundle.sh \
-	-n Glyphica -i se.garagehack.glyphica -v "$version" \
+	-n Glyphica -i com.aliasblack.glyphica -v "$version" \
 	-e ./neosphere -l ./libs -c ./system/icon.png -o mac_dist \
 	glyphica.spk system licenses
 rm -f glyphica_intel_mac.zip
