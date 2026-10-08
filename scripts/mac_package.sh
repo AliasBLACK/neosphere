@@ -6,7 +6,8 @@
 #   -n <name>     app name                (default: Glyphica)
 #   -i <id>       bundle identifier       (default: com.aliasblack.glyphica)
 #   -v <version>  bundle version          (default: today, YYYY.M.D)
-#   -p <spk>      game package            (default: the one .spk in the game dir)
+#   -p <spk>      game package            (default: the one .spk in the game dir,
+#                                          if any; "none" to leave it out)
 #   -o <dir>      where the .app goes     (default: <game dir>/mac_dist)
 #   -z <zip>      output zip              (default: <game dir>/<name>_mac.zip)
 #   -s            skip the build, bundle what's already in the game dir
@@ -40,7 +41,7 @@ while getopts "g:n:i:v:p:o:z:s" opt; do
 		o) out_dir=$OPTARG ;;
 		z) zip=$OPTARG ;;
 		s) skip_build=true ;;
-		*) sed -n '2,16p' "$0" >&2; exit 1 ;;
+		*) sed -n '2,17p' "$0" >&2; exit 1 ;;
 	esac
 done
 
@@ -49,23 +50,25 @@ out_dir="${out_dir:-$game_dir/mac_dist}"
 zip="${zip:-$game_dir/${app_name}_mac.zip}"
 
 if [ -z "$spk" ]; then
-	# the engine only autoloads an .spk when it's the only one, so insist on
-	# exactly one here too
+	# the engine only autoloads an .spk when it's the only one, so more than
+	# one is ambiguous.  none is fine: the app is built empty and the .spk can
+	# be dropped into Contents/Resources later, no re-signing needed
 	shopt -s nullglob
 	spks=("$game_dir"/*.spk)
 	shopt -u nullglob
-	if [ ${#spks[@]} -ne 1 ]; then
-		echo "error: expected one .spk in $game_dir, found ${#spks[@]}; pass -p" >&2
+	if [ ${#spks[@]} -gt 1 ]; then
+		echo "error: found ${#spks[@]} .spk files in $game_dir; pass -p <spk> or -p none" >&2
 		exit 1
 	fi
-	spk="${spks[0]}"
+	spk="${spks[0]:-none}"
 fi
 
 if ! $skip_build; then
 	"$src_dir/scripts/mac_build.sh" "$game_dir"
 fi
 
-resources=("$spk")
+resources=()
+[ "$spk" != none ] && resources+=("$spk")
 for res in system licenses; do
 	[ -e "$game_dir/$res" ] && resources+=("$game_dir/$res")
 done
@@ -78,7 +81,7 @@ mkdir -p "$out_dir"
 "$src_dir/scripts/mac_bundle.sh" \
 	-n "$app_name" -i "$bundle_id" -v "$version" \
 	-e "$game_dir/neosphere" -l "$game_dir/libs" -c "$icon" -o "$out_dir" \
-	"${resources[@]}"
+	${resources[@]+"${resources[@]}"}
 
 rm -f "$zip"
 ditto -c -k --sequesterRsrc --keepParent "$out_dir/$app_name.app" "$zip"
@@ -88,3 +91,8 @@ echo "app:     $out_dir/$app_name.app"
 echo "zip:     $zip"
 echo "id:      $bundle_id $version"
 echo "archs:   $(lipo -archs "$out_dir/$app_name.app/Contents/MacOS/neosphere")"
+if [ "$spk" = none ]; then
+	echo "spk:     none, add one to $app_name.app/Contents/Resources/ before shipping"
+else
+	echo "spk:     $(basename "$spk")"
+fi
