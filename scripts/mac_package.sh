@@ -83,8 +83,11 @@ mkdir -p "$out_dir"
 	-e "$game_dir/neosphere" -l "$game_dir/libs" -c "$icon" -o "$out_dir" \
 	${resources[@]+"${resources[@]}"}
 
+# no resource forks/xattrs: they'd end up as a __MACOSX/ folder of ._ files
+# that non-Mac unzippers show, and the code signatures are embedded in the
+# binaries anyway
 rm -f "$zip"
-ditto -c -k --sequesterRsrc --keepParent "$out_dir/$app_name.app" "$zip"
+ditto -c -k --norsrc --noextattr --noacl --keepParent "$out_dir/$app_name.app" "$zip"
 
 echo
 echo "app:     $out_dir/$app_name.app"
