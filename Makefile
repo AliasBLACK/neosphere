@@ -127,8 +127,11 @@ ssj_sources=src/ssj/main.c \
    src/ssj/session.c
 
 ifeq ($(os), Darwin)
-LINKER_ARGS=-Wl,-rpath,\$$ORIGIN
+# $ORIGIN is Linux-only; on macOS the binaries find libChakraCore.dylib next
+# to themselves, so copy it into bin/ for running straight from there
+LINKER_ARGS=-Wl,-rpath,@executable_path/
 CHAKRACORE_URL=https://aka.ms/chakracore/cc_osx_x64_1_11_15
+runtime_libs=bin/libChakraCore.dylib
 else
 LINKER_ARGS=-Wl,-rpath=\$$ORIGIN
 OPTIONS=-DNEOSPHERE_MNG_SUPPORT
@@ -150,13 +153,13 @@ installdeps:
 	cp dep/lib/* $(installdir)/lib
 
 .PHONY: neosphere
-neosphere: bin/neosphere
+neosphere: bin/neosphere $(runtime_libs)
 
 .PHONY: spherun
-spherun: bin/neosphere bin/spherun
+spherun: bin/neosphere bin/spherun $(runtime_libs)
 
 .PHONY: cell
-cell: bin/cell
+cell: bin/cell $(runtime_libs)
 
 .PHONY: ssj
 ssj: bin/ssj
@@ -208,7 +211,6 @@ bin/neosphere:
 	      $(LINKER_ARGS) \
 	      $(OPTIONS) \
 	      $(engine_sources) $(engine_libs)
-	install_name_tool -add_rpath @executable_path/ bin/neosphere
 	cp -r assets/system bin
 
 bin/spherun:
@@ -230,7 +232,10 @@ bin/cell:
 	      -Ldep/lib \
 	      $(LINKER_ARGS) \
 	      $(cell_sources) $(cell_libs)
-	install_name_tool -add_rpath @executable_path/ bin/cell
+
+bin/libChakraCore.dylib:
+	mkdir -p bin
+	cp dep/lib/libChakraCore.dylib bin
 
 bin/ssj:
 	mkdir -p bin
