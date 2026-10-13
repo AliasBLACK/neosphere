@@ -640,31 +640,40 @@ bool
 game_rename(game_t* it, const char* old_pathname, const char* new_pathname)
 {
 	enum fs_type new_fs_type;
-	path_t*      new_path;
+	path_t*      new_path = NULL;
 	enum fs_type old_fs_type;
-	path_t*      old_path;
+	path_t*      old_path = NULL;
+	bool         retval = false;
 
 	if (!resolve_pathname(it, old_pathname, &old_path, &old_fs_type))
-		return false;
+		goto finished;
 	if (!resolve_pathname(it, new_pathname, &new_path, &new_fs_type))
-		return false;
+		goto finished;
 	if (new_fs_type != old_fs_type)
-		return false;  // can't cross file system boundaries
+		goto finished;  // can't cross file system boundaries
 	switch (old_fs_type) {
 	case FS_LOCAL:
 		// here's where we have to be careful.  on some platforms rename() with the same
 		// filename for old and new will delete the file (!), and it will also happily overwrite
 		// any existing file with the same name.
-		if (path_is(old_path, new_path))
-			return true;  // avoid rename() deleting file if oldname == newname
+		if (path_is(old_path, new_path)) {
+			retval = true;  // avoid rename() deleting file if oldname == newname
+			goto finished;
+		}
 		if (game_file_exists(it, new_pathname) || game_dir_exists(it, new_pathname))
-			return false; // don't overwrite existing file
-		return rename(path_cstr(old_path), path_cstr(new_path)) == 0;
+			goto finished;  // don't overwrite existing file
+		retval = os_rename(path_cstr(old_path), path_cstr(new_path));
+		break;
 	case FS_PACKAGE:
-		return false;  // SPK packages are not writable
+		break;  // SPK packages are not writable
 	default:
-		return false;
+		break;
 	}
+
+finished:
+	path_free(old_path);
+	path_free(new_path);
+	return retval;
 }
 
 bool
@@ -672,17 +681,21 @@ game_rmdir(game_t* it, const char* dirname)
 {
 	enum fs_type fs_type;
 	path_t*      path;
+	bool         retval = false;
 
 	if (!resolve_pathname(it, dirname, &path, &fs_type))
 		return false;
 	switch (fs_type) {
 	case FS_LOCAL:
-		return rmdir(path_cstr(path)) == 0;
+		retval = os_rmdir(path_cstr(path));
+		break;
 	case FS_PACKAGE:
-		return false;
+		break;
 	default:
-		return false;
+		break;
 	}
+	path_free(path);
+	return retval;
 }
 
 bool
@@ -702,17 +715,21 @@ game_unlink(game_t* it, const char* filename)
 {
 	enum fs_type fs_type;
 	path_t*      path;
+	bool         retval = false;
 
 	if (!resolve_pathname(it, filename, &path, &fs_type))
 		return false;
 	switch (fs_type) {
 	case FS_LOCAL:
-		return unlink(path_cstr(path)) == 0;
+		retval = os_unlink(path_cstr(path));
+		break;
 	case FS_PACKAGE:
-		return false;
+		break;
 	default:
-		return false;
+		break;
 	}
+	path_free(path);
+	return retval;
 }
 
 directory_t*
