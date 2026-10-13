@@ -40,6 +40,16 @@
 #include "md5.h"
 #include "path.h"
 
+#if defined(_WIN32)
+#include <wchar.h>
+#else
+#include <unistd.h>
+#endif
+
+#if defined(_WIN32)
+static wchar_t* utf8_to_wide (const char* string);
+#endif
+
 const path_t*
 app_data_path(void)
 {
@@ -222,6 +232,63 @@ on_error:
 		image_unlock(parent, lock);
 	image_unref(image);
 	return NULL;
+}
+
+bool
+os_rename(const char* old_filename, const char* new_filename)
+{
+	// note: on Windows, the narrow CRT functions interpret paths in the active ANSI code
+	//       page rather than UTF-8, so any non-ASCII path (e.g. a home directory under a
+	//       Chinese username) would fail.  use the wide versions instead.
+#if defined(_WIN32)
+	wchar_t* new_wide;
+	wchar_t* old_wide;
+	bool     retval = false;
+
+	old_wide = utf8_to_wide(old_filename);
+	new_wide = utf8_to_wide(new_filename);
+	if (old_wide != NULL && new_wide != NULL)
+		retval = _wrename(old_wide, new_wide) == 0;
+	free(old_wide);
+	free(new_wide);
+	return retval;
+#else
+	return rename(old_filename, new_filename) == 0;
+#endif
+}
+
+bool
+os_rmdir(const char* dirname)
+{
+#if defined(_WIN32)
+	wchar_t* wide;
+	bool     retval;
+
+	if (!(wide = utf8_to_wide(dirname)))
+		return false;
+	retval = _wrmdir(wide) == 0;
+	free(wide);
+	return retval;
+#else
+	return rmdir(dirname) == 0;
+#endif
+}
+
+bool
+os_unlink(const char* filename)
+{
+#if defined(_WIN32)
+	wchar_t* wide;
+	bool     retval;
+
+	if (!(wide = utf8_to_wide(filename)))
+		return false;
+	retval = _wunlink(wide) == 0;
+	free(wide);
+	return retval;
+#else
+	return unlink(filename) == 0;
+#endif
 }
 
 lstring_t*
@@ -419,3 +486,22 @@ on_error:
 	image_unlock(image, lock);
 	return false;
 }
+
+#if defined(_WIN32)
+static wchar_t*
+utf8_to_wide(const char* string)
+{
+	ALLEGRO_USTR_INFO   info;
+	wchar_t*            retval;
+	size_t              size;
+	const ALLEGRO_USTR* ustr;
+
+	// note: wchar_t is UTF-16 on Windows; the size includes the NUL terminator.
+	ustr = al_ref_cstr(&info, string);
+	size = al_ustr_size_utf16(ustr);
+	if (!(retval = malloc(size)))
+		return NULL;
+	al_ustr_encode_utf16(ustr, (uint16_t*)retval, size);
+	return retval;
+}
+#endif
