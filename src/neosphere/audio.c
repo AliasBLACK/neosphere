@@ -40,6 +40,7 @@ struct mixer
 	ALLEGRO_MIXER* ptr;
 	ALLEGRO_VOICE* voice;
 	float          gain;
+	mixer_t*       parent;
 };
 
 struct stream
@@ -96,6 +97,7 @@ static void update_stream (stream_t* stream);
 static vector_t*            s_active_samples;
 static vector_t*            s_active_sounds;
 static vector_t*            s_active_streams;
+static vector_t*            s_voices;
 static bool                 s_have_sound;
 static unsigned int         s_next_mixer_id = 1;
 static unsigned int         s_next_sample_id = 1;
@@ -114,6 +116,7 @@ audio_init(void)
 	s_active_samples = vector_new(sizeof(struct sample_instance));
 	s_active_sounds = vector_new(sizeof(sound_t*));
 	s_active_streams = vector_new(sizeof(stream_t*));
+	s_voices = vector_new(sizeof(ALLEGRO_VOICE*));
 
 	s_have_sound = true;
 	if (!al_install_audio()) {
@@ -129,6 +132,7 @@ audio_uninit(void)
 {
 	struct sample_instance* sample_instance;
 	sound_t**               sound_ptr;
+	ALLEGRO_VOICE**         voice_ptr;
 
 	iter_t iter;
 
@@ -149,6 +153,24 @@ audio_uninit(void)
 	}
 	vector_free(s_active_samples);
 	vector_free(s_active_streams);
+
+	// note: on macOS, Allegro's AudioQueue thread keeps using a voice for up to 50ms
+	//       after it's stopped and al_destroy_voice() doesn't wait for it, so stop
+	//       every voice first and give those threads time to finish before any of
+	//       them get freed.  this includes voices of mixers that are still alive,
+	//       which al_uninstall_audio() would otherwise destroy while playing.
+	//       al_set_voice_playing() refuses to stop a voice with a mixer attached, so
+	//       detach instead, which does stop it.
+	iter = vector_enum(s_voices);
+	while ((voice_ptr = iter_next(&iter)))
+		al_detach_voice(*voice_ptr);
+	if (vector_len(s_voices) > 0)
+		al_rest(0.2);
+	iter = vector_enum(s_voices);
+	while ((voice_ptr = iter_next(&iter)))
+		al_destroy_voice(*voice_ptr);
+	vector_free(s_voices);
+
 	if (s_have_sound)
 		al_uninstall_audio();
 }
@@ -261,6 +283,7 @@ mixer_new(int frequency, int bits, int channels)
 
 	mixer->gain = al_get_mixer_gain(mixer->ptr);
 	mixer->id = s_next_mixer_id++;
+	vector_push(s_voices, &mixer->voice);
 	return mixer_ref(mixer);
 
 on_error:
@@ -289,7 +312,17 @@ mixer_unref(mixer_t* mixer)
 		return;
 
 	console_log(3, "disposing mixer #%u no longer in use", mixer->id);
+
+	// note: Allegro doesn't detach a mixer's children when destroying it, so a child
+	//       holds a reference to its parent and detaches itself here, before the
+	//       parent can go away.  otherwise the child is left pointing at a freed mixer
+	//       (and its mutex) and destroying it later corrupts the heap or deadlocks.
+	al_detach_mixer(mixer->ptr);
 	al_destroy_mixer(mixer->ptr);
+	mixer_unref(mixer->parent);
+
+	// note: al_detach_mixer() above stopped the voice, but don't destroy it yet;
+	//       audio_uninit() does that, see the note there.
 	free(mixer);
 }
 
@@ -309,8 +342,22 @@ mixer_set_gain(mixer_t* mixer, float gain)
 void
 mixer_attach_mixer(mixer_t* mixer, mixer_t* parent)
 {
+	mixer_t* old_parent;
+
+	if (parent == mixer || parent == mixer->parent)
+		return;
+
+	old_parent = mixer->parent;
 	al_detach_mixer(mixer->ptr);
-	al_attach_mixer_to_mixer(mixer->ptr, parent->ptr);
+	if (al_attach_mixer_to_mixer(mixer->ptr, parent->ptr)) {
+		mixer->parent = mixer_ref(parent);
+	}
+	else {
+		// attaching failed (e.g. mismatched frequency), fall back to our own voice
+		al_attach_mixer_to_voice(mixer->ptr, mixer->voice);
+		mixer->parent = NULL;
+	}
+	mixer_unref(old_parent);
 }
 
 sample_t*
