@@ -73,6 +73,8 @@ static void on_dyad_accept  (dyad_Event* e);
 static void on_dyad_close   (dyad_Event* e);
 static void on_dyad_connect (dyad_Event* e);
 static void on_dyad_receive (dyad_Event* e);
+static void on_server_close (dyad_Event* e);
+static void end_server_stream (server_t* server, dyad_Stream* stream);
 
 static sockets_on_idle_t s_idle_callback = NULL;
 static unsigned int      s_next_server_id = 1;
@@ -321,6 +323,7 @@ server_new(const char* hostname, int port, size_t buffer_size, int max_backlog, 
 		if (!(server->stream4 = dyad_newStream()))
 			goto on_error;
 		dyad_addListener(server->stream4, DYAD_EVENT_ACCEPT, on_dyad_accept, server);
+		dyad_addListener(server->stream4, DYAD_EVENT_CLOSE, on_server_close, server);
 		if (dyad_listenEx(server->stream4, "0.0.0.0", port, max_backlog) != 0) {
 			dyad_close(server->stream4);
 			server->stream4 = NULL;
@@ -328,6 +331,7 @@ server_new(const char* hostname, int port, size_t buffer_size, int max_backlog, 
 		if (!(server->stream6 = dyad_newStream()))
 			goto on_error;
 		dyad_addListener(server->stream6, DYAD_EVENT_ACCEPT, on_dyad_accept, server);
+		dyad_addListener(server->stream6, DYAD_EVENT_CLOSE, on_server_close, server);
 		if (dyad_listenEx(server->stream6, "::", port, max_backlog) != 0) {
 			dyad_close(server->stream6);
 			server->stream6 = NULL;
@@ -339,6 +343,7 @@ server_new(const char* hostname, int port, size_t buffer_size, int max_backlog, 
 		if (!(server->stream4 = dyad_newStream()))
 			goto on_error;
 		dyad_addListener(server->stream4, DYAD_EVENT_ACCEPT, on_dyad_accept, server);
+		dyad_addListener(server->stream4, DYAD_EVENT_CLOSE, on_server_close, server);
 		if (dyad_listenEx(server->stream4, hostname, port, max_backlog) == -1)
 			goto on_error;
 	}
@@ -375,11 +380,12 @@ server_unref(server_t* it)
 		return;
 	console_log(3, "disposing server #%u no longer in use", it->id);
 	for (i = 0; i < it->num_backlog; ++i)
-		dyad_end(it->backlog[i]);
+		end_server_stream(it, it->backlog[i]);
 	if (it->stream4 != NULL)
-		dyad_end(it->stream4);
+		end_server_stream(it, it->stream4);
 	if (it->stream6 != NULL)
-		dyad_end(it->stream6);
+		end_server_stream(it, it->stream6);
+	free(it->backlog);
 	free(it);
 }
 
@@ -425,6 +431,7 @@ server_accept(server_t* it)
 	client->no_delay = it->no_delay;
 	client->recv_buffer = malloc(it->buffer_size);
 	client->stream = it->backlog[0];
+	dyad_removeListener(client->stream, DYAD_EVENT_CLOSE, on_server_close, it);
 	dyad_setNoDelay(client->stream, client->no_delay);
 	dyad_addListener(client->stream, DYAD_EVENT_CLOSE, on_dyad_close, client);
 	dyad_addListener(client->stream, DYAD_EVENT_DATA, on_dyad_receive, client);
@@ -449,6 +456,7 @@ on_dyad_accept(dyad_Event* e)
 		console_log(4, "taking connection from %s:%d on server #%u",
 			dyad_getAddress(e->remote), dyad_getPort(e->remote), server->id);
 		server->backlog[server->num_backlog++] = e->remote;
+		dyad_addListener(e->remote, DYAD_EVENT_CLOSE, on_server_close, server);
 	}
 	else {
 		console_log(4, "backlog full on server #%u, refusing %s:%d", server->id,
@@ -495,4 +503,38 @@ on_dyad_receive(dyad_Event* e)
 	}
 	memcpy(socket->recv_buffer + socket->recv_size, e->data, e->size);
 	socket->recv_size += e->size;
+}
+
+static void
+on_server_close(dyad_Event* e)
+{
+	server_t* server = e->udata;
+
+	int i;
+
+	// a closed stream gets freed on the next dyad_update() (or by dyad_shutdown()), so
+	// forget about it now.  otherwise server_accept() or server_unref() would touch a
+	// freed stream later on.
+	if (e->stream == server->stream4)
+		server->stream4 = NULL;
+	if (e->stream == server->stream6)
+		server->stream6 = NULL;
+	for (i = 0; i < server->num_backlog; ++i) {
+		if (server->backlog[i] != e->stream)
+			continue;
+		--server->num_backlog;
+		memmove(&server->backlog[i], &server->backlog[i + 1],
+			(server->num_backlog - i) * sizeof(dyad_Stream*));
+		break;
+	}
+}
+
+static void
+end_server_stream(server_t* server, dyad_Stream* stream)
+{
+	// detach the server first: the stream may not finish closing until after the
+	// server has been freed.
+	dyad_removeListener(stream, DYAD_EVENT_ACCEPT, on_dyad_accept, server);
+	dyad_removeListener(stream, DYAD_EVENT_CLOSE, on_server_close, server);
+	dyad_end(stream);
 }

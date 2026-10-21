@@ -12,10 +12,22 @@
 
 void killApplication()
 {
+	// note: this runs on the watchdog thread while the main thread is stuck, so don't
+	//       run atexit handlers or static destructors (Allegro, ChakraCore); they can
+	//       deadlock on locks the main thread holds and keep the process alive.
 #if defined(_WIN32)
-	ExitProcess(1);
+	TerminateProcess(GetCurrentProcess(), 1);
 #else
-	exit(1);
+	_exit(1);
+#endif
+}
+
+static void sleep_ms(unsigned int ms)
+{
+#if defined(_WIN32)
+	Sleep(ms);
+#else
+	usleep(ms * 1000);
 #endif
 }
 
@@ -60,6 +72,7 @@ void* watchdog_thread(void* data)
 			killApplication();
 			break;
 		}
+		sleep_ms(50);
 	}
 	al_destroy_mutex(w->mutex);
 	free(w);
